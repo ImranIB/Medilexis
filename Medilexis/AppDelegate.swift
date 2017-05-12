@@ -17,6 +17,52 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        let statusBar: UIView = UIApplication.shared.value(forKey: "statusBar") as! UIView
+        if statusBar.responds(to: #selector(setter: UIView.backgroundColor)) {
+            statusBar.backgroundColor = UIColor.gray
+        }
+        
+       let userDefaults = Foundation.UserDefaults.standard
+        let value  = userDefaults.string(forKey: "login")
+        
+        if value == nil || value == "" {
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            
+            let loginViewController = storyBoard.instantiateViewController(withIdentifier: "selection") as! Selection
+            window!.rootViewController = loginViewController
+            
+        } else {
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            
+            let MainViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+            window!.rootViewController = MainViewController
+        }
+        
+         UITabBarItem.appearance().setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Lato", size: 14)!], for: .normal)
+        
+          UITabBarItem.appearance().setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Lato", size: 14)!], for: .selected)
+        
+          UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0)], for: .selected)
+        
+         UITabBar.appearance().tintColor = UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0)
+        
+         UITabBar.appearance().selectionIndicatorImage = getImageWithColorPosition(color: UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0), size: CGSize(width:(self.window?.frame.size.width)!/4,height: 49), lineSize: CGSize(width:(self.window?.frame.size.width)!/4, height:3))
+        
+         UITabBar.appearance().barTintColor = UIColor(red: 255/255.0, green: 255/255.0, blue: 255/255.0, alpha: 1.0)
+
+    
+       /* let hasLaunchedKey = "HasLaunched"
+        let defaults = UserDefaults.standard
+        let hasLaunched = defaults.bool(forKey: hasLaunchedKey)
+        
+        if !hasLaunched {
+            defaults.set(true, forKey: hasLaunchedKey)
+            print("run")
+        }*/
+        
         return true
     }
 
@@ -88,6 +134,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
+    
+    func getImageWithColorPosition(color: UIColor, size: CGSize, lineSize: CGSize) -> UIImage {
+        let rect = CGRect(x:0, y: 0, width: size.width, height: size.height)
+        let rectLine = CGRect(x:0, y:size.height-lineSize.height,width: lineSize.width,height: lineSize.height)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+        UIColor.clear.setFill()
+        UIRectFill(rect)
+        color.setFill()
+        UIRectFill(rectLine)
+        let image: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return image
+    }
 
 }
+
 

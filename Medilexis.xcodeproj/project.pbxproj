@@ -7,23 +7,106 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1D3FA5B01E9058D200E8777E /* PatientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3FA5AF1E9058D200E8777E /* PatientCell.swift */; };
+		4435FB591E8E6B2900413102 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4435FB581E8E6B2900413102 /* Connection.swift */; };
+		4435FF831E794C6B00E006D4 /* PlanDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4435FF821E794C6B00E006D4 /* PlanDictation.swift */; };
+		4435FF851E794F0C00E006D4 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4435FF841E794F0C00E006D4 /* Network.swift */; };
+		443666A61E81160F007AD22C /* ForgetPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443666A51E81160F007AD22C /* ForgetPassword.swift */; };
+		443C4CC71E94EDDD000F7D06 /* SearchPatients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443C4CC61E94EDDD000F7D06 /* SearchPatients.swift */; };
+		443C4CC91E94EE0C000F7D06 /* SearchPatientsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443C4CC81E94EE0C000F7D06 /* SearchPatientsCell.swift */; };
 		4448E5071E76A9F00071B2C1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5061E76A9F00071B2C1 /* AppDelegate.swift */; };
-		4448E5091E76A9F00071B2C1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5081E76A9F00071B2C1 /* ViewController.swift */; };
-		4448E50C1E76A9F00071B2C1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4448E50A1E76A9F00071B2C1 /* Main.storyboard */; };
 		4448E50F1E76A9F00071B2C1 /* Medilexis.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4448E50D1E76A9F00071B2C1 /* Medilexis.xcdatamodeld */; };
-		4448E5111E76A9F00071B2C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4448E5101E76A9F00071B2C1 /* Assets.xcassets */; };
-		4448E5141E76A9F00071B2C1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4448E5121E76A9F00071B2C1 /* LaunchScreen.storyboard */; };
+		4448E5201E76AAAC0071B2C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4448E51C1E76AAAC0071B2C1 /* Assets.xcassets */; };
+		4448E5211E76AAAC0071B2C1 /* fontawesome-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4448E51D1E76AAAC0071B2C1 /* fontawesome-webfont.ttf */; };
+		4448E5221E76AAAC0071B2C1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4448E51E1E76AAAC0071B2C1 /* LaunchScreen.storyboard */; };
+		4448E5261E76AAF80071B2C1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4448E5251E76AAF80071B2C1 /* Main.storyboard */; };
+		4448E5451E76AB5C0071B2C1 /* Selection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5281E76AB5C0071B2C1 /* Selection.swift */; };
+		4448E5461E76AB5C0071B2C1 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5291E76AB5C0071B2C1 /* Login.swift */; };
+		4448E5471E76AB5C0071B2C1 /* Register.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E52A1E76AB5C0071B2C1 /* Register.swift */; };
+		4448E5481E76AB5C0071B2C1 /* Dashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E52B1E76AB5C0071B2C1 /* Dashboard.swift */; };
+		4448E5491E76AB5C0071B2C1 /* WalkIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E52C1E76AB5C0071B2C1 /* WalkIn.swift */; };
+		4448E54A1E76AB5C0071B2C1 /* PatientsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E52D1E76AB5C0071B2C1 /* PatientsData.swift */; };
+		4448E54E1E76AB5C0071B2C1 /* RecordingPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5311E76AB5C0071B2C1 /* RecordingPlayback.swift */; };
+		4448E5501E76AB5C0071B2C1 /* CCDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5331E76AB5C0071B2C1 /* CCDictation.swift */; };
+		4448E5511E76AB5C0071B2C1 /* HPIDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5341E76AB5C0071B2C1 /* HPIDictation.swift */; };
+		4448E5521E76AB5C0071B2C1 /* HXDIctation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5351E76AB5C0071B2C1 /* HXDIctation.swift */; };
+		4448E5531E76AB5C0071B2C1 /* ROSDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5361E76AB5C0071B2C1 /* ROSDictation.swift */; };
+		4448E5581E76AB5C0071B2C1 /* selectDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E53B1E76AB5C0071B2C1 /* selectDictation.swift */; };
+		4448E5591E76AB5C0071B2C1 /* singleDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E53C1E76AB5C0071B2C1 /* singleDictation.swift */; };
+		4448E55A1E76AB5C0071B2C1 /* EditProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E53D1E76AB5C0071B2C1 /* EditProfile.swift */; };
+		4448E55B1E76AB5C0071B2C1 /* ChangePassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E53E1E76AB5C0071B2C1 /* ChangePassword.swift */; };
+		4448E55C1E76AB5C0071B2C1 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E53F1E76AB5C0071B2C1 /* Settings.swift */; };
+		4448E8EF1E9B7FD600AC5675 /* HPIPlayBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E8EE1E9B7FD600AC5675 /* HPIPlayBack.swift */; };
+		4448E8F11E9B7FE700AC5675 /* HXPlayBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E8F01E9B7FE700AC5675 /* HXPlayBack.swift */; };
+		444EA4761E97C80400BB53CC /* CCPlayBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444EA4751E97C80400BB53CC /* CCPlayBack.swift */; };
+		446511D61EA4C432004DF84E /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 446511D51EA4C432004DF84E /* SWRevealViewController.m */; };
+		446511D81EA4C61E004DF84E /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446511D71EA4C61E004DF84E /* Menu.swift */; };
+		44B509401E9B947000A3C285 /* ROSPlayBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B5093F1E9B947000A3C285 /* ROSPlayBack.swift */; };
+		44B509421E9B948200A3C285 /* PlanPlayBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B509411E9B948200A3C285 /* PlanPlayBack.swift */; };
+		44E9897C1EB0F48100417E9E /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44E9897B1EB0F48100417E9E /* Lato-Light.ttf */; };
+		44F262DB1E9E21D400CD0657 /* PrintTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F262DA1E9E21D400CD0657 /* PrintTemplate.swift */; };
+		44F37CB01EC372B4009D6B03 /* Patients+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F37CAC1EC372B4009D6B03 /* Patients+CoreDataClass.swift */; };
+		44F37CB11EC372B4009D6B03 /* Patients+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F37CAD1EC372B4009D6B03 /* Patients+CoreDataProperties.swift */; };
+		44F37CB21EC372B4009D6B03 /* Sounds+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F37CAE1EC372B4009D6B03 /* Sounds+CoreDataClass.swift */; };
+		44F37CB31EC372B4009D6B03 /* Sounds+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F37CAF1EC372B4009D6B03 /* Sounds+CoreDataProperties.swift */; };
+		C132D1D6D52E4228C152D5F7 /* Pods_Medilexis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA4AC88B1F777CC28422AD2B /* Pods_Medilexis.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1D3FA5AF1E9058D200E8777E /* PatientCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientCell.swift; sourceTree = "<group>"; };
+		3BA235B27CB4DAE2E1DEEA17 /* Pods-Medilexis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Medilexis.release.xcconfig"; path = "Pods/Target Support Files/Pods-Medilexis/Pods-Medilexis.release.xcconfig"; sourceTree = "<group>"; };
+		442C0ED11EB2133400558095 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
+		442C0ED21EB2290D00558095 /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
+		4435FB581E8E6B2900413102 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		4435FF821E794C6B00E006D4 /* PlanDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlanDictation.swift; sourceTree = "<group>"; };
+		4435FF841E794F0C00E006D4 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
+		443666A51E81160F007AD22C /* ForgetPassword.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgetPassword.swift; sourceTree = "<group>"; };
+		443C4CC61E94EDDD000F7D06 /* SearchPatients.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchPatients.swift; sourceTree = "<group>"; };
+		443C4CC81E94EE0C000F7D06 /* SearchPatientsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchPatientsCell.swift; sourceTree = "<group>"; };
 		4448E5031E76A9F00071B2C1 /* Medilexis.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Medilexis.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4448E5061E76A9F00071B2C1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		4448E5081E76A9F00071B2C1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		4448E50B1E76A9F00071B2C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		4448E50E1E76A9F00071B2C1 /* Medilexis.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Medilexis.xcdatamodel; sourceTree = "<group>"; };
-		4448E5101E76A9F00071B2C1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		4448E5131E76A9F00071B2C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		4448E5151E76A9F00071B2C1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4448E51C1E76AAAC0071B2C1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4448E51D1E76AAAC0071B2C1 /* fontawesome-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "fontawesome-webfont.ttf"; sourceTree = "<group>"; };
+		4448E51E1E76AAAC0071B2C1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4448E51F1E76AAAC0071B2C1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4448E5251E76AAF80071B2C1 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		4448E5281E76AB5C0071B2C1 /* Selection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Selection.swift; sourceTree = "<group>"; };
+		4448E5291E76AB5C0071B2C1 /* Login.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
+		4448E52A1E76AB5C0071B2C1 /* Register.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Register.swift; sourceTree = "<group>"; };
+		4448E52B1E76AB5C0071B2C1 /* Dashboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dashboard.swift; sourceTree = "<group>"; };
+		4448E52C1E76AB5C0071B2C1 /* WalkIn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalkIn.swift; sourceTree = "<group>"; };
+		4448E52D1E76AB5C0071B2C1 /* PatientsData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientsData.swift; sourceTree = "<group>"; wrapsLines = 1; };
+		4448E5311E76AB5C0071B2C1 /* RecordingPlayback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingPlayback.swift; sourceTree = "<group>"; };
+		4448E5331E76AB5C0071B2C1 /* CCDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CCDictation.swift; sourceTree = "<group>"; };
+		4448E5341E76AB5C0071B2C1 /* HPIDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HPIDictation.swift; sourceTree = "<group>"; };
+		4448E5351E76AB5C0071B2C1 /* HXDIctation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HXDIctation.swift; sourceTree = "<group>"; };
+		4448E5361E76AB5C0071B2C1 /* ROSDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ROSDictation.swift; sourceTree = "<group>"; };
+		4448E53B1E76AB5C0071B2C1 /* selectDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = selectDictation.swift; sourceTree = "<group>"; };
+		4448E53C1E76AB5C0071B2C1 /* singleDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = singleDictation.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		4448E53D1E76AB5C0071B2C1 /* EditProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditProfile.swift; sourceTree = "<group>"; };
+		4448E53E1E76AB5C0071B2C1 /* ChangePassword.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePassword.swift; sourceTree = "<group>"; };
+		4448E53F1E76AB5C0071B2C1 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		4448E8EE1E9B7FD600AC5675 /* HPIPlayBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HPIPlayBack.swift; sourceTree = "<group>"; };
+		4448E8F01E9B7FE700AC5675 /* HXPlayBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HXPlayBack.swift; sourceTree = "<group>"; };
+		444EA4751E97C80400BB53CC /* CCPlayBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CCPlayBack.swift; sourceTree = "<group>"; };
+		44650A2A1EB72B020026DB25 /* Lato-Hairline.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Hairline.ttf"; sourceTree = "<group>"; };
+		446511D31EA4C431004DF84E /* Medilexis-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Medilexis-Bridging-Header.h"; sourceTree = "<group>"; };
+		446511D41EA4C432004DF84E /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
+		446511D51EA4C432004DF84E /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
+		446511D71EA4C61E004DF84E /* Menu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
+		44B5093F1E9B947000A3C285 /* ROSPlayBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ROSPlayBack.swift; sourceTree = "<group>"; };
+		44B509411E9B948200A3C285 /* PlanPlayBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlanPlayBack.swift; sourceTree = "<group>"; };
+		44E9897A1EB0ED3400417E9E /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
+		44E9897B1EB0F48100417E9E /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
+		44E9897D1EB0F74A00417E9E /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
+		44F262DA1E9E21D400CD0657 /* PrintTemplate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrintTemplate.swift; sourceTree = "<group>"; };
+		44F37CAC1EC372B4009D6B03 /* Patients+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Patients+CoreDataClass.swift"; sourceTree = "<group>"; };
+		44F37CAD1EC372B4009D6B03 /* Patients+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Patients+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		44F37CAE1EC372B4009D6B03 /* Sounds+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sounds+CoreDataClass.swift"; sourceTree = "<group>"; };
+		44F37CAF1EC372B4009D6B03 /* Sounds+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sounds+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		AA4AC88B1F777CC28422AD2B /* Pods_Medilexis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Medilexis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C3D762BABBCF06C402081418 /* Pods-Medilexis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Medilexis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Medilexis/Pods-Medilexis.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,17 +114,29 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C132D1D6D52E4228C152D5F7 /* Pods_Medilexis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		19632C6864A5F13A4122A75B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C3D762BABBCF06C402081418 /* Pods-Medilexis.debug.xcconfig */,
+				3BA235B27CB4DAE2E1DEEA17 /* Pods-Medilexis.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		4448E4FA1E76A9F00071B2C1 = {
 			isa = PBXGroup;
 			children = (
 				4448E5051E76A9F00071B2C1 /* Medilexis */,
 				4448E5041E76A9F00071B2C1 /* Products */,
+				19632C6864A5F13A4122A75B /* Pods */,
+				56659354B32845D53CC80847 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,15 +151,114 @@
 		4448E5051E76A9F00071B2C1 /* Medilexis */ = {
 			isa = PBXGroup;
 			children = (
-				4448E5061E76A9F00071B2C1 /* AppDelegate.swift */,
-				4448E5081E76A9F00071B2C1 /* ViewController.swift */,
-				4448E50A1E76A9F00071B2C1 /* Main.storyboard */,
-				4448E5101E76A9F00071B2C1 /* Assets.xcassets */,
-				4448E5121E76A9F00071B2C1 /* LaunchScreen.storyboard */,
-				4448E5151E76A9F00071B2C1 /* Info.plist */,
-				4448E50D1E76A9F00071B2C1 /* Medilexis.xcdatamodeld */,
+				446511D11EA4C3D7004DF84E /* SWRevealViewController */,
+				444EA4641E978FDD00BB53CC /* Entity */,
+				4448E5241E76AAD20071B2C1 /* View */,
+				4448E5271E76AB330071B2C1 /* Controller */,
+				4448E51B1E76AA520071B2C1 /* Supporting Files */,
+				446511D21EA4C3E7004DF84E /* Model */,
 			);
 			path = Medilexis;
+			sourceTree = "<group>";
+		};
+		4448E51B1E76AA520071B2C1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				44E9897B1EB0F48100417E9E /* Lato-Light.ttf */,
+				4435FB581E8E6B2900413102 /* Connection.swift */,
+				442C0ED21EB2290D00558095 /* Lato-Bold.ttf */,
+				4435FF841E794F0C00E006D4 /* Network.swift */,
+				44650A2A1EB72B020026DB25 /* Lato-Hairline.ttf */,
+				442C0ED11EB2133400558095 /* Lato-Black.ttf */,
+				44E9897A1EB0ED3400417E9E /* Lato-Thin.ttf */,
+				44E9897D1EB0F74A00417E9E /* Lato-Regular.ttf */,
+				4448E51C1E76AAAC0071B2C1 /* Assets.xcassets */,
+				4448E5061E76A9F00071B2C1 /* AppDelegate.swift */,
+				4448E51D1E76AAAC0071B2C1 /* fontawesome-webfont.ttf */,
+				4448E51E1E76AAAC0071B2C1 /* LaunchScreen.storyboard */,
+				4448E51F1E76AAAC0071B2C1 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		4448E5241E76AAD20071B2C1 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				4448E5251E76AAF80071B2C1 /* Main.storyboard */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		4448E5271E76AB330071B2C1 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				4448E5281E76AB5C0071B2C1 /* Selection.swift */,
+				4448E5291E76AB5C0071B2C1 /* Login.swift */,
+				4448E52A1E76AB5C0071B2C1 /* Register.swift */,
+				1D3FA5AF1E9058D200E8777E /* PatientCell.swift */,
+				4448E52B1E76AB5C0071B2C1 /* Dashboard.swift */,
+				4448E52C1E76AB5C0071B2C1 /* WalkIn.swift */,
+				4448E52D1E76AB5C0071B2C1 /* PatientsData.swift */,
+				4448E5311E76AB5C0071B2C1 /* RecordingPlayback.swift */,
+				4448E5331E76AB5C0071B2C1 /* CCDictation.swift */,
+				4448E5341E76AB5C0071B2C1 /* HPIDictation.swift */,
+				4448E5351E76AB5C0071B2C1 /* HXDIctation.swift */,
+				4448E5361E76AB5C0071B2C1 /* ROSDictation.swift */,
+				4435FF821E794C6B00E006D4 /* PlanDictation.swift */,
+				4448E53B1E76AB5C0071B2C1 /* selectDictation.swift */,
+				4448E53C1E76AB5C0071B2C1 /* singleDictation.swift */,
+				4448E53D1E76AB5C0071B2C1 /* EditProfile.swift */,
+				4448E53E1E76AB5C0071B2C1 /* ChangePassword.swift */,
+				4448E53F1E76AB5C0071B2C1 /* Settings.swift */,
+				443666A51E81160F007AD22C /* ForgetPassword.swift */,
+				443C4CC61E94EDDD000F7D06 /* SearchPatients.swift */,
+				443C4CC81E94EE0C000F7D06 /* SearchPatientsCell.swift */,
+				444EA4751E97C80400BB53CC /* CCPlayBack.swift */,
+				4448E8EE1E9B7FD600AC5675 /* HPIPlayBack.swift */,
+				4448E8F01E9B7FE700AC5675 /* HXPlayBack.swift */,
+				44B5093F1E9B947000A3C285 /* ROSPlayBack.swift */,
+				44B509411E9B948200A3C285 /* PlanPlayBack.swift */,
+				44F262DA1E9E21D400CD0657 /* PrintTemplate.swift */,
+				446511D71EA4C61E004DF84E /* Menu.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		444EA4641E978FDD00BB53CC /* Entity */ = {
+			isa = PBXGroup;
+			children = (
+				44F37CAC1EC372B4009D6B03 /* Patients+CoreDataClass.swift */,
+				44F37CAD1EC372B4009D6B03 /* Patients+CoreDataProperties.swift */,
+				44F37CAE1EC372B4009D6B03 /* Sounds+CoreDataClass.swift */,
+				44F37CAF1EC372B4009D6B03 /* Sounds+CoreDataProperties.swift */,
+			);
+			name = Entity;
+			sourceTree = "<group>";
+		};
+		446511D11EA4C3D7004DF84E /* SWRevealViewController */ = {
+			isa = PBXGroup;
+			children = (
+				446511D41EA4C432004DF84E /* SWRevealViewController.h */,
+				446511D51EA4C432004DF84E /* SWRevealViewController.m */,
+				446511D31EA4C431004DF84E /* Medilexis-Bridging-Header.h */,
+			);
+			name = SWRevealViewController;
+			sourceTree = "<group>";
+		};
+		446511D21EA4C3E7004DF84E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				4448E50D1E76A9F00071B2C1 /* Medilexis.xcdatamodeld */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		56659354B32845D53CC80847 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AA4AC88B1F777CC28422AD2B /* Pods_Medilexis.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -74,9 +268,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4448E5181E76A9F00071B2C1 /* Build configuration list for PBXNativeTarget "Medilexis" */;
 			buildPhases = (
+				B5D5B1269104833DD2E7EDB4 /* [CP] Check Pods Manifest.lock */,
 				4448E4FF1E76A9F00071B2C1 /* Sources */,
 				4448E5001E76A9F00071B2C1 /* Frameworks */,
 				4448E5011E76A9F00071B2C1 /* Resources */,
+				5AF215315C782DE0110D4B7F /* [CP] Embed Pods Frameworks */,
+				61F30569CC89D037A2FD8034 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -100,6 +297,7 @@
 					4448E5021E76A9F00071B2C1 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 6858PJW8RX;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -127,45 +325,110 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4448E5141E76A9F00071B2C1 /* LaunchScreen.storyboard in Resources */,
-				4448E5111E76A9F00071B2C1 /* Assets.xcassets in Resources */,
-				4448E50C1E76A9F00071B2C1 /* Main.storyboard in Resources */,
+				44E9897C1EB0F48100417E9E /* Lato-Light.ttf in Resources */,
+				4448E5211E76AAAC0071B2C1 /* fontawesome-webfont.ttf in Resources */,
+				4448E5261E76AAF80071B2C1 /* Main.storyboard in Resources */,
+				4448E5221E76AAAC0071B2C1 /* LaunchScreen.storyboard in Resources */,
+				4448E5201E76AAAC0071B2C1 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5AF215315C782DE0110D4B7F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Medilexis/Pods-Medilexis-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		61F30569CC89D037A2FD8034 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Medilexis/Pods-Medilexis-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B5D5B1269104833DD2E7EDB4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		4448E4FF1E76A9F00071B2C1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4448E5091E76A9F00071B2C1 /* ViewController.swift in Sources */,
+				4448E5511E76AB5C0071B2C1 /* HPIDictation.swift in Sources */,
+				4448E55C1E76AB5C0071B2C1 /* Settings.swift in Sources */,
+				44B509401E9B947000A3C285 /* ROSPlayBack.swift in Sources */,
+				4448E5581E76AB5C0071B2C1 /* selectDictation.swift in Sources */,
+				4448E5491E76AB5C0071B2C1 /* WalkIn.swift in Sources */,
+				444EA4761E97C80400BB53CC /* CCPlayBack.swift in Sources */,
+				1D3FA5B01E9058D200E8777E /* PatientCell.swift in Sources */,
 				4448E50F1E76A9F00071B2C1 /* Medilexis.xcdatamodeld in Sources */,
+				4448E8EF1E9B7FD600AC5675 /* HPIPlayBack.swift in Sources */,
+				4448E55B1E76AB5C0071B2C1 /* ChangePassword.swift in Sources */,
+				443666A61E81160F007AD22C /* ForgetPassword.swift in Sources */,
+				4435FF831E794C6B00E006D4 /* PlanDictation.swift in Sources */,
+				4448E5481E76AB5C0071B2C1 /* Dashboard.swift in Sources */,
+				4435FB591E8E6B2900413102 /* Connection.swift in Sources */,
+				4448E5521E76AB5C0071B2C1 /* HXDIctation.swift in Sources */,
+				4448E55A1E76AB5C0071B2C1 /* EditProfile.swift in Sources */,
+				44F37CB31EC372B4009D6B03 /* Sounds+CoreDataProperties.swift in Sources */,
+				4435FF851E794F0C00E006D4 /* Network.swift in Sources */,
+				4448E8F11E9B7FE700AC5675 /* HXPlayBack.swift in Sources */,
+				4448E5591E76AB5C0071B2C1 /* singleDictation.swift in Sources */,
+				443C4CC71E94EDDD000F7D06 /* SearchPatients.swift in Sources */,
+				443C4CC91E94EE0C000F7D06 /* SearchPatientsCell.swift in Sources */,
+				446511D61EA4C432004DF84E /* SWRevealViewController.m in Sources */,
+				4448E5531E76AB5C0071B2C1 /* ROSDictation.swift in Sources */,
+				4448E5451E76AB5C0071B2C1 /* Selection.swift in Sources */,
+				446511D81EA4C61E004DF84E /* Menu.swift in Sources */,
+				44F37CB01EC372B4009D6B03 /* Patients+CoreDataClass.swift in Sources */,
+				4448E54A1E76AB5C0071B2C1 /* PatientsData.swift in Sources */,
+				4448E5461E76AB5C0071B2C1 /* Login.swift in Sources */,
+				4448E5501E76AB5C0071B2C1 /* CCDictation.swift in Sources */,
+				44F37CB21EC372B4009D6B03 /* Sounds+CoreDataClass.swift in Sources */,
+				4448E54E1E76AB5C0071B2C1 /* RecordingPlayback.swift in Sources */,
 				4448E5071E76A9F00071B2C1 /* AppDelegate.swift in Sources */,
+				4448E5471E76AB5C0071B2C1 /* Register.swift in Sources */,
+				44B509421E9B948200A3C285 /* PlanPlayBack.swift in Sources */,
+				44F262DB1E9E21D400CD0657 /* PrintTemplate.swift in Sources */,
+				44F37CB11EC372B4009D6B03 /* Patients+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		4448E50A1E76A9F00071B2C1 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4448E50B1E76A9F00071B2C1 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		4448E5121E76A9F00071B2C1 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				4448E5131E76A9F00071B2C1 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		4448E5161E76A9F00071B2C1 /* Debug */ = {
@@ -189,7 +452,8 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -239,7 +503,8 @@
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -263,26 +528,42 @@
 		};
 		4448E5191E76A9F00071B2C1 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C3D762BABBCF06C402081418 /* Pods-Medilexis.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 6858PJW8RX;
 				INFOPLIST_FILE = Medilexis/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.NX3.Medilexis;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nx3Corp.Medilexis;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Medilexis/Medilexis-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		4448E51A1E76A9F00071B2C1 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3BA235B27CB4DAE2E1DEEA17 /* Pods-Medilexis.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 6858PJW8RX;
 				INFOPLIST_FILE = Medilexis/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.NX3.Medilexis;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nx3Corp.Medilexis;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Medilexis/Medilexis-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -306,6 +587,7 @@
 				4448E51A1E76A9F00071B2C1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

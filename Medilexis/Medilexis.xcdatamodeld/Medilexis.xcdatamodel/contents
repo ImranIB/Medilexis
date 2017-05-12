@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="11759" systemVersion="15G31" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Patients" representedClassName=".Patients" syncable="YES">
+        <attribute name="dateBirth" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dateSchedule" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="isRecording" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isTranscribed" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="patientID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="patientName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingStatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="visitType" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="sounds" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Sounds" inverseName="patients" inverseEntity="Sounds" syncable="YES"/>
+    </entity>
+    <entity name="Sounds" representedClassName=".Sounds" syncable="YES">
+        <attribute name="patientID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="transcription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="patients" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Patients" inverseName="sounds" inverseEntity="Patients" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Patients" positionX="-54" positionY="-9" width="128" height="210"/>
+        <element name="Sounds" positionX="189" positionY="-81" width="128" height="135"/>
+    </elements>
 </model>
