@@ -10,7 +10,6 @@ import UIKit
 import AVFoundation
 import Speech
 import SystemConfiguration
-import SCLAlertView
 import CoreData
 
 class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UITextViewDelegate  {
@@ -150,6 +149,10 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
         
         if recorder == nil {
             recordPause.setImage(UIImage(named: "pause-btn"), for: UIControlState.normal)
+            transcribe.isHidden = true
+            save.isHidden = true
+            transcribeLabel.isHidden = true
+            saveExitLabel.isHidden = true
             play.isEnabled = false
             stop.isEnabled = true
             progressView.isEnabled = false

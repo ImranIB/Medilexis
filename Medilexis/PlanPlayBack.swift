@@ -10,7 +10,6 @@ import UIKit
 import CoreData
 import AVFoundation
 import Speech
-import SCLAlertView
 import SwiftSpinner
 import SimplePDFSwift
 
@@ -26,8 +25,10 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     @IBOutlet weak var play: UIButton!
     @IBOutlet weak var transcribe: UIButton!
     @IBOutlet weak var saveNext: UIButton!
+    @IBOutlet weak var saveExit: UIButton!
     @IBOutlet weak var transcribeLabel: UILabel!
     @IBOutlet weak var saveExitLabel: UILabel!
+    @IBOutlet weak var saveNextLabel: UILabel!
     
     let defaults = UserDefaults.standard
     var PLANfileURL: URL!
@@ -42,8 +43,10 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
         
         activityIndicator.isHidden = true
 
-        saveExitLabel.isHidden = true
-        saveNext.isHidden = true
+        //saveExitLabel.isHidden = true
+        //saveNext.isHidden = true
+        //saveExit.isHidden = true
+        //saveNextLabel.isHidden = true
         progressView.isEnabled = false
         pause.isEnabled = false
         stop.isEnabled = false
@@ -141,9 +144,10 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
         }
         
         if recordedTransciption.text != "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."{
-            saveNext.isHidden = false
             saveExitLabel.isHidden = false
-
+            saveNext.isHidden = false
+            saveExit.isHidden = false
+            saveNextLabel.isHidden = false
         }
         
     }
@@ -335,7 +339,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     @IBAction func navigateToHome(_ sender: UIBarButtonItem) {
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateRX") as! UpdateRX
         self.present(nextViewController, animated:true, completion:nil)
     }
     
@@ -346,6 +350,75 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     }
     
     @IBAction func saveNext(_ sender: UIButton) {
+        
+        
+        let patientID = defaults.value(forKey: "PatientID")
+        let type = "PLAN"
+        recordedTransciption.resignFirstResponder()
+        
+        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
+        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientID as! CVarArg, type)
+        fetchRequest.predicate = predicate
+        
+        do {
+            
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count > 0 {
+                
+                let fetchResult = try getContext().fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    item.transcription! =  recordedTransciption.text
+                    try context.save()
+                    
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "PhotoDictationPlayback") as! PhotoDictationPlayback
+                    self.present(nextViewController, animated:true, completion:nil)
+                }
+            } else {
+                
+                ///insert into sounds
+                let patientid = defaults.value(forKey: "PatientID") as! String
+                let context = getContext()
+                
+                let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
+                
+                let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
+                
+                managedObj.setValue(patientid, forKey: "patientID")
+                managedObj.setValue("N/A", forKey: "recordingName")
+                managedObj.setValue("N/A", forKey: "recordingURL")
+                managedObj.setValue(recordedTransciption.text, forKey: "transcription")
+                managedObj.setValue("PLAN", forKey: "type")
+                
+                do {
+                    try context.save()
+                    recordedTransciption.resignFirstResponder()
+                    saveNext.isEnabled = false
+                    saveExit.isEnabled = false
+                    saveExitLabel.isEnabled = false
+                    saveNextLabel.isEnabled = false
+                    
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "PhotoDictationPlayback") as! PhotoDictationPlayback
+                    self.present(nextViewController, animated:true, completion:nil)
+                    
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+            
+            
+        }catch {
+            print(error.localizedDescription)
+            
+        }
+        
+    }
+    
+    @IBAction func saveExit(_ sender: UIButton) {
         
         let patientID = defaults.value(forKey: "PatientID")
         let type = "PLAN"
@@ -392,8 +465,9 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                     try context.save()
                     recordedTransciption.resignFirstResponder()
                     saveNext.isEnabled = false
+                    saveExit.isEnabled = false
                     saveExitLabel.isEnabled = false
-                    
+                    saveNextLabel.isEnabled = false
                     
                     let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
                     let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
@@ -538,50 +612,66 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     
     fileprivate func addHeadersFooters(_ pdf: SimplePDF) {
         
-        let headerOne = defaults.value(forKey: "HeaderOne") as! String
-        let headerTwo = defaults.value(forKey: "HeaderTwo") as! String
-        let FooterOne = defaults.value(forKey: "FooterOne")
-        //let FooterTwo = defaults.value(forKey: "FooterTwo")
+        let uid = defaults.value(forKey: "UserID")
+        let fetchRequest:NSFetchRequest<Users> = Users.fetchRequest()
+        let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
+        fetchRequest.predicate = predicate
         
-        let regularFont = UIFont.systemFont(ofSize: 18)
-        let boldFont = UIFont.boldSystemFont(ofSize: 20)
-        let leftAlignment = NSMutableParagraphStyle()
-        leftAlignment.alignment = NSTextAlignment.left
-        
-        
-        // add a logo to the header, on right
-        
-        if let imgData = defaults.value(forKey: "TemplateImage") as? NSData {
-            let retrievedImg = UIImage(data: imgData as Data)
+        do {
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
             
-            //let image : UIImage = UIImage(named: "logo")!
-            //  let logoPath = Bundle.main.path(forResource: "Demo", ofType: "png")
-            // NOTE: we can specify either the image or its path
-            let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
-                                                        image:retrievedImg, imageHeight: 55, alignment: .right)
-            pdf.headerFooterImages.append(rightLogo)
+            if count > 0 {
+                
+                let fetchResult = try context.fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    let regularFont = UIFont.systemFont(ofSize: 18)
+                    let boldFont = UIFont.boldSystemFont(ofSize: 20)
+                    let leftAlignment = NSMutableParagraphStyle()
+                    leftAlignment.alignment = NSTextAlignment.left
+                    
+                    
+                    if item.logo != nil {
+                        
+                        let retrievedImg = UIImage(data: item.logo as! Data)!
+                        
+                        let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
+                                                                    image:retrievedImg, imageHeight: 55, alignment: .right)
+                        pdf.headerFooterImages.append(rightLogo)
+                    }
+                    
+                    if item.heading != nil && item.subHeading != nil {
+                        
+                        // add some document information to the header, on left
+                        let leftHeaderString = "\(item.heading!)\n\(item.subHeading!)"
+                        let leftHeaderAttrString = NSMutableAttributedString(string: leftHeaderString)
+                        leftHeaderAttrString.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
+                        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
+                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, 1), attributedString: leftHeaderAttrString)
+                        pdf.headerFooterTexts.append(header)
+                        
+                    }
+                    
+                    if item.footer != nil {
+                        
+                        // add a link to your app may be
+                        
+                        let link = NSMutableAttributedString(string: item.footer!)
+                        link.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, link.length))
+                        link.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, link.length))
+                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, 1), attributedString: link)
+                        pdf.headerFooterTexts.append(appLinkFooter)
+                    }
+                    
+                }
+                
+            }
+        }catch {
+            print(error.localizedDescription)
         }
-        
-        
-        
-        // add some document information to the header, on left
-        let leftHeaderString = "\(headerOne)\n\(headerTwo)"
-        let leftHeaderAttrString = NSMutableAttributedString(string: leftHeaderString)
-        leftHeaderAttrString.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
-        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
-        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: headerOne))
-        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: headerTwo))
-        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, 1), attributedString: leftHeaderAttrString)
-        pdf.headerFooterTexts.append(header)
-        
-        
-        // add a link to your app may be
-        
-        let link = NSMutableAttributedString(string: FooterOne as! String)
-        link.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, link.length))
-        link.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, link.length))
-        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, 1), attributedString: link)
-        pdf.headerFooterTexts.append(appLinkFooter)
         
     }
     

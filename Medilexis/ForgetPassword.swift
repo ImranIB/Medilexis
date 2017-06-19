@@ -8,7 +8,6 @@
 
 import UIKit
 import SkyFloatingLabelTextField
-import SCLAlertView
 import SwiftSpinner
 
 class ForgetPassword: UIViewController {

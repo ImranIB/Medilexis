@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import IQKeyboardManagerSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -53,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
          UITabBar.appearance().barTintColor = UIColor(red: 255/255.0, green: 255/255.0, blue: 255/255.0, alpha: 1.0)
 
-    
+        IQKeyboardManager.sharedManager().enable = true
        /* let hasLaunchedKey = "HasLaunched"
         let defaults = UserDefaults.standard
         let hasLaunched = defaults.bool(forKey: hasLaunchedKey)
@@ -137,7 +138,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func getImageWithColorPosition(color: UIColor, size: CGSize, lineSize: CGSize) -> UIImage {
         let rect = CGRect(x:0, y: 0, width: size.width, height: size.height)
-        let rectLine = CGRect(x:0, y:size.height-lineSize.height,width: lineSize.width,height: lineSize.height)
+        let rectLine = CGRect(x:0, y:0,width: lineSize.width,height: lineSize.height)
         UIGraphicsBeginImageContextWithOptions(size, false, 0)
         UIColor.clear.setFill()
         UIRectFill(rect)

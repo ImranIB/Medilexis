@@ -8,22 +8,21 @@
 
 import UIKit
 import CoreData
-import SCLAlertView
 import SkyFloatingLabelTextField
 
-class PatientsData: UIViewController, UITableViewDataSource, UITableViewDelegate{
+class PatientsData: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating{
     
     @IBOutlet weak var fromTextField: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet weak var toTextField: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var noPatients: UILabel!
     
-    
-    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let defaults = UserDefaults.standard
     
     var tasks = [Patients]()
+    var searchController: UISearchController!
+    var searchResults:[Patients] = []
     
     override func viewDidLoad() {
     
@@ -31,6 +30,15 @@ class PatientsData: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         self.view.backgroundColor =  UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
         self.tableView.backgroundColor = UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
+        
+        // Add a search bar
+        searchController = UISearchController(searchResultsController: nil)
+        tableView.tableHeaderView = searchController.searchBar
+        searchController.searchResultsUpdater = self
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search patients..."
+        searchController.searchBar.tintColor = UIColor.white
+        searchController.searchBar.barTintColor = UIColor(red: 236.0/255.0, green: 236.0/255.0, blue: 236.0/255.0, alpha: 1.0)
         
         tableView.reloadData()
         
@@ -87,7 +95,7 @@ class PatientsData: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         let label1 = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
         
-        label1.font = UIFont(name: "Helvetica", size: 12)
+        label1.font = UIFont(name: "FontAwesome", size: 16)
         
         label1.backgroundColor = UIColor.clear
         
@@ -122,7 +130,7 @@ class PatientsData: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         let label2 = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
         
-        label2.font = UIFont(name: "Helvetica", size: 12)
+        label2.font = UIFont(name: "FontAwesome", size: 16)
         
         label2.backgroundColor = UIColor.clear
         
@@ -137,6 +145,7 @@ class PatientsData: UIViewController, UITableViewDataSource, UITableViewDelegate
         toolBar2.setItems([defaultButton2,flexSpace2,textBtn2,flexSpace2,doneButton2], animated: true)
         
         toTextField.inputAccessoryView = toolBar2
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -238,17 +247,20 @@ class PatientsData: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        // return filteredArray.count
-        return tasks.count
-        
-        
+        if searchController.isActive {
+            return searchResults.count
+        } else {
+            return tasks.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     
-           let cell = tableView.dequeueReusableCell(withIdentifier: "Patients", for: indexPath) as! PatientCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Patients", for: indexPath) as! PatientCell
         
-        let task = tasks[indexPath.row]
+        // Determine if we get the restaurant from search result or the original array
+        let task = (searchController.isActive) ? searchResults[indexPath.row] : tasks[indexPath.row]
+        //let task = tasks[indexPath.row]
         
         if let myName = task.patientName {
             cell.patientName?.text = myName
@@ -387,6 +399,7 @@ class PatientsData: UIViewController, UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
       
         let selectTask = tasks[indexPath.row]
+
         defaults.set(selectTask.patientName!, forKey: "PatientName")
         defaults.set(selectTask.patientID!, forKey: "PatientID")
         
@@ -411,6 +424,26 @@ class PatientsData: UIViewController, UITableViewDataSource, UITableViewDelegate
             
             noPatients.isHidden = true
             noPatients.text = ""
+        }
+    }
+    
+    // MARK: - Search Controller
+    
+    func filterContent(for searchText: String) {
+        searchResults = tasks.filter({ (task) -> Bool in
+            if let name = task.patientName{
+                let isMatch = name.localizedCaseInsensitiveContains(searchText)
+                return isMatch
+            }
+            
+            return false
+        })
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        if let searchText = searchController.searchBar.text {
+            filterContent(for: searchText)
+            tableView.reloadData()
         }
     }
     

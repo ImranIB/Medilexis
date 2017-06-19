@@ -10,7 +10,6 @@ import UIKit
 import CoreData
 import AVFoundation
 import Speech
-import SCLAlertView
 import SwiftSpinner
 
 class CCPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, UITabBarDelegate {
@@ -118,8 +117,6 @@ class CCPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
                 play.isEnabled = false
                 transcribe.isHidden = true
                 transcribeLabel.isHidden = true
-                saveExit.isEnabled = false
-                saveNext.isEnabled = false
                 activityIndicator.isHidden = true
             }
         }catch {
@@ -361,96 +358,119 @@ class CCPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
         fetchRequest.predicate = predicate
         
         do {
-            let fetchResult = try getContext().fetch(fetchRequest)
             
-            for item in fetchResult {
-                
-                item.transcription! =  recordedTransciption.text
-                try context.save()
-                
-            }
-        }catch {
-            print(error.localizedDescription)
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
             
-        }
-        
-        ///update into patients
-        let patientRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
-        
-        let predicatePatient = NSPredicate(format: "(patientID = %@)", patientID as! CVarArg)
-        patientRequest.predicate = predicatePatient
-        
-        do {
-            let fetchResult = try context.fetch(patientRequest)
-            
-            for item in fetchResult {
+            if count > 0 {
                 
-                if recordedTransciption.text == "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text." {
-                    item.isTranscribed = false
-                } else {
-                    item.isTranscribed = true
+                let fetchResult = try getContext().fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    item.transcription! =  recordedTransciption.text
+                    try context.save()
+                    
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+                    self.present(nextViewController, animated:true, completion:nil)
                 }
+            } else {
                 
-                try context.save()
+                ///insert into sounds
+                let patientid = defaults.value(forKey: "PatientID") as! String
+                let context = getContext()
                 
-                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                self.present(nextViewController, animated:true, completion:nil)
+                let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
                 
+                let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
+                
+                managedObj.setValue(patientid, forKey: "patientID")
+                managedObj.setValue("N/A", forKey: "recordingName")
+                managedObj.setValue("N/A", forKey: "recordingURL")
+                managedObj.setValue(recordedTransciption.text, forKey: "transcription")
+                managedObj.setValue("CC", forKey: "type")
+                
+                do {
+                    try context.save()
+                    recordedTransciption.resignFirstResponder()
+                    saveNext.isEnabled = false
+                    saveNextLabel.isEnabled = false
+                    saveExitLabel.isEnabled = false
+                    saveExit.isEnabled = false
+                    
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+                    self.present(nextViewController, animated:true, completion:nil)
+                    
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
+            
+            
         }catch {
             print(error.localizedDescription)
+            
         }
         
     }
     
     @IBAction func saveNext(_ sender: UIButton) {
         
-        let patientID = defaults.value(forKey: "PatientID")
         let type = "CC"
-        recordedTransciption.resignFirstResponder()
-        
+        let patientID = defaults.value(forKey: "PatientID")
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientID as! CVarArg, type)
+        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientID! as! CVarArg, type)
         fetchRequest.predicate = predicate
         
         do {
-            let fetchResult = try getContext().fetch(fetchRequest)
             
-            for item in fetchResult {
-                
-                item.transcription! =  recordedTransciption.text
-                try context.save()
-                
-                
-            }
-        }catch {
-            print(error.localizedDescription)
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
             
-        }
-        
-        ///update into patients
-        let patientRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
-        
-        let predicatePatient = NSPredicate(format: "(patientID = %@)", patientID as! CVarArg)
-        patientRequest.predicate = predicatePatient
-        
-        do {
-            let fetchResult = try context.fetch(patientRequest)
-            
-            for item in fetchResult {
+            if count > 0 {
                 
-                if recordedTransciption.text == "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text." {
-                    item.isTranscribed = false
-                } else {
-                    item.isTranscribed = true
+                let fetchResult = try getContext().fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    item.transcription! =  recordedTransciption.text
+                    try context.save()
+                    
+                    self.tabBarController?.selectedIndex = 1
                 }
                 
-                try context.save()
+            } else {
                 
-                self.tabBarController?.selectedIndex = 1
+                ///insert into sounds
+                let patientid = defaults.value(forKey: "PatientID") as! String
+                let context = getContext()
                 
+                let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
+                
+                let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
+                
+                managedObj.setValue(patientid, forKey: "patientID")
+                managedObj.setValue("N/A", forKey: "recordingName")
+                managedObj.setValue("N/A", forKey: "recordingURL")
+                managedObj.setValue(recordedTransciption.text, forKey: "transcription")
+                managedObj.setValue("CC", forKey: "type")
+                
+                do {
+                    try context.save()
+                    recordedTransciption.resignFirstResponder()
+                    saveNext.isEnabled = false
+                    saveNextLabel.isEnabled = false
+                    saveExitLabel.isEnabled = false
+                    saveExit.isEnabled = false
+                    
+                    self.tabBarController?.selectedIndex = 1
+                    
+                } catch {
+                    print(error.localizedDescription)
+                }
             }
+            
+            
         }catch {
             print(error.localizedDescription)
         }

@@ -11,7 +11,6 @@ import AVFoundation
 import Speech
 import SwiftSpinner
 import SystemConfiguration
-import SCLAlertView
 import CoreData
 import SimplePDFSwift
 
@@ -518,50 +517,66 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
     
     fileprivate func addHeadersFooters(_ pdf: SimplePDF) {
         
-        let headerOne = defaults.value(forKey: "HeaderOne") as! String
-        let headerTwo = defaults.value(forKey: "HeaderTwo") as! String
-        let FooterOne = defaults.value(forKey: "FooterOne")
-        //let FooterTwo = defaults.value(forKey: "FooterTwo")
+        let uid = defaults.value(forKey: "UserID")
+        let fetchRequest:NSFetchRequest<Users> = Users.fetchRequest()
+        let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
+        fetchRequest.predicate = predicate
         
-        let regularFont = UIFont.systemFont(ofSize: 18)
-        let boldFont = UIFont.boldSystemFont(ofSize: 20)
-        let leftAlignment = NSMutableParagraphStyle()
-        leftAlignment.alignment = NSTextAlignment.left
-        
-        
-        // add a logo to the header, on right
-        
-        if let imgData = defaults.value(forKey: "TemplateImage") as? NSData {
-            let retrievedImg = UIImage(data: imgData as Data)
+        do {
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
             
-            //let image : UIImage = UIImage(named: "logo")!
-            //  let logoPath = Bundle.main.path(forResource: "Demo", ofType: "png")
-            // NOTE: we can specify either the image or its path
-            let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
-                                                        image:retrievedImg, imageHeight: 55, alignment: .right)
-            pdf.headerFooterImages.append(rightLogo)
+            if count > 0 {
+                
+                let fetchResult = try context.fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    let regularFont = UIFont.systemFont(ofSize: 18)
+                    let boldFont = UIFont.boldSystemFont(ofSize: 20)
+                    let leftAlignment = NSMutableParagraphStyle()
+                    leftAlignment.alignment = NSTextAlignment.left
+                    
+                    
+                    if item.logo != nil {
+                        
+                        let retrievedImg = UIImage(data: item.logo as! Data)!
+                        
+                        let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
+                                                                    image:retrievedImg, imageHeight: 55, alignment: .right)
+                        pdf.headerFooterImages.append(rightLogo)
+                    }
+                    
+                    if item.heading != nil && item.subHeading != nil {
+                        
+                        // add some document information to the header, on left
+                        let leftHeaderString = "\(item.heading!)\n\(item.subHeading!)"
+                        let leftHeaderAttrString = NSMutableAttributedString(string: leftHeaderString)
+                        leftHeaderAttrString.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
+                        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
+                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, 1), attributedString: leftHeaderAttrString)
+                        pdf.headerFooterTexts.append(header)
+                    
+                    }
+                    
+                    if item.footer != nil {
+                        
+                        // add a link to your app may be
+                        
+                        let link = NSMutableAttributedString(string: item.footer!)
+                        link.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, link.length))
+                        link.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, link.length))
+                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, 1), attributedString: link)
+                        pdf.headerFooterTexts.append(appLinkFooter)
+                    }
+                    
+                }
+                
+            }
+        }catch {
+            print(error.localizedDescription)
         }
-      
-        
-        
-        // add some document information to the header, on left
-        let leftHeaderString = "\(headerOne)\n\(headerTwo)"
-        let leftHeaderAttrString = NSMutableAttributedString(string: leftHeaderString)
-        leftHeaderAttrString.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
-        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
-        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: headerOne))
-        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: headerTwo))
-        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, 1), attributedString: leftHeaderAttrString)
-        pdf.headerFooterTexts.append(header)
-        
-        
-        // add a link to your app may be
-        
-        let link = NSMutableAttributedString(string: FooterOne as! String)
-        link.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, link.length))
-        link.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, link.length))
-        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, 1), attributedString: link)
-        pdf.headerFooterTexts.append(appLinkFooter)
         
         
     }

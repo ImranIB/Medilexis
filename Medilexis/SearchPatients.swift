@@ -7,12 +7,13 @@
 //
 
 import UIKit
+import AWSS3
+import AWSCore
 import CoreData
+import SwiftSpinner
 import SkyFloatingLabelTextField
 
-class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelegate {
-
-    
+class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
 
     @IBOutlet weak var fromTextField: SkyFloatingLabelTextFieldWithIcon!
  
@@ -20,19 +21,32 @@ class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet weak var searchTableView: UITableView!
     @IBOutlet weak var menuButton: UIBarButtonItem!
     @IBOutlet weak var noSearchPatients: UILabel!
+    @IBOutlet weak var syncButton: UIButton!
     
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let defaults = UserDefaults.standard
     var searchTasks = [Patients]()
+    var searchController: UISearchController!
+    var searchResults:[Patients] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        searchTableView.reloadData()
         
         self.view.backgroundColor =  UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
         self.searchTableView.backgroundColor = UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
+        
+        // Add a search bar
+        searchController = UISearchController(searchResultsController: nil)
+        searchTableView.tableHeaderView = searchController.searchBar
+        searchController.searchResultsUpdater = self
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search patients..."
+        searchController.searchBar.tintColor = UIColor.white
+        searchController.searchBar.barTintColor = UIColor(red: 236.0/255.0, green: 236.0/255.0, blue: 236.0/255.0, alpha: 1.0)
+        
+        
+        searchTableView.reloadData()
         
         fromTextField.iconFont = UIFont(name: "FontAwesome", size: 12)
         fromTextField.iconText = "\u{f274}"
@@ -84,7 +98,7 @@ class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelega
         
         let label1 = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
         
-        label1.font = UIFont(name: "Helvetica", size: 12)
+        label1.font = UIFont(name: "FontAwesome", size: 16)
         
         label1.backgroundColor = UIColor.clear
         
@@ -119,7 +133,7 @@ class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelega
         
         let label2 = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
         
-        label2.font = UIFont(name: "Helvetica", size: 12)
+        label2.font = UIFont(name: "FontAwesome", size: 16)
         
         label2.backgroundColor = UIColor.clear
         
@@ -140,6 +154,9 @@ class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelega
             menuButton.action = #selector(SWRevealViewController.revealToggle(_:))
             view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
+        
+        FetchSearchData()
+        searchTableView.reloadData()
         
     }
 
@@ -191,7 +208,11 @@ class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-         return searchTasks.count
+        if searchController.isActive {
+            return searchResults.count
+        } else {
+           return searchTasks.count
+        }
        
     }
     
@@ -199,7 +220,9 @@ class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelega
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "SearchPatients", for: indexPath) as! SearchPatientsCell
         
-        let task = searchTasks[indexPath.row]
+        let task = (searchController.isActive) ? searchResults[indexPath.row] : searchTasks[indexPath.row]
+        
+      //  let task = searchTasks[indexPath.row]
         
         if let myName = task.patientName {
             cell.patientName?.text = myName
@@ -218,6 +241,9 @@ class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelega
        if task.recordingStatus == "true"{
             let image : UIImage = UIImage(named: "track-play-icon")!
             cell.recordingIcon.image = image
+            cell.upload.setBackgroundImage(UIImage(named: "sync"), for: UIControlState.normal)
+            cell.upload.tag = indexPath.row
+        
         }
         
         if task.isTranscribed == true {
@@ -225,6 +251,10 @@ class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelega
             let image : UIImage = UIImage(named: "transcribe-icon")!
             cell.transcriptionIcon.image = image
             
+        }
+        
+        if task.isUploading == true {
+            cell.uploadStatus.text = "Completed"
         }
         return cell
         
@@ -467,19 +497,6 @@ class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelega
         self.present(nextViewController, animated:true, completion:nil)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        
-        searchTableView.reloadData()
-        FetchSearchData()
-        
-        let dateFormate = DateFormatter()
-        dateFormate.dateFormat = "dd MMMM yyyy"
-        let date = NSDate()
-        let stringOfDate = dateFormate.string(from: date as Date)
-        fromTextField.text = stringOfDate
-        toTextField.text = stringOfDate
-    }
-    
     func dateWithOutTime( datDate: NSDate) -> NSDate {
         let calendar = NSCalendar(identifier: NSCalendar.Identifier.gregorian)!
         calendar.timeZone = NSTimeZone(forSecondsFromGMT: 0) as TimeZone
@@ -499,5 +516,353 @@ class SearchPatients: UIViewController, UITableViewDataSource, UITableViewDelega
             noSearchPatients.text = ""
         }
     }
+    
+    // MARK: - Search Controller
+    
+    func filterContent(for searchText: String) {
+        searchResults = searchTasks.filter({ (task) -> Bool in
+            if let name = task.patientName{
+                let isMatch = name.localizedCaseInsensitiveContains(searchText)
+                return isMatch
+            }
+            
+            return false
+        })
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        if let searchText = searchController.searchBar.text {
+            filterContent(for: searchText)
+            searchTableView.reloadData()
+        }
+    }
+    
+    
 
+    @IBAction func syncData(_ sender: UIButton) {
+        
+        if currentReachabilityStatus == .reachableViaWiFi ||  currentReachabilityStatus == .reachableViaWWAN {
+            
+            
+            let buttonRow = sender.tag
+            let detail = searchTasks[buttonRow]
+            
+            let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
+            let predicate = NSPredicate(format: "(patientID = %@)", detail.patientID!)
+            fetchRequest.predicate = predicate
+            
+            do {
+                let fetchResult = try getContext().fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    if item.isUploading == false {
+                        
+                        let alert = UIAlertController(title: "Sync Data", message: "This will sync the patient encounter with the server. Do you wish to continue?", preferredStyle: UIAlertControllerStyle.alert)
+                        
+                        alert.addAction(UIAlertAction(title: "Yes", style: .default, handler:{ action in
+                            
+                            let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
+                            let predicate = NSPredicate(format: "(patientID = %@)", detail.patientID!)
+                            fetchRequest.predicate = predicate
+                            
+                            do {
+                                let fetchResult = try self.getContext().fetch(fetchRequest)
+                                
+                                for item in fetchResult {
+                                    
+                                    SwiftSpinner.show("Uploading patient encounter to server")
+                                    
+                                    let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
+                                    
+                                    let predicate = NSPredicate(format: "(patientID = %@)", item.patientID!)
+                                    
+                                    fetchRequest.predicate = predicate
+                                    
+                                    do {
+                                        let fetchResult = try self.getContext().fetch(fetchRequest)
+                                        
+                                        for item in fetchResult {
+                                            
+                                            
+                                            let fileManager = FileManager.default
+                                            let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
+                                            let documentsDirectoryURL: URL = urls.first!
+                                            let audioURL = documentsDirectoryURL.appendingPathComponent(item.recordingName! + ".m4a")
+                                            
+                                            // Configure AWS Cognito Credentials
+                                            let myIdentityPoolId = "us-west-2:567c2436-bfc7-41ee-9a62-8efa08645dc2"
+                                            
+                                            let credentialsProvider:AWSCognitoCredentialsProvider = AWSCognitoCredentialsProvider(regionType:AWSRegionType.usWest2, identityPoolId: myIdentityPoolId)
+                                            
+                                            let configuration = AWSServiceConfiguration(region:AWSRegionType.usWest2, credentialsProvider:credentialsProvider)
+                                            
+                                            AWSServiceManager.default().defaultServiceConfiguration = configuration
+                                            
+                                            let S3BucketName = "medilexis"
+                                            let remoteName = item.recordingName!
+                                            let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(remoteName)
+                                            
+                                            
+                                            let uploadRequest = AWSS3TransferManagerUploadRequest()!
+                                            uploadRequest.body = audioURL
+                                            uploadRequest.key = remoteName
+                                            uploadRequest.bucket = S3BucketName
+                                            uploadRequest.contentType = "audio/mpeg"
+                                            uploadRequest.acl = .publicRead
+                                            
+                                            let transferManager = AWSS3TransferManager.default()
+                                            transferManager?.upload(uploadRequest).continue({ [weak self] (task: AWSTask<AnyObject>) -> Any? in
+                                                
+                                                if let error = task.error {
+                                                    print("Upload failed with error: (\(error.localizedDescription))")
+                                                }
+                                                if let exception = task.exception {
+                                                    print("Upload failed with exception (\(exception))")
+                                                }
+                                                
+                                                if task.result != nil {
+                                                    let url = AWSS3.default().configuration.endpoint.url
+                                                    let publicURL = url?.appendingPathComponent(uploadRequest.bucket!).appendingPathComponent(uploadRequest.key!)
+                                                    print("Uploaded to:\(publicURL)")
+                                                    
+                                                    DispatchQueue.main.async {
+                                                        
+                                                        SwiftSpinner.hide()
+                                                        self?.searchTableView.reloadData()
+                                                        
+                                                        return
+                                                    }
+                                                    ///update into patients
+                                                    let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
+                                                    
+                                                    let predicate = NSPredicate(format: "(patientID = %@)", detail.patientID!)
+                                                    fetchRequest.predicate = predicate
+                                                    
+                                                    do {
+                                                        let fetchResult = try self?.context.fetch(fetchRequest)
+                                                        
+                                                        for item in fetchResult! {
+                                                            
+                                                            item.isUploading = true
+                                                            
+                                                            try self?.context.save()
+                                                            
+                                                            
+                                                            
+                                                        }
+                                                    }catch {
+                                                        print(error.localizedDescription)
+                                                    }
+                                                }
+                                                
+                                                return nil
+                                            })
+                                            
+                                        }
+                                        
+                                        self.uploadImages()
+                                        
+                                    }catch {
+                                        print(error.localizedDescription)
+                                    }
+                                    
+                                }
+                            }catch {
+                                print(error.localizedDescription)
+                            }
+                            
+                        }))
+                        
+                        let no = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: dismiss)
+                        alert.addAction(no)
+                        
+                        self.present(alert, animated: true, completion: nil);
+                        
+                    } else {
+                        
+                        let alert = UIAlertController(title: "Notice", message: "Patient encounter already uploaded", preferredStyle: UIAlertControllerStyle.alert)
+                        let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                        alert.addAction(action)
+                        
+                        self.present(alert, animated: true, completion: nil);
+                    }
+                }
+            }catch {
+                print(error.localizedDescription)
+            }
+
+        } else {
+            
+            DispatchQueue.main.async {
+                
+                let alert = UIAlertController(title: "No Connection", message: "Please check your internet connection and try again!", preferredStyle: UIAlertControllerStyle.alert)
+                let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                alert.addAction(action)
+                self.present(alert, animated: true, completion: nil);
+            }
+        }
+        
+    }
+    
+    func dismiss(alert: UIAlertAction){
+        searchTableView.reloadData()
+    }
+    
+    func uploadImages(){
+        
+        let patientID = defaults.value(forKey: "PatientID")
+        
+        let currentDateTime = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
+        let newFile = formatter.string(from: currentDateTime)+""
+        let fileName = newFile + ".png"
+        
+        let myIdentityPoolId = "us-west-2:567c2436-bfc7-41ee-9a62-8efa08645dc2"
+        
+        let credentialsProvider:AWSCognitoCredentialsProvider = AWSCognitoCredentialsProvider(regionType:AWSRegionType.usWest2, identityPoolId: myIdentityPoolId)
+        
+        let configuration = AWSServiceConfiguration(region:AWSRegionType.usWest2, credentialsProvider:credentialsProvider)
+        
+        AWSServiceManager.default().defaultServiceConfiguration = configuration
+        
+        let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
+        let predicate = NSPredicate(format: "(patientID = %@)", patientID as! CVarArg)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let fetchResult = try getContext().fetch(fetchRequest)
+            
+            for item in fetchResult {
+                
+                if item.image != nil {
+                    
+                    let S3BucketName = "medilexis"
+                    let remoteName = fileName
+                    let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(remoteName)
+                    let imageData = UIImage(data:item.image as! Data , scale:1.0)
+                    let data = UIImagePNGRepresentation(imageData!)
+                    do {
+                        try data?.write(to: fileURL)
+                    }
+                    catch {}
+                    
+                    let uploadRequest = AWSS3TransferManagerUploadRequest()!
+                    uploadRequest.body = fileURL
+                    uploadRequest.key = remoteName
+                    uploadRequest.bucket = S3BucketName
+                    uploadRequest.contentType = "image/jpeg/png"
+                    uploadRequest.acl = .publicRead
+                    
+                    let transferManager = AWSS3TransferManager.default()
+                    transferManager?.upload(uploadRequest).continue({ [weak self] (task: AWSTask<AnyObject>) -> Any? in
+                        
+                        if let error = task.error {
+                            print("Upload failed with error: (\(error.localizedDescription))")
+                        }
+                        if let exception = task.exception {
+                            print("Upload failed with exception (\(exception))")
+                        }
+                        
+                        if task.result != nil {
+                            let url = AWSS3.default().configuration.endpoint.url
+                            let publicURL = url?.appendingPathComponent(uploadRequest.bucket!).appendingPathComponent(uploadRequest.key!)
+                            print("Uploaded to:\(publicURL)")
+                            self?.anotherImage()
+                            
+                        }
+                        
+                        return nil
+                    })
+                
+                }
+            
+        
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
+
+        
+    }
+
+    func anotherImage(){
+        
+        let patientID = defaults.value(forKey: "PatientID")
+        
+        let currentDateTime = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd-HH-mm-ss"
+        let newFile = formatter.string(from: currentDateTime)+""
+        let fileName = newFile + ".png"
+        
+        let myIdentityPoolId = "us-west-2:567c2436-bfc7-41ee-9a62-8efa08645dc2"
+        
+        let credentialsProvider:AWSCognitoCredentialsProvider = AWSCognitoCredentialsProvider(regionType:AWSRegionType.usWest2, identityPoolId: myIdentityPoolId)
+        
+        let configuration = AWSServiceConfiguration(region:AWSRegionType.usWest2, credentialsProvider:credentialsProvider)
+        
+        AWSServiceManager.default().defaultServiceConfiguration = configuration
+        
+        let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
+        let predicate = NSPredicate(format: "(patientID = %@)", patientID as! CVarArg)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let fetchResult = try getContext().fetch(fetchRequest)
+            
+            for item in fetchResult {
+                
+                if item.anotherImage != nil {
+                    
+                    let S3BucketName = "medilexis"
+                    let remoteName = fileName
+                    let fileURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(remoteName)
+                    let imageData = UIImage(data:item.anotherImage as! Data , scale:1.0)
+                    let data = UIImagePNGRepresentation(imageData!)
+                    do {
+                        try data?.write(to: fileURL)
+                    }
+                    catch {}
+                    
+                    let uploadRequest = AWSS3TransferManagerUploadRequest()!
+                    uploadRequest.body = fileURL
+                    uploadRequest.key = remoteName
+                    uploadRequest.bucket = S3BucketName
+                    uploadRequest.contentType = "image/jpeg/png"
+                    uploadRequest.acl = .publicRead
+                    
+                    let transferManager = AWSS3TransferManager.default()
+                    transferManager?.upload(uploadRequest).continue({ [weak self] (task: AWSTask<AnyObject>) -> Any? in
+                        
+                        if let error = task.error {
+                            print("Upload failed with error: (\(error.localizedDescription))")
+                        }
+                        if let exception = task.exception {
+                            print("Upload failed with exception (\(exception))")
+                        }
+                        
+                        if task.result != nil {
+                            let url = AWSS3.default().configuration.endpoint.url
+                            let publicURL = url?.appendingPathComponent(uploadRequest.bucket!).appendingPathComponent(uploadRequest.key!)
+                            print("Uploaded to:\(publicURL)")
+                            
+                        }
+                        
+                        return nil
+                    })
+                    
+                }
+                
+                
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
+        
+        
+    }
+    
+   
 }

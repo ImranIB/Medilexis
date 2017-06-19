@@ -9,7 +9,6 @@
 import UIKit
 import SkyFloatingLabelTextField
 import SwiftSpinner
-import SCLAlertView
 import SystemConfiguration
 
 class Login: UIViewController{
@@ -112,9 +111,6 @@ class Login: UIViewController{
                                 let userDefaults = Foundation.UserDefaults.standard
                                 
                                 userDefaults.set("true", forKey: "login")
-                                userDefaults.set("", forKey: "HeaderOne")
-                                userDefaults.set("", forKey: "HeaderTwo")
-                                userDefaults.set("", forKey: "FooterOne")
                                 userDefaults.set(status["address"]!, forKey: "Address")
                                 userDefaults.set(status["city"]!, forKey: "City")
                                 userDefaults.set(status["country"]!, forKey: "Country")

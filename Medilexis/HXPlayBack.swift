@@ -10,7 +10,6 @@ import UIKit
 import CoreData
 import AVFoundation
 import Speech
-import SCLAlertView
 import SwiftSpinner
 
 

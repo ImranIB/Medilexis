@@ -2,7 +2,7 @@
 //  Sounds+CoreDataProperties.swift
 //  Medilexis
 //
-//  Created by iOS Developer on 10/05/2017.
+//  Created by iOS Developer on 24/05/2017.
 //  Copyright © 2017 NX3. All rights reserved.
 //
 
@@ -21,6 +21,5 @@ extension Sounds {
     @NSManaged public var recordingURL: String?
     @NSManaged public var transcription: String?
     @NSManaged public var type: String?
-    @NSManaged public var patients: Patients?
 
 }

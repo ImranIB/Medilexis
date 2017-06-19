@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import SCLAlertView
 import Photos
+import CoreData
 import SkyFloatingLabelTextField
 
 class PrintTemplate: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate  {
@@ -22,6 +22,7 @@ class PrintTemplate: UIViewController, UIImagePickerControllerDelegate, UINaviga
     
     let picker = UIImagePickerController()
     let userDefaults = Foundation.UserDefaults.standard
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let text = "N/A"
 
     override func viewDidLoad() {
@@ -45,37 +46,36 @@ class PrintTemplate: UIViewController, UIImagePickerControllerDelegate, UINaviga
         
          picker.delegate = self
         
-        if userDefaults.value(forKey: "HeaderOne") != nil{
-
-            let headerOne = userDefaults.value(forKey: "HeaderOne") as! String
-            
-            headerTextOne.text = headerOne
-
-        }
+        let uid = userDefaults.value(forKey: "UserID")
+        let fetchRequest:NSFetchRequest<Users> = Users.fetchRequest()
+        let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
+        fetchRequest.predicate = predicate
         
-        if userDefaults.value(forKey: "HeaderTwo") != nil{
+        do {
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
             
-            let headerTwo = userDefaults.value(forKey: "HeaderTwo") as! String
-            
-            headerTextTwo.text = headerTwo
-            
+            if count > 0 {
+                
+                print("record exists")
+                let fetchResult = try context.fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    headerTextOne.text = item.heading
+                    headerTextTwo.text = item.subHeading
+                    footerTextOne.text = item.footer
+                }
+                
+            }
+        }catch {
+            print(error.localizedDescription)
         }
-        
-        if userDefaults.value(forKey: "FooterOne") != nil{
-            
-            let Footer = userDefaults.value(forKey: "FooterOne")
-            
-            footerTextOne.text = Footer as! String!
-            
-        }
-
         
         if revealViewController() != nil {
             menuButton.target = revealViewController()
             menuButton.action = #selector(SWRevealViewController.revealToggle(_:))
             view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
-   
         
     }
 
@@ -95,12 +95,75 @@ class PrintTemplate: UIViewController, UIImagePickerControllerDelegate, UINaviga
     
     
     func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [String : AnyObject])
+                               didFinishPickingMediaWithInfo info: [String : Any])
     {
         let chosenImage = info[UIImagePickerControllerOriginalImage] as! UIImage //2
         let data = UIImagePNGRepresentation(chosenImage)
-        userDefaults.set(data, forKey: "TemplateImage")
         dismiss(animated:true, completion: nil) //5
+        
+        let uid = userDefaults.value(forKey: "UserID")
+        let fetchRequest:NSFetchRequest<Users> = Users.fetchRequest()
+        let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count > 0 {
+                
+                let fetchResult = try context.fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    item.logo =  data as NSData?
+                    
+                    try context.save()
+                    
+                    
+                    let alert = UIAlertController(title: "Success", message: "Image successfully updated", preferredStyle: UIAlertControllerStyle.alert)
+                    let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                    alert.addAction(action)
+                    
+                    self.present(alert, animated: true, completion: nil);
+                    
+                    return
+                }
+                
+            } else {
+                
+                
+                let userID = userDefaults.value(forKey: "UserID") as! Int32
+                let context = getContext()
+                
+                let entity = NSEntityDescription.entity(forEntityName: "Users", in: context)
+                
+                let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+                
+                managedObj.setValue(userID, forKey: "userID")
+                managedObj.setValue(data, forKey: "logo")
+                
+                do {
+                    try context.save()
+                    
+                    let alert = UIAlertController(title: "Success", message: "Image added successfully", preferredStyle: UIAlertControllerStyle.alert)
+                    let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                    alert.addAction(action)
+                    
+                    self.present(alert, animated: true, completion: nil);
+                    
+                    return
+                    
+                    
+                } catch {
+                    print(error.localizedDescription)
+                }
+                
+            }
+            
+        }catch {
+            print(error.localizedDescription)
+        }
+
     }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -119,22 +182,101 @@ class PrintTemplate: UIViewController, UIImagePickerControllerDelegate, UINaviga
             
             return
             
-        } else {
+        } else if (headerTextOne.text?.characters.count)! > 45 {
             
-            userDefaults.set(headerTextOne.text, forKey: "HeaderOne")
-            userDefaults.set(headerTextTwo.text, forKey: "HeaderTwo")
-            userDefaults.set(footerTextOne.text, forKey: "FooterOne")
-            
-            let alert = UIAlertController(title: "Success", message: "Template successfully saved", preferredStyle: UIAlertControllerStyle.alert)
+            let alert = UIAlertController(title: "Notice", message: "Heading text should not be more then 45 characters", preferredStyle: UIAlertControllerStyle.alert)
             let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
             alert.addAction(action)
             
             self.present(alert, animated: true, completion: nil);
             
-            return
+        } else if (headerTextTwo.text?.characters.count)! > 45 {
+            
+            let alert = UIAlertController(title: "Notice", message: "Sub heading text should not be more then 45 characters", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else if (footerTextOne.text?.characters.count)! > 100 {
+            
+            let alert = UIAlertController(title: "Notice", message: "Footer text should not be more then 100 characters", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            let uid = userDefaults.value(forKey: "UserID")
+            let fetchRequest:NSFetchRequest<Users> = Users.fetchRequest()
+            let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
+            fetchRequest.predicate = predicate
+            
+            do {
+                let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+                
+                if count > 0 {
+                    
+                    print("updated")
+                    let fetchResult = try context.fetch(fetchRequest)
+                    
+                    for item in fetchResult {
+                        
+                        item.heading =  headerTextOne.text
+                        item.subHeading = headerTextTwo.text
+                        item.footer = footerTextOne.text
+                        
+                        try context.save()
+                        
+                        
+                        let alert = UIAlertController(title: "Success", message: "Template successfully updated", preferredStyle: UIAlertControllerStyle.alert)
+                        let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                        alert.addAction(action)
+                        
+                        self.present(alert, animated: true, completion: nil);
+                        
+                        return
+                    }
+                    
+                } else {
+                    
+                    
+                    let userID = userDefaults.value(forKey: "UserID") as! Int32
+                    let context = getContext()
+                    
+                    let entity = NSEntityDescription.entity(forEntityName: "Users", in: context)
+                    
+                    let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+                    
+                    managedObj.setValue(userID, forKey: "userID")
+                    managedObj.setValue(headerTextOne.text, forKey: "heading")
+                    managedObj.setValue(headerTextTwo.text, forKey: "subHeading")
+                    managedObj.setValue(footerTextOne.text, forKey: "footer")
+                    
+                    do {
+                        try context.save()
+                        
+                        let alert = UIAlertController(title: "Success", message: "Template added successfully", preferredStyle: UIAlertControllerStyle.alert)
+                        let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                        alert.addAction(action)
+                        
+                        self.present(alert, animated: true, completion: nil);
+                        
+                        return
+                        
+                        
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                    
+                }
+                
+            }catch {
+                print(error.localizedDescription)
+            }
             
         }
-      
         
     }
     
@@ -150,5 +292,10 @@ class PrintTemplate: UIViewController, UIImagePickerControllerDelegate, UINaviga
         
     }
     
+    func getContext () -> NSManagedObjectContext {
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.persistentContainer.viewContext
+    }
 
 }

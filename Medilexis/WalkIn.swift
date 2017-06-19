@@ -9,7 +9,6 @@
 import UIKit
 import SkyFloatingLabelTextField
 import CoreData
-import SCLAlertView
 
 class WalkIn: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     
@@ -51,7 +50,7 @@ class WalkIn: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
         
-        label.font = UIFont(name: "Helvetica", size: 12)
+        label.font = UIFont(name: "FontAwesome", size: 16)
         
         label.backgroundColor = UIColor.clear
         
@@ -87,7 +86,7 @@ class WalkIn: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let label1 = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
         
-        label1.font = UIFont(name: "Helvetica", size: 12)
+        label1.font = UIFont(name: "FontAwesome", size: 16)
         
         label1.backgroundColor = UIColor.clear
         
@@ -123,7 +122,7 @@ class WalkIn: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let label2 = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
         
-        label2.font = UIFont(name: "Helvetica", size: 12)
+        label2.font = UIFont(name: "FontAwesome", size: 16)
         
         label2.backgroundColor = UIColor.clear
         
@@ -261,17 +260,42 @@ class WalkIn: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     
     func datePickerDateValueChanged(sender:UIDatePicker) {
         
+        let date = NSDate()
         let dateFormatter = DateFormatter()
+        let todayDate = dateWithOutTime(datDate: date)
         
         dateFormatter.dateFormat = "dd MMMM yyyy"
         
-        dateTextField.text = dateFormatter.string(from: sender.date)
+        let birthDate = dateWithOutTime(datDate: sender.date as NSDate!)
+        
+        switch birthDate.compare(todayDate as Date) {
+        case .orderedAscending     :   print("Date A is earlier than date B")
+        case .orderedDescending    :   print("Date A is later than date B")
+        case .orderedSame          :   print("The two dates are the same")
+        }
+        
+        if birthDate.compare(todayDate as Date) == .orderedDescending {
+            
+            let alert = UIAlertController(title: "Notice", message: "Date of birth should not be selected after today's date", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+            let _ = dateTextField.resignFirstResponder()
+            
+        } else {
+            
+            dateTextField.text = dateFormatter.string(from: sender.date)
+        }
         
     }
     
     func ScheduledDateChanged(sender:UIDatePicker){
         
-       
+        let date = NSDate()
+        let todayDate = dateWithOutTime(datDate: date)
+        
         let dateFormatter = DateFormatter()
         
         dateFormatter.dateFormat = "dd MMMM yyyy"
@@ -280,7 +304,26 @@ class WalkIn: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         print(scheduledPickDate)
         
-        scheduledDateWalkinPatient.text = dateFormatter.string(from: sender.date)
+        switch scheduledPickDate.compare(todayDate as Date) {
+        case .orderedAscending     :   print("Date A is earlier than date B")
+        case .orderedDescending    :   print("Date A is later than date B")
+        case .orderedSame          :   print("The two dates are the same")
+        }
+        
+        if scheduledPickDate.compare(todayDate as Date) == .orderedAscending {
+            
+            let alert = UIAlertController(title: "Notice", message: "Schedule date should not be selected before today's date", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+            let _ = scheduledDateWalkinPatient.resignFirstResponder()
+            
+        } else {
+            
+            scheduledDateWalkinPatient.text = dateFormatter.string(from: sender.date)
+        }
         
     }
     
@@ -291,6 +334,13 @@ class WalkIn: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         datePickerView.datePickerMode = UIDatePickerMode.date
         
         sender.inputView = datePickerView
+        
+        let dateFormate = DateFormatter()
+        dateFormate.dateFormat = "dd MMMM yyyy"
+        let date = NSDate()
+        let todayDate = dateWithOutTime(datDate: date)
+        let stringOfDate = dateFormate.string(from: todayDate as Date)
+        dateTextField.text = stringOfDate
         
         datePickerView.addTarget(self, action: #selector(WalkIn.datePickerDateValueChanged), for: UIControlEvents.valueChanged)
 

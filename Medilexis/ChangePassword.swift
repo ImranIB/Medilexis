@@ -9,7 +9,6 @@
 import UIKit
 import SkyFloatingLabelTextField
 import SwiftSpinner
-import SCLAlertView
 
 class ChangePassword: UIViewController {
     

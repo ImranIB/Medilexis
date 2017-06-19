@@ -16,6 +16,9 @@ class SearchPatientsCell: UITableViewCell {
     @IBOutlet weak var recordingIcon: UIImageView!
     @IBOutlet weak var transcriptionIcon: UIImageView!
     @IBOutlet weak var cardView: UIView!
+    @IBOutlet weak var upload: UIButton!
+    @IBOutlet weak var uploadStatus: UILabel!
+    
     
 
     override func awakeFromNib() {

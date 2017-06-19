@@ -8,7 +8,6 @@
 
 import UIKit
 import SkyFloatingLabelTextField
-import SCLAlertView
 import SwiftSpinner
 
 class EditProfile: UIViewController, UIPickerViewDelegate {
@@ -311,6 +310,14 @@ class EditProfile: UIViewController, UIPickerViewDelegate {
                 self.present(alert, animated: true, completion: nil);
                 
                 return
+                
+            } else if (phoneTextField.text?.characters.count)! > 15 {
+                
+                let alert = UIAlertController(title: "Notice", message: "Phone Number should not be more then 15 numbers ", preferredStyle: UIAlertControllerStyle.alert)
+                let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                alert.addAction(action)
+                
+                self.present(alert, animated: true, completion: nil);
                 
             } else {
                 

@@ -9,7 +9,6 @@
 import UIKit
 import SkyFloatingLabelTextField
 import SwiftSpinner
-import SCLAlertView
 import SystemConfiguration
 
 class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
@@ -296,7 +295,15 @@ class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
                 
                 self.present(alert, animated: true, completion: nil);
                 
-            } else if passwordTextField.text != reTypePasswordTextField.text {
+            } else if (phoneTextField.text?.characters.count)! > 15 {
+                
+                let alert = UIAlertController(title: "Notice", message: "Phone Number should not be more then 15 numbers", preferredStyle: UIAlertControllerStyle.alert)
+                let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                alert.addAction(action)
+                
+                self.present(alert, animated: true, completion: nil);
+                
+            }  else if passwordTextField.text != reTypePasswordTextField.text {
                 
                 let alert = UIAlertController(title: "Notice", message: "Passwords not matched", preferredStyle: UIAlertControllerStyle.alert)
                 let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
@@ -332,7 +339,7 @@ class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
                         print(json)
                         DispatchQueue.main.async {
                             
-                            let userDefaults = Foundation.UserDefaults.standard
+                            //let userDefaults = Foundation.UserDefaults.standard
 
                             self.firstNameTextField.text = ""
                             self.lastNameTextField.text = ""
@@ -430,6 +437,10 @@ class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         self.stateTextFIeld.text = ""
         self.zipcodeTextField.text = ""
         
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Login") as! Login
+        self.present(nextViewController, animated:true, completion:nil)
+        return
     }
     
 }
