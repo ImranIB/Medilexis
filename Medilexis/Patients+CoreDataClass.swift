@@ -2,7 +2,7 @@
 //  Patients+CoreDataClass.swift
 //  Medilexis
 //
-//  Created by iOS Developer on 02/06/2017.
+//  Created by iOS Developer on 07/07/2017.
 //  Copyright © 2017 NX3. All rights reserved.
 //
 

@@ -8,37 +8,26 @@
 
 import UIKit
 import SkyFloatingLabelTextField
+import XLActionController
 import CoreData
 
 class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var cptTableView: UITableView!
-    @IBOutlet weak var descriptionTextField: SkyFloatingLabelTextField!
-    @IBOutlet weak var codeTextField: SkyFloatingLabelTextField!
+    @IBOutlet var addCPTButton: UIBarButtonItem!
+    @IBOutlet var saveExitBUtton: UIButton!
+    @IBOutlet var saveExitLabel: UILabel!
     
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let defaults = UserDefaults.standard
     var codes = [DiagnosticList]()
-    var cptName = ["Evaluation and Management", "Anesthesia", "Surgery", "Radiology", "Pathology and Laboratory", "Medicine"]
-    var cptCode = ["99201 – 99499", "99100 – 9914", "10021 – 69990", "70010 – 79999", "80047 – 89398", "90281 – 99199"]
+    var cptName = ["Evaluation and Management", "Anesthesia", "Surgery", "Radiology", "Pathology and Laboratory", "Medicine", "Composite measures", "Patient management", " Patient history", "Physical examination"]
+    var cptCode = ["99201 – 99499", "99100 – 9914", "10021 – 69990", "70010 – 79999", "80047 – 89398", "90281 – 99199", "0001F-0015F", "0500F-0575F", "1000F-1220F", "2000F-2050F"]
     var cptIsSelected = Array(repeating: false, count: 1000)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-       // self.view.backgroundColor =  UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
-        //self.cptTableView.backgroundColor = UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
-        
-        descriptionTextField.title = "Description"
-        descriptionTextField.titleFormatter = { $0 }
-        descriptionTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        self.view.addSubview(descriptionTextField)
-        
-        codeTextField.title = "Code"
-        codeTextField.titleFormatter = { $0 }
-        codeTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        self.view.addSubview(codeTextField)
         
         let codesGenerated = "codesGenerated"
         let codesValue = defaults.bool(forKey: codesGenerated)
@@ -69,9 +58,13 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 } catch {
                     print(error.localizedDescription)
                 }
-                
             }
+          
         }
+        
+        saveExitBUtton.isEnabled = false
+        saveExitLabel.isEnabled = false
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -104,13 +97,16 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
         if self.cptIsSelected[indexPath.row] == false {
     
+            saveExitBUtton.isEnabled = true
+            saveExitLabel.isEnabled = true
+            
             // Toggle check-in and undo-check-in
             self.cptIsSelected[indexPath.row] = self.cptIsSelected[indexPath.row] ? false : true
             cell?.accessoryType = self.cptIsSelected[indexPath.row] ? .checkmark : .none
             cell?.tintColor = UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0)
             
             let userID = defaults.value(forKey: "UserID") as! Int32
-            let patientID = defaults.value(forKey: "PatientID")
+            let AppointmentID = defaults.value(forKey: "AppointmentID")
             
             let context = getContext()
             
@@ -120,7 +116,7 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
             
             managedObj.setValue(detail.codeID!, forKey: "diagnosticID")
             managedObj.setValue(userID, forKey: "userID")
-            managedObj.setValue(patientID, forKey: "patientID")
+            managedObj.setValue(AppointmentID, forKey: "appointmentID")
             managedObj.setValue(detail.name, forKey: "discription")
             managedObj.setValue(detail.code!, forKey: "code")
             managedObj.setValue("CPT", forKey: "type")
@@ -135,12 +131,15 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
             
         } else {
-      
+     
+       
             // Toggle check-in and undo-check-in
             self.cptIsSelected[indexPath.row] = self.cptIsSelected[indexPath.row] ? false : true
+            cell?.accessoryType = self.cptIsSelected[indexPath.row] ? .checkmark : .none
+            cell?.tintColor = UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0)
             
             let fetchRequest: NSFetchRequest<Diagnostics> = Diagnostics.fetchRequest()
-            let predicate = NSPredicate(format: "(diagnosticID = %@)", detail.codeID!)
+            let predicate = NSPredicate(format: "(diagnosticID = %@) AND (type = %@)", detail.codeID!, "CPT")
             fetchRequest.predicate = predicate
             
             do {
@@ -152,6 +151,8 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     
                     try context.save()
                     
+                    checkCPT()
+                    
                 }
             }catch {
                 print(error.localizedDescription)
@@ -159,46 +160,6 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
         }
 
-    }
-    
-    @IBAction func addCPT(_ sender: UIButton) {
-        
-        
-        if descriptionTextField.text == "" || codeTextField.text == "" {
-            
-            let alert = UIAlertController(title: "Notice", message: "Please fill all the fields", preferredStyle: UIAlertControllerStyle.alert)
-            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-            alert.addAction(action)
-            
-            self.present(alert, animated: true, completion: nil);
-            
-        } else {
-            
-            let codesId = NSUUID().uuidString.lowercased() as String
-            
-            let context = getContext()
-            
-            let entity = NSEntityDescription.entity(forEntityName: "DiagnosticList", in: context)
-            
-            let managedObj = NSManagedObject(entity: entity!, insertInto: context)
-            
-            managedObj.setValue(descriptionTextField.text, forKey: "name")
-            managedObj.setValue(codeTextField.text, forKey: "code")
-            managedObj.setValue(codesId, forKey: "codeID")
-            managedObj.setValue("CPT", forKey: "type")
-            
-            do {
-                try context.save()
-                
-                descriptionTextField.text = ""
-                codeTextField.text = ""
-                getCodes()
-                cptTableView.reloadData()
-                
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
     }
     
     func getCodes(){
@@ -244,5 +205,137 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
         return appDelegate.persistentContainer.viewContext
     }
     
+    func done(alert: UIAlertAction){
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+        
+    }
+    
+    @IBAction func saveExit(_ sender: UIButton) {
+        
+        if defaults.value(forKey: "qaTranscription") != nil{
+            let switchON: Bool = defaults.value(forKey: "qaTranscription")  as! Bool
+            print(switchON)
+            
+            if switchON == true{
+                
+                let alert = UIAlertController(title: "Completed", message: "Encounter completed.Do you want this encounter to be Transcribed?", preferredStyle: UIAlertControllerStyle.alert)
+                let yes = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: done)
+                let no = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: noTranscribe)
+                alert.addAction(yes)
+                alert.addAction(no)
+                self.present(alert, animated: true, completion: nil);
+                
+            }
+            else if switchON == false{
+                
+                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+                self.present(nextViewController, animated:true, completion:nil)
+                
+            }
+        }
+        
+    }
+    
+    func noTranscribe(alert: UIAlertAction){
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+        
+    }
+    
+    @IBAction func addCPT(_ sender: UIButton) {
+        
+        let alertController = UIAlertController(title: "Add New CPT", message: "", preferredStyle: .alert)
+        
+        let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
+            alert -> Void in
+            
+            let descriptionTextField = alertController.textFields![0] as UITextField
+            let codeTextField = alertController.textFields![1] as UITextField
+            
+            if descriptionTextField.text == "" || codeTextField.text == "" {
+                
+                let alert = UIAlertController(title: "Notice", message: "Please fill all the fields", preferredStyle: UIAlertControllerStyle.alert)
+                let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                alert.addAction(action)
+                
+                self.present(alert, animated: true, completion: nil);
+                
+            } else {
+                
+                let description = descriptionTextField.text?.capitalized
+                let codesId = NSUUID().uuidString.lowercased() as String
+                
+                let context = self.getContext()
+                
+                let entity = NSEntityDescription.entity(forEntityName: "DiagnosticList", in: context)
+                
+                let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+                
+                managedObj.setValue(description, forKey: "name")
+                managedObj.setValue(codeTextField.text, forKey: "code")
+                managedObj.setValue(codesId, forKey: "codeID")
+                managedObj.setValue("CPT", forKey: "type")
+                
+                do {
+                    try context.save()
+                    
+                    descriptionTextField.text = ""
+                    codeTextField.text = ""
+                    self.getCodes()
+                    self.cptTableView.reloadData()
+                    
+                } catch {
+                    print(error.localizedDescription)
+                }
+                
+            }
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: {
+            (action : UIAlertAction!) -> Void in
+            
+        })
+        
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Description"
+        }
+        
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Code"
+        }
+        
+        alertController.addAction(saveAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func checkCPT(){
+        
+        let AppointmentID = defaults.value(forKey: "AppointmentID")
+        let fetchRequest: NSFetchRequest<Diagnostics> = Diagnostics.fetchRequest()
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID! as! CVarArg, "CPT")
+        fetchRequest.predicate = predicate
+        
+        do {
+            let count = try self.getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count == 0 {
+                
+                self.saveExitBUtton.isEnabled = false
+                self.saveExitLabel.isEnabled = false
+            }
+            
+        }catch {
+            print(error.localizedDescription)
+        }
+        
+    }
 
 }

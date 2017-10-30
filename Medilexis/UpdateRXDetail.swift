@@ -22,6 +22,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
     @IBOutlet weak var route: SkyFloatingLabelTextField!
     @IBOutlet weak var startDate: SkyFloatingLabelTextField!
     @IBOutlet weak var endDate: SkyFloatingLabelTextField!
+    @IBOutlet weak var total: SkyFloatingLabelTextField!
     @IBOutlet weak var notes: SkyFloatingLabelTextField!
     
     var selectedRX = String()
@@ -89,6 +90,11 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         endDate.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         self.view.addSubview(endDate)
         
+        total.title = "Notes"
+        total.titleFormatter = { $0 }
+        total.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
+        self.view.addSubview(total)
+        
         notes.title = "Notes"
         notes.titleFormatter = { $0 }
         notes.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
@@ -110,8 +116,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         toolBar.backgroundColor = UIColor.black
         
-        
-        let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.doneDoseStrengthBtnPressed))
+       // let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.doneDoseStrengthBtnPressed))
         
         let flexSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -129,7 +134,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         let textBtn = UIBarButtonItem(customView: doseWeight)
         
-        toolBar.setItems([flexSpace,textBtn,flexSpace,doneButton], animated: true)
+        toolBar.setItems([flexSpace,textBtn,flexSpace], animated: true)
         
         weight.inputAccessoryView = toolBar
         
@@ -148,7 +153,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         toolBar1.backgroundColor = UIColor.black
         
         
-        let doneButton1 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.doneTimesLength))
+        //let doneButton1 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.doneTimesLength))
         
         let flexSpace1 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -166,7 +171,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         let textBtn1 = UIBarButtonItem(customView: doseWeight1)
         
-        toolBar1.setItems([flexSpace1,textBtn1,flexSpace1,doneButton1], animated: true)
+        toolBar1.setItems([flexSpace1,textBtn1,flexSpace1], animated: true)
         
         timesLength.inputAccessoryView = toolBar1
         
@@ -185,7 +190,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         toolBar2.backgroundColor = UIColor.black
         
         
-        let doneButton2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.doneDispense))
+        //let doneButton2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.doneDispense))
         
         let flexSpace2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -203,7 +208,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         let textBtn2 = UIBarButtonItem(customView: doseWeight2)
         
-        toolBar2.setItems([flexSpace2,textBtn2,flexSpace2,doneButton2], animated: true)
+        toolBar2.setItems([flexSpace2,textBtn2,flexSpace2], animated: true)
         
         dispense.inputAccessoryView = toolBar2
         
@@ -222,7 +227,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         toolBar3.backgroundColor = UIColor.black
         
         
-        let doneButton3 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.doneRoute))
+       // let doneButton3 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.doneRoute))
         
         let flexSpace3 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -240,7 +245,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         let textBtn3 = UIBarButtonItem(customView: doseWeight3)
         
-        toolBar3.setItems([flexSpace3,textBtn3, flexSpace3, doneButton3], animated: true)
+        toolBar3.setItems([flexSpace3,textBtn3, flexSpace3], animated: true)
         
         route.inputAccessoryView = toolBar3
         
@@ -259,7 +264,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         let defaultButton4 = UIBarButtonItem(title: "Today", style: UIBarButtonItemStyle.plain, target: self, action: #selector(UpdateRXDetail.startDefaultBtn))
         
-        let doneButton4 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.selectDoneStartButton))
+       // let doneButton4 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.selectDoneStartButton))
         
         let flexSpace4 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -277,7 +282,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         let textBtn4 = UIBarButtonItem(customView: label4)
         
-        toolBar4.setItems([defaultButton4,flexSpace4,textBtn4,flexSpace4,doneButton4], animated: true)
+        toolBar4.setItems([defaultButton4,flexSpace4,textBtn4,flexSpace4], animated: true)
         
         startDate.inputAccessoryView = toolBar4
         
@@ -296,7 +301,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         let defaultButton5 = UIBarButtonItem(title: "Today", style: UIBarButtonItemStyle.plain, target: self, action: #selector(UpdateRXDetail.endDefaultBtn))
         
-        let doneButton5 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.selectDoneEndButton))
+       // let doneButton5 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(UpdateRXDetail.selectDoneEndButton))
         
         let flexSpace5 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -314,7 +319,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         let textBtn5 = UIBarButtonItem(customView: label5)
         
-        toolBar5.setItems([defaultButton5,flexSpace5,textBtn5,flexSpace5,doneButton5], animated: true)
+        toolBar5.setItems([defaultButton5,flexSpace5,textBtn5,flexSpace5], animated: true)
         
         endDate.inputAccessoryView = toolBar5
 
@@ -370,12 +375,16 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
         
         if weight.isEditing{
             weight.text = doseStrength[row]
+            let _ = weight.resignFirstResponder()
         } else if timesLength.isEditing{
             timesLength.text = timeDuration[row]
+            let _ = timesLength.resignFirstResponder()
         } else if dispense.isEditing{
             dispense.text = dispensing[row]
+            let _ = dispense.resignFirstResponder()
         }else if route.isEditing{
             route.text = routes[row]
+            let _ = route.resignFirstResponder()
         }
     }
     
@@ -386,55 +395,36 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
 
     @IBAction func saveNext(_ sender: UIButton) {
         
-        if dose.text == "" || unit.text == "" || weight.text == "" || times.text == "" || timesLength.text == "" || dispense.text == "" || route.text == "" || startDate.text == "" || endDate.text == "" || notes.text == ""   {
+        let medicineID = defaults.value(forKey: "medicineID") as! String
+        let medicineName = defaults.value(forKey: "medicineName") as! String
+        
+        let fetchRequest:NSFetchRequest<Medicines> = Medicines.fetchRequest()
+        let predicate = NSPredicate(format: "(medicineID = %@) AND (medicineName = %@) ", medicineID, medicineName)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let fetchResult = try getContext().fetch(fetchRequest)
             
-            let alert = UIAlertController(title: "Notice", message: "Please fill all the fields", preferredStyle: UIAlertControllerStyle.alert)
-            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-            alert.addAction(action)
-            
-            self.present(alert, animated: true, completion: nil);
-            
-            return
-            
-        } else {
-            
-            let medicineID = defaults.value(forKey: "medicineID") as! String
-            let medicineName = defaults.value(forKey: "medicineName") as! String
-            
-            let fetchRequest:NSFetchRequest<Medicines> = Medicines.fetchRequest()
-            let predicate = NSPredicate(format: "(medicineID = %@) AND (medicineName = %@) ", medicineID, medicineName)
-            fetchRequest.predicate = predicate
-            
-            do {
-                let fetchResult = try getContext().fetch(fetchRequest)
+            for item in fetchResult {
                 
-                for item in fetchResult {
-                    
-                    item.dose = dose.text
-                    item.unit = unit.text
-                    item.weight = weight.text
-                    item.times = times.text
-                    item.length = timesLength.text
-                    item.dispense = dispense.text
-                    item.route = route.text
-                    item.startDate = startDate.text
-                    item.endDate = endDate.text
-                    item.notes = notes.text
-                    
-                    try context.save()
-                    print("updated")
-                    let alert = UIAlertController(title: "Success", message: "Detail updated successfully", preferredStyle: UIAlertControllerStyle.alert)
-                    let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-                    alert.addAction(action)
-                    
-                    self.present(alert, animated: true, completion: nil);
-                    
-                    return
-                    
-                }
-            }catch {
-                print(error.localizedDescription)
+                item.dose = dose.text
+                item.unit = unit.text
+                item.weight = weight.text
+                item.times = times.text
+                item.length = timesLength.text
+                item.dispense = dispense.text
+                item.route = route.text
+                item.startDate = startDate.text
+                item.endDate = endDate.text
+                item.notes = notes.text
+                
+                try context.save()
+                print("updated")
+                dismiss(animated: true, completion: nil)
+                
             }
+        }catch {
+            print(error.localizedDescription)
         }
         
     }
@@ -480,6 +470,7 @@ class UpdateRXDetail: UIViewController, UIPickerViewDelegate, UIPickerViewDataSo
                 route.text = item.route
                 startDate.text = item.startDate
                 endDate.text = item.endDate
+                total.text = item.total
                 notes.text = item.notes
                
             }

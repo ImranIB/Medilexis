@@ -1,0 +1,64 @@
+PODS:
+  - AWSAutoScaling (2.4.16):
+    - AWSCore (= 2.4.16)
+  - AWSCloudWatch (2.4.16):
+    - AWSCore (= 2.4.16)
+  - AWSCognito (2.4.16):
+    - AWSCore (= 2.4.16)
+  - AWSCognitoIdentityProvider (2.4.16):
+    - AWSCore (= 2.4.16)
+  - AWSCore (2.4.16)
+  - AWSDynamoDB (2.4.16):
+    - AWSCore (= 2.4.16)
+  - AWSS3 (2.4.16):
+    - AWSCore (= 2.4.16)
+  - CardIO (5.4.1)
+  - IQKeyboardManagerSwift (4.0.10)
+  - M13Checkbox (3.1.3)
+  - SearchTextField (1.1.6)
+  - SimplePDFSwift (0.2.1)
+  - SkyFloatingLabelTextField (2.0.1)
+  - Stripe (9.2.0)
+  - SwiftSpinner (1.1.0)
+  - XLActionController/Core (3.0.1)
+  - XLActionController/Youtube (3.0.1):
+    - XLActionController/Core
+
+DEPENDENCIES:
+  - AWSAutoScaling
+  - AWSCloudWatch
+  - AWSCognito
+  - AWSCognitoIdentityProvider
+  - AWSDynamoDB
+  - AWSS3
+  - CardIO
+  - IQKeyboardManagerSwift (= 4.0.10)
+  - M13Checkbox
+  - SearchTextField
+  - SimplePDFSwift
+  - SkyFloatingLabelTextField (~> 2.0.0)
+  - Stripe
+  - SwiftSpinner
+  - XLActionController/Youtube
+
+SPEC CHECKSUMS:
+  AWSAutoScaling: b659a202a145e89c212f11b889122545a663f5e8
+  AWSCloudWatch: 3653a840e267235722b350202e06185a976c3ba9
+  AWSCognito: 666dba6eb65ac27faad79e83febf25630913aefc
+  AWSCognitoIdentityProvider: 1c74bb819fc5f74a708a4a8e0be8b235a959ab86
+  AWSCore: 7c3c129991e6387bcbad7132bc3661e7135754db
+  AWSDynamoDB: e6fc88dca72b2efee4492729d96ed945b9f3a224
+  AWSS3: fef6aa8f8f625df8f67f1b6574fe761f3a4ddc99
+  CardIO: 56983b39b62f495fc6dae9ad7cf875143df06443
+  IQKeyboardManagerSwift: 75ba21a23794a1e6b6fe6d9a267ea17f80e06771
+  M13Checkbox: c132a7e0eb964731855eff67b883a0b21b7c0977
+  SearchTextField: 913343415f7cb0bfa29db09e00ce4b54274b611b
+  SimplePDFSwift: 98969bb38b924b473731c9c85cd78b467d15c633
+  SkyFloatingLabelTextField: 070e749632ffd608d6fd9db3fa488a822524997c
+  Stripe: a47770e82db059d0e7e160f9aabc2997055ee911
+  SwiftSpinner: c03815614599b91eea46594bd52ba742849d0414
+  XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963
+
+PODFILE CHECKSUM: e647dcb1e037637c650836f830a57004dd5f7337
+
+COCOAPODS: 1.3.1

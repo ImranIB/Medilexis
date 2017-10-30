@@ -336,34 +336,81 @@ class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
                     do {
                         guard let data = data else { return }
                         guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] else { return }
-                        print(json)
+                        //print(json)
                         DispatchQueue.main.async {
                             
-                            //let userDefaults = Foundation.UserDefaults.standard
-
-                            self.firstNameTextField.text = ""
-                            self.lastNameTextField.text = ""
-                            self.practiceNameTextField.text = ""
-                            self.phoneTextField.text = ""
-                            self.practiceAddressTextField.text = ""
-                            self.emailTextField.text = ""
-                            self.npiTextField.text = ""
-                            self.passwordTextField.text = ""
-                            self.reTypePasswordTextField.text = ""
-                            self.countriesTextField.text = ""
-                            self.cityTextFIeld.text = ""
-                            self.stateTextFIeld.text = ""
-                            self.zipcodeTextField.text = ""
+                            let status = json["status"] as? String
                             
-                            SwiftSpinner.hide()
-                            
-                            // activityIndicator.stopAnimating()
-                            
-                            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                            
-                            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Login") as! Login
-                            self.present(nextViewController, animated:true, completion:nil)
-                            return
+                            if (status == "success"){
+                                
+                                DispatchQueue.main.async {
+                                    
+                                    let status = json["user_details"] as! NSDictionary
+                                    
+                                    let response = json["data"] as! NSArray
+                                    let details = response[0] as! [String:Any]
+                                    let userDefaults = Foundation.UserDefaults.standard
+                                    
+                                    userDefaults.set("true", forKey: "login")
+                                    userDefaults.set(status["address"]!, forKey: "Address")
+                                    userDefaults.set(status["city"]!, forKey: "City")
+                                    userDefaults.set(status["country"]!, forKey: "Country")
+                                    userDefaults.set(status["firstname"]!, forKey: "FirstName")
+                                    userDefaults.set(status["lastname"]!, forKey: "LastName")
+                                    userDefaults.set(status["npi"]!, forKey: "Npi")
+                                    userDefaults.set(status["phone"]!, forKey: "Phone")
+                                    userDefaults.set(status["state"]!, forKey: "State")
+                                    userDefaults.set(status["zipcode"]!, forKey: "Zipcode")
+                                    userDefaults.set(status["retypepassword"]!, forKey: "Password")
+                                    userDefaults.set(details["username"]!, forKey: "Username")
+                                    userDefaults.set(details["token"]!, forKey: "Token")
+                                    userDefaults.set(details["userID"]!, forKey: "UserID")
+                                    userDefaults.set(details["email"]!, forKey: "Email")
+                                    userDefaults.set(true, forKey: "photos")
+                                    userDefaults.set(true, forKey: "cpt")
+                                    userDefaults.set(true, forKey: "rx")
+                                    userDefaults.set(true, forKey: "anotherphoto")
+                                    userDefaults.set(false, forKey: "qaTranscription")
+                  
+                                    
+                                    self.firstNameTextField.text = ""
+                                    self.lastNameTextField.text = ""
+                                    self.practiceNameTextField.text = ""
+                                    self.phoneTextField.text = ""
+                                    self.practiceAddressTextField.text = ""
+                                    self.emailTextField.text = ""
+                                    self.npiTextField.text = ""
+                                    self.passwordTextField.text = ""
+                                    self.reTypePasswordTextField.text = ""
+                                    self.countriesTextField.text = ""
+                                    self.cityTextFIeld.text = ""
+                                    self.stateTextFIeld.text = ""
+                                    self.zipcodeTextField.text = ""
+                                    
+                                    SwiftSpinner.hide()
+                                    
+                                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+                                    self.present(nextViewController, animated:true, completion:nil)
+                                    
+                                    
+                                }
+                                
+                            } else  if (status == "fail") {
+                                
+                                let response = json["error"] as! NSDictionary
+                                let data = response["message"]! as! String
+                                //print(data)
+                                
+                                SwiftSpinner.hide()
+                                
+                                let alert = UIAlertController(title: "Notice", message: data, preferredStyle: UIAlertControllerStyle.alert)
+                                let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                                alert.addAction(action)
+                                
+                                self.present(alert, animated: true, completion: nil);
+                                
+                            }
                             
                             
                         }
@@ -438,7 +485,7 @@ class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         self.zipcodeTextField.text = ""
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Login") as! Login
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "selection") as! Selection
         self.present(nextViewController, animated:true, completion:nil)
         return
     }

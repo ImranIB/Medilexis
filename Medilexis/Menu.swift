@@ -36,17 +36,23 @@ class Menu: UITableViewController {
             
             self.present(alert, animated: true, completion: nil);
             
+        }
+        
+        if indexPath.row == 4 && indexPath.section == 1 {
             
+            userDefaults.set("SearchAppointments", forKey: "ComingFrom")
+    
         }
     }
     
     func logout(alert: UIAlertAction){
-        print("You tapped: \(alert.title)")
+       // print("You tapped: \(alert.title)")
         navigate()
+        
     }
     
     func dismiss(alert: UIAlertAction){
-        print("You tapped: \(alert.title)")
+       // print("You tapped: \(alert.title)")
         menuTable.reloadData()
         
     }
@@ -54,6 +60,10 @@ class Menu: UITableViewController {
     func navigate(){
         
         userDefaults.set( "", forKey: "login")
+        userDefaults.set(true, forKey: "photos")
+        userDefaults.set(true, forKey: "cpt")
+        userDefaults.set(true, forKey: "rx")
+        userDefaults.set(true, forKey: "anotherphoto")
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "selection") as! Selection

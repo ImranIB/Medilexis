@@ -24,9 +24,19 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
     @IBOutlet weak var transcribe: UIButton!
     @IBOutlet weak var saveExit: UIButton!
     @IBOutlet weak var saveNext: UIButton!
+    @IBOutlet var saveButton: UIButton!
+    @IBOutlet var skipButton: UIButton!
     @IBOutlet weak var transcribeLabel: UILabel!
     @IBOutlet weak var saveExitLabel: UILabel!
     @IBOutlet weak var saveNextLabel: UILabel!
+    @IBOutlet var saveLabel: UILabel!
+    @IBOutlet var skipLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    @IBOutlet var nextLine: UIView!
+    @IBOutlet var exitLine: UIView!
+    @IBOutlet var transcribeLine: UIView!
+    @IBOutlet var skipLine: UIView!
+    
     
     let defaults = UserDefaults.standard
     var HPIfileURL: URL!
@@ -45,17 +55,23 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
         saveNext.isHidden = true
         saveNextLabel.isHidden = true
         progressView.isEnabled = false
+        transcribeLine.isHidden = true
+        saveLine.isHidden = true
+        nextLine.isHidden = true
+        exitLine.isHidden = true
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
         pause.isEnabled = false
         stop.isEnabled = false
         recordedTransciption.delegate = self
         recordedTransciption.layer.cornerRadius = 10
         fetchTranscription()
         
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         let type = "HPI"
         
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientid, type)
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID, type)
         fetchRequest.predicate = predicate
         
         do {
@@ -63,15 +79,11 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
             
             if count > 0 {
                 
-                print("One")
                 let fetchResult = try context.fetch(fetchRequest)
                 
                 for item in fetchResult {
             
-                    
                     if item.recordingURL != "N/A" {
-                        
-                       // let selectedAudioFileName = defaults.value(forKey: "RecordingName") as! String
                         
                         progressView.isEnabled = false
                         pause.isEnabled = false
@@ -140,14 +152,25 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
         self.view.endEditing(true)
         
         if recordedTransciption.text == ""{
-            recordedTransciption.text = "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."
+            recordedTransciption.text = "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"
+            saveExit.isHidden = true
+            saveExitLabel.isHidden = true
+            saveNext.isHidden = true
+            saveNextLabel.isHidden = true
         }
         
-        if recordedTransciption.text != "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."{
+        if recordedTransciption.text != "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"{
+            
             saveExit.isHidden = false
             saveExitLabel.isHidden = false
             saveNext.isHidden = false
             saveNextLabel.isHidden = false
+            saveButton.isHidden = false
+            saveLabel.isHidden = false
+            saveLine.isHidden = false
+            skipButton.isHidden = true
+            skipLabel.isHidden = true
+            skipLine.isHidden = true
         }
         
         
@@ -221,6 +244,10 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
                                 
                                 self.activityIndicator.stopAnimating()
                                 self.activityIndicator.isHidden = true
+                                self.saveLine.isHidden = false
+                                self.nextLine.isHidden = true
+                                self.exitLine.isHidden = true
+                                self.skipLine.isHidden = true
                                 
                             }
                             
@@ -230,6 +257,10 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
                             self.recordedTransciption.text = result?.bestTranscription.formattedString
                             self.activityIndicator.stopAnimating()
                             self.activityIndicator.isHidden = true
+                            self.saveLine.isHidden = false
+                            self.nextLine.isHidden = true
+                            self.exitLine.isHidden = true
+                            self.skipLine.isHidden = true
                             
                         }
                     }
@@ -255,69 +286,9 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
 
     @IBAction func saveExit(_ sender: UIButton) {
         
-        let patientID = defaults.value(forKey: "PatientID")
-        let type = "HPI"
-        recordedTransciption.resignFirstResponder()
-        
-        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientID as! CVarArg, type)
-        fetchRequest.predicate = predicate
-        
-        do {
-            
-            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
-            
-            if count > 0 {
-                
-                let fetchResult = try getContext().fetch(fetchRequest)
-                
-                for item in fetchResult {
-                    
-                    item.transcription! =  recordedTransciption.text
-                    try context.save()
-                    
-                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                    self.present(nextViewController, animated:true, completion:nil)
-                }
-            } else {
-                
-                ///insert into sounds
-                let patientid = defaults.value(forKey: "PatientID") as! String
-                let context = getContext()
-                
-                let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
-                
-                let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
-                
-                managedObj.setValue(patientid, forKey: "patientID")
-                managedObj.setValue("N/A", forKey: "recordingName")
-                managedObj.setValue("N/A", forKey: "recordingURL")
-                managedObj.setValue(recordedTransciption.text, forKey: "transcription")
-                managedObj.setValue("HPI", forKey: "type")
-                
-                do {
-                    try context.save()
-                    recordedTransciption.resignFirstResponder()
-                    saveNext.isEnabled = false
-                    saveNextLabel.isEnabled = false
-                    saveExitLabel.isEnabled = false
-                    saveExit.isEnabled = false
-                    
-                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                    self.present(nextViewController, animated:true, completion:nil)
-                    
-                } catch {
-                    print(error.localizedDescription)
-                }
-            }
-            
-            
-        }catch {
-            print(error.localizedDescription)
-            
-        }
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
     }
     
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
@@ -331,11 +302,11 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
     
     override func viewWillDisappear(_ animated: Bool) {
         
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         let type = "HPI"
         
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientid, type)
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID, type)
         fetchRequest.predicate = predicate
         
         do {
@@ -365,7 +336,7 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
     }
     
     func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-        let alert = UIAlertController(title: "Recorder Pro", message: "Decoding Error: \(error?.localizedDescription)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Recorder Pro", message: "Decoding Error: \(String(describing: error?.localizedDescription))", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
@@ -378,11 +349,11 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
     
     func fetchTranscription(){
         
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         let type = "HPI"
         
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientid, type)
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID, type)
         fetchRequest.predicate = predicate
         
         do {
@@ -412,70 +383,28 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if recordedTransciption.text == "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text." {
+        if recordedTransciption.text == "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)" {
             recordedTransciption.text = nil
         }
     }
     
     @IBAction func saveNext(_ sender: UIButton) {
         
-        let type = "HPI"
-        let patientID = defaults.value(forKey: "PatientID")
-        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientID! as! CVarArg, type)
-        fetchRequest.predicate = predicate
+        self.tabBarController?.selectedIndex = 2
         
-        do {
-            
-            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
-            
-            if count > 0 {
-                
-                let fetchResult = try getContext().fetch(fetchRequest)
-                
-                for item in fetchResult {
-                    
-                    item.transcription! =  recordedTransciption.text
-                    try context.save()
-                    
-                    self.tabBarController?.selectedIndex = 2
-                }
-                
-            } else {
-                
-                ///insert into sounds
-                let patientid = defaults.value(forKey: "PatientID") as! String
-                let context = getContext()
-                
-                let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
-                
-                let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
-                
-                managedObj.setValue(patientid, forKey: "patientID")
-                managedObj.setValue("N/A", forKey: "recordingName")
-                managedObj.setValue("N/A", forKey: "recordingURL")
-                managedObj.setValue(recordedTransciption.text, forKey: "transcription")
-                managedObj.setValue("HPI", forKey: "type")
-                
-                do {
-                    try context.save()
-                    recordedTransciption.resignFirstResponder()
-                    saveNext.isEnabled = false
-                    saveNextLabel.isEnabled = false
-                    saveExitLabel.isEnabled = false
-                    saveExit.isEnabled = false
-                    
-                    self.tabBarController?.selectedIndex = 2
-                    
-                } catch {
-                    print(error.localizedDescription)
-                }
-            }
-            
-            
-        }catch {
-            print(error.localizedDescription)
-        }
+        saveLine.isHidden = true
+        nextLine.isHidden = true
+        exitLine.isHidden = true
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
+        saveNext.isHidden = true
+        saveNextLabel.isHidden = true
+        saveExit.isHidden = true
+        saveExitLabel.isHidden = true
+        skipButton.isHidden = false
+        skipLabel.isHidden = false
+        skipLine.isHidden = false
+
     }
     
     
@@ -504,7 +433,73 @@ class HPIPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, 
         
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
+    @IBAction func savePressed(_ sender: UIButton) {
+        
+        
+        let type = "HPI"
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID as CVarArg, type)
+        fetchRequest.predicate = predicate
+        
+        do {
+            
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count > 0 {
+                
+                let fetchResult = try getContext().fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    item.transcription! =  recordedTransciption.text
+                    try context.save()
+                    saveLine.isHidden = true
+                    transcribeLine.isHidden = true
+                    exitLine.isHidden = true
+                    skipLine.isHidden = true
+                    nextLine.isHidden = false
+                }
+                
+            } else {
+                
+                ///insert into sounds
+                let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+                let context = getContext()
+                
+                let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
+                
+                let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
+                
+                managedObj.setValue(AppointmentID, forKey: "appointmentID")
+                managedObj.setValue("N/A", forKey: "recordingName")
+                managedObj.setValue("N/A", forKey: "recordingURL")
+                managedObj.setValue(recordedTransciption.text, forKey: "transcription")
+                managedObj.setValue("HPI", forKey: "type")
+                
+                do {
+                    try context.save()
+                    saveLine.isHidden = true
+                    transcribeLine.isHidden = true
+                    exitLine.isHidden = true
+                    skipLine.isHidden = true
+                    nextLine.isHidden = false
+                    
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+            
+            
+        }catch {
+            print(error.localizedDescription)
+        }
+        
     }
+    
+    @IBAction func skipPressed(_ sender: UIButton) {
+        
+        self.tabBarController?.selectedIndex = 2
+    }
+    
 }

@@ -9,6 +9,7 @@
 import UIKit
 import XLActionController
 import CoreData
+import SwiftSpinner
 
 class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
@@ -20,6 +21,7 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
     let picker = UIImagePickerController()
     var lastPoint = CGPoint.zero
     var swiped = false
+    var filePhotoStored = ""
     
     var red:CGFloat = 0.0
     var green:CGFloat = 0.0
@@ -59,10 +61,14 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        swiped = false
-        if let touch = touches.first {
-            lastPoint = touch.location(in: self.view)
+        if self.imageView.image != nil{
+            
+            swiped = false
+            if let touch = touches.first {
+                lastPoint = touch.location(in: self.view)
+            }
         }
+
     }
     
     func drawLines(fromPoint:CGPoint,toPoint:CGPoint) {
@@ -86,21 +92,31 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        swiped = true
-        captureLabel.isHidden = true
         
-        if let touch = touches.first {
-            let currentPoint = touch.location(in: self.view)
-            drawLines(fromPoint: lastPoint, toPoint: currentPoint)
+         if self.imageView.image != nil{
             
-            lastPoint = currentPoint
+            swiped = true
+            captureLabel.isHidden = true
+            
+            if let touch = touches.first {
+                let currentPoint = touch.location(in: self.view)
+                drawLines(fromPoint: lastPoint, toPoint: currentPoint)
+                
+                lastPoint = currentPoint
+            }
         }
+
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if !swiped {
-            drawLines(fromPoint: lastPoint, toPoint: lastPoint)
+        
+         if self.imageView.image != nil{
+        
+            if !swiped {
+                drawLines(fromPoint: lastPoint, toPoint: lastPoint)
+            }
         }
+
     }
     
     func getContext () -> NSManagedObjectContext {
@@ -184,7 +200,7 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
         selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage
             imageView.image = selectedImage
             captureLabel.isHidden = true
-        
+        filePhotoStored = "false"
         dismiss(animated: true, completion: nil)//5
     }
     
@@ -192,32 +208,37 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
         dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func resetIcon(_ sender: UIButton) {
-        
-        self.imageView.image = nil
-        captureLabel.isHidden = false
-    }
-    
     @IBAction func saveIcon(_ sender: UIButton) {
         
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         
-        let actionController = YoutubeActionController()
-        
-        actionController.addAction(Action(ActionData(title: "Save and Next", image: UIImage(named: "saveNext")!), style: .default, handler: { action in
+        if filePhotoStored == "" {
             
-            if self.imageView.image == nil {
+            let actionController = YoutubeActionController()
+            
+            actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
                 
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
                 let nextViewController = storyBoard.instantiateViewController(withIdentifier: "captureAnotherPhoto") as! AnotherPhotoDictation
                 self.present(nextViewController, animated:true, completion:nil)
                 
-            } else {
+            }))
+            
+            actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
+            }))
+            
+            present(actionController, animated: true, completion: nil)
+      
+        } else {
+            
+            let actionController = YoutubeActionController()
+            
+            actionController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "saveImage")!), style: .default, handler: { action in
                 
                 ///update into patients
-                let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
+                let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
                 
-                let predicate = NSPredicate(format: "(patientID = %@)", patientid)
+                let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
                 fetchRequest.predicate = predicate
                 
                 do {
@@ -229,7 +250,11 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
                         item.image = newImageData as NSData?
                         
                         try self.context.save()
-                        print("Done")
+                        self.filePhotoStored = "true"
+                        
+                        if let image = self.imageView.image {
+                            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                        }
                         
                     }
                 }catch {
@@ -237,60 +262,104 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
                     
                     
                 }
-            }
+                
+            }))
             
-            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "captureAnotherPhoto") as! AnotherPhotoDictation
-            self.present(nextViewController, animated:true, completion:nil)
+            actionController.addAction(Action(ActionData(title: "Next", image: UIImage(named: "saveNext")!), style: .default, handler: { action in
+                
+                if self.filePhotoStored == "false" {
+                    
+                    let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+                    let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesExit)
+                    let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+                    alert.addAction(action)
+                    alert.addAction(cancel)
+                    
+                    
+                    self.present(alert, animated: true, completion: nil);
+                    
+                } else {
+                    
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "captureAnotherPhoto") as! AnotherPhotoDictation
+                    self.present(nextViewController, animated:true, completion:nil)
+                    
+                }
+                
+                
+            }))
             
-        }))
-        actionController.addAction(Action(ActionData(title: "Save and Exit", image: UIImage(named: "saveExit")!), style: .default, handler: { action in
+            actionController.addAction(Action(ActionData(title: "Exit", image: UIImage(named: "exit")!), style: .default, handler: { action in
+                
+                if self.filePhotoStored == "false" {
+                    
+                    let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+                    let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesExit)
+                    let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+                    alert.addAction(action)
+                    alert.addAction(cancel)
+                    
+                    
+                    self.present(alert, animated: true, completion: nil);
+                    
+                } else {
+                    
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+                    self.present(nextViewController, animated:true, completion:nil)
+                    
+                }
+                
+            }))
             
-            if self.imageView.image == nil {
+            actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
                 
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "captureAnotherPhoto") as! AnotherPhotoDictation
                 self.present(nextViewController, animated:true, completion:nil)
                 
-            } else {
-                
-                ///update into patients
-                let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
-                
-                let predicate = NSPredicate(format: "(patientID = %@)", patientid)
-                fetchRequest.predicate = predicate
-                
-                do {
-                    let fetchResult = try self.context.fetch(fetchRequest)
-                    
-                    for item in fetchResult {
-                        
-                        let newImageData = UIImagePNGRepresentation(self.imageView.image!)
-                        item.image = newImageData as NSData?
-                        
-                        try self.context.save()
-                        print("Done")
-                        
-                    }
-                }catch {
-                    print(error.localizedDescription)
-                    
-                }
-            }
+            }))
             
-            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-            self.present(nextViewController, animated:true, completion:nil)
+            actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
+            }))
             
-        }))
-        
-        actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
-        }))
-        
-        present(actionController, animated: true, completion: nil)
-        
+            present(actionController, animated: true, completion: nil)
+        }
         
     }
     
+    func yesExit(alert: UIAlertAction){
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+        
+    }
+    
+    @IBAction func backPressed(_ sender: UIBarButtonItem) {
+        
+        dismiss(animated: true, completion: nil)
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        
+        
+        SwiftSpinner.show("Proceeding to next screen")
+        
+        if defaults.value(forKey: "photos") != nil{
+            let switchON: Bool = defaults.value(forKey: "photos")  as! Bool
+            
+            if switchON == false{
+                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "AnotherPhotoPlayback") as! AnotherPhotoPlayback
+                self.present(nextViewController, animated:true, completion:nil)
+                SwiftSpinner.hide()
+                
+            }  else {
+                SwiftSpinner.hide()
+            }
+            
+        }
+        
+    }
     
 }

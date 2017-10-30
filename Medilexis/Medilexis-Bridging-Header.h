@@ -3,3 +3,12 @@
 //
 
 #import "SWRevealViewController.h"
+#import "CardIO.h"
+#import <Stripe/Stripe.h>
+
+@import AudioToolbox;
+@import AVFoundation;
+@import CoreMedia;
+@import CoreVideo;
+@import MobileCoreServices;
+

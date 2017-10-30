@@ -100,22 +100,22 @@ class ForgetPassword: UIViewController {
                         guard let data = data else { return }
                         guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] else { return }
                         print(json)
-                        self.emailTextFIeld.text = ""
-                        
                       
                         
                         DispatchQueue.main.async {
                             
-                            SwiftSpinner.hide({
-                                
-                                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Login") as! Login
-                                self.present(nextViewController, animated:true, completion:nil)
-                                
-                                return
-                                
-                                
-                            })
+                            SwiftSpinner.hide()
+                            
+                            self.emailTextFIeld.text = ""
+                            
+                            let alert = UIAlertController(title: "Success", message: "Check email to reset your password.", preferredStyle: UIAlertControllerStyle.alert)
+                            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                            alert.addAction(action)
+                            
+                            self.present(alert, animated: true, completion: nil);
+                            
+                            return
+                            
                             
 
                             

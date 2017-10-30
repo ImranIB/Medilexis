@@ -8,42 +8,37 @@
 
 /* Begin PBXBuildFile section */
 		1D3FA5B01E9058D200E8777E /* PatientCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D3FA5AF1E9058D200E8777E /* PatientCell.swift */; };
+		4403F8901F39FD5000CF3B2C /* FetchRxList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4403F88F1F39FD5000CF3B2C /* FetchRxList.swift */; };
+		4403F8921F3A074200CF3B2C /* FetchRxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4403F8911F3A074200CF3B2C /* FetchRxCell.swift */; };
+		44257F3B1F434136001419A6 /* Encounter+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44257F391F434136001419A6 /* Encounter+CoreDataClass.swift */; };
+		44257F3C1F434136001419A6 /* Encounter+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44257F3A1F434136001419A6 /* Encounter+CoreDataProperties.swift */; };
+		442D847C1EFA6D1400D5ADC2 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442D847B1EFA6D1400D5ADC2 /* Settings.swift */; };
 		44338EE91EDE9E9B0058E446 /* UpdateCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44338EE81EDE9E9B0058E446 /* UpdateCodes.swift */; };
 		44338EEB1EDE9EB50058E446 /* UpdateCpt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44338EEA1EDE9EB50058E446 /* UpdateCpt.swift */; };
 		44338EED1EDE9EC40058E446 /* UpdateDx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44338EEC1EDE9EC40058E446 /* UpdateDx.swift */; };
 		44338EEF1EDEA40A0058E446 /* UpdateCptCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44338EEE1EDEA40A0058E446 /* UpdateCptCell.swift */; };
 		44338EF11EDEA4280058E446 /* UpdateDxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44338EF01EDEA4280058E446 /* UpdateDxCell.swift */; };
-		44338EF41EDEB7890058E446 /* Medilexis.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 44338EF21EDEB7890058E446 /* Medilexis.xcdatamodeld */; };
-		44338EFB1EDEB7CD0058E446 /* Diagnostics+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44338EF91EDEB7CD0058E446 /* Diagnostics+CoreDataClass.swift */; };
-		44338EFC1EDEB7CD0058E446 /* Diagnostics+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44338EFA1EDEB7CD0058E446 /* Diagnostics+CoreDataProperties.swift */; };
-		44353DD41EE15DE10043BB61 /* Patients+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44353DD21EE15DE10043BB61 /* Patients+CoreDataClass.swift */; };
-		44353DD51EE15DE10043BB61 /* Patients+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44353DD31EE15DE10043BB61 /* Patients+CoreDataProperties.swift */; };
 		4435FB591E8E6B2900413102 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4435FB581E8E6B2900413102 /* Connection.swift */; };
 		4435FF831E794C6B00E006D4 /* PlanDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4435FF821E794C6B00E006D4 /* PlanDictation.swift */; };
 		4435FF851E794F0C00E006D4 /* Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4435FF841E794F0C00E006D4 /* Network.swift */; };
 		443666A61E81160F007AD22C /* ForgetPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443666A51E81160F007AD22C /* ForgetPassword.swift */; };
 		4437E0021ED58249003E277A /* UpdateRXDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4437E0011ED58249003E277A /* UpdateRXDetail.swift */; };
-		4437E02D1ED5D3C7003E277A /* Sounds+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4437E02B1ED5D3C7003E277A /* Sounds+CoreDataClass.swift */; };
-		4437E02E1ED5D3C7003E277A /* Sounds+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4437E02C1ED5D3C7003E277A /* Sounds+CoreDataProperties.swift */; };
-		4437E0311ED5D3D4003E277A /* Medicines+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4437E02F1ED5D3D4003E277A /* Medicines+CoreDataClass.swift */; };
-		4437E0321ED5D3D4003E277A /* Medicines+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4437E0301ED5D3D4003E277A /* Medicines+CoreDataProperties.swift */; };
 		44390EB41ECB2AE7001ED088 /* PhotoDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44390EB31ECB2AE7001ED088 /* PhotoDictation.swift */; };
 		44390EB61ECB2B00001ED088 /* AnotherPhotoDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44390EB51ECB2B00001ED088 /* AnotherPhotoDictation.swift */; };
 		443C2E5D1ED6DC9E00F919F0 /* CptCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443C2E5C1ED6DC9E00F919F0 /* CptCell.swift */; };
 		443C2E5F1ED6DCAF00F919F0 /* DxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443C2E5E1ED6DCAF00F919F0 /* DxCell.swift */; };
-		443C4CC71E94EDDD000F7D06 /* SearchPatients.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443C4CC61E94EDDD000F7D06 /* SearchPatients.swift */; };
+		443C4CC71E94EDDD000F7D06 /* SearchAppointments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443C4CC61E94EDDD000F7D06 /* SearchAppointments.swift */; };
 		443C4CC91E94EE0C000F7D06 /* SearchPatientsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 443C4CC81E94EE0C000F7D06 /* SearchPatientsCell.swift */; };
 		4448E5071E76A9F00071B2C1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5061E76A9F00071B2C1 /* AppDelegate.swift */; };
 		4448E5201E76AAAC0071B2C1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4448E51C1E76AAAC0071B2C1 /* Assets.xcassets */; };
 		4448E5211E76AAAC0071B2C1 /* fontawesome-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4448E51D1E76AAAC0071B2C1 /* fontawesome-webfont.ttf */; };
 		4448E5221E76AAAC0071B2C1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4448E51E1E76AAAC0071B2C1 /* LaunchScreen.storyboard */; };
-		4448E5261E76AAF80071B2C1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4448E5251E76AAF80071B2C1 /* Main.storyboard */; };
 		4448E5451E76AB5C0071B2C1 /* Selection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5281E76AB5C0071B2C1 /* Selection.swift */; };
 		4448E5461E76AB5C0071B2C1 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5291E76AB5C0071B2C1 /* Login.swift */; };
 		4448E5471E76AB5C0071B2C1 /* Register.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E52A1E76AB5C0071B2C1 /* Register.swift */; };
 		4448E5481E76AB5C0071B2C1 /* Dashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E52B1E76AB5C0071B2C1 /* Dashboard.swift */; };
-		4448E5491E76AB5C0071B2C1 /* WalkIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E52C1E76AB5C0071B2C1 /* WalkIn.swift */; };
-		4448E54A1E76AB5C0071B2C1 /* PatientsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E52D1E76AB5C0071B2C1 /* PatientsData.swift */; };
+		4448E5491E76AB5C0071B2C1 /* NewAppointment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E52C1E76AB5C0071B2C1 /* NewAppointment.swift */; };
+		4448E54A1E76AB5C0071B2C1 /* ScheduledAppointments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E52D1E76AB5C0071B2C1 /* ScheduledAppointments.swift */; };
 		4448E54E1E76AB5C0071B2C1 /* RecordingPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5311E76AB5C0071B2C1 /* RecordingPlayback.swift */; };
 		4448E5501E76AB5C0071B2C1 /* CCDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5331E76AB5C0071B2C1 /* CCDictation.swift */; };
 		4448E5511E76AB5C0071B2C1 /* HPIDictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E5341E76AB5C0071B2C1 /* HPIDictation.swift */; };
@@ -55,25 +50,62 @@
 		4448E55B1E76AB5C0071B2C1 /* ChangePassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E53E1E76AB5C0071B2C1 /* ChangePassword.swift */; };
 		4448E8EF1E9B7FD600AC5675 /* HPIPlayBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E8EE1E9B7FD600AC5675 /* HPIPlayBack.swift */; };
 		4448E8F11E9B7FE700AC5675 /* HXPlayBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4448E8F01E9B7FE700AC5675 /* HXPlayBack.swift */; };
-		44490B311EEAAA5100E9FB0C /* Users+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44490B2F1EEAAA5100E9FB0C /* Users+CoreDataClass.swift */; };
-		44490B321EEAAA5100E9FB0C /* Users+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44490B301EEAAA5100E9FB0C /* Users+CoreDataProperties.swift */; };
 		444EA4761E97C80400BB53CC /* CCPlayBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444EA4751E97C80400BB53CC /* CCPlayBack.swift */; };
+		444F12C51F0F881F005C0D05 /* AddPatient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444F12C41F0F881F005C0D05 /* AddPatient.swift */; };
+		444F12D01F0FA78F005C0D05 /* Patients+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444F12CE1F0FA78F005C0D05 /* Patients+CoreDataClass.swift */; };
+		444F12D11F0FA78F005C0D05 /* Patients+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444F12CF1F0FA78F005C0D05 /* Patients+CoreDataProperties.swift */; };
+		444F12D31F0FB85E005C0D05 /* PatientsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444F12D21F0FB85E005C0D05 /* PatientsList.swift */; };
+		444F12D51F0FBF44005C0D05 /* PatientsListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444F12D41F0FBF44005C0D05 /* PatientsListCell.swift */; };
+		445272061F349A4300DDD6C5 /* Users+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445272041F349A4300DDD6C5 /* Users+CoreDataClass.swift */; };
+		445272071F349A4300DDD6C5 /* Users+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445272051F349A4300DDD6C5 /* Users+CoreDataProperties.swift */; };
+		4454918B1F45EE41005BE254 /* FilterSearchAppointments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4454918A1F45EE41005BE254 /* FilterSearchAppointments.swift */; };
+		4455A6231F68202F0030997C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4455A6221F68202F0030997C /* Main.storyboard */; };
 		445D3C3C1ED4760300E2FBAC /* UpdateRX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445D3C3B1ED4760300E2FBAC /* UpdateRX.swift */; };
 		445D3C3E1ED482F100E2FBAC /* UpdateRXCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 445D3C3D1ED482F100E2FBAC /* UpdateRXCell.swift */; };
 		446511D61EA4C432004DF84E /* SWRevealViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 446511D51EA4C432004DF84E /* SWRevealViewController.m */; };
 		446511D81EA4C61E004DF84E /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446511D71EA4C61E004DF84E /* Menu.swift */; };
+		44659E451F44A63300DC86C5 /* CustomSearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44659E431F44A63300DC86C5 /* CustomSearchBar.swift */; };
+		44659E461F44A63300DC86C5 /* CustomSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44659E441F44A63300DC86C5 /* CustomSearchController.swift */; };
 		4469B6411ED30AC300218FE1 /* PhotoDictationPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4469B6401ED30AC300218FE1 /* PhotoDictationPlayback.swift */; };
 		4469B6431ED3230500218FE1 /* AnotherPhotoPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4469B6421ED3230500218FE1 /* AnotherPhotoPlayback.swift */; };
+		446B2E1F1F4F30E7005A3E82 /* Appointments+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B2E1D1F4F30E7005A3E82 /* Appointments+CoreDataClass.swift */; };
+		446B2E201F4F30E7005A3E82 /* Appointments+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446B2E1E1F4F30E7005A3E82 /* Appointments+CoreDataProperties.swift */; };
+		446CF4251F31C6DD00142F2F /* Medilexis.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 446CF4231F31C6DD00142F2F /* Medilexis.xcdatamodeld */; };
+		446CF4301F31F3C300142F2F /* Sounds+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446CF42E1F31F3C300142F2F /* Sounds+CoreDataClass.swift */; };
+		446CF4311F31F3C300142F2F /* Sounds+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446CF42F1F31F3C300142F2F /* Sounds+CoreDataProperties.swift */; };
+		446CF4361F322D0500142F2F /* Diagnostics+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446CF4321F322D0500142F2F /* Diagnostics+CoreDataClass.swift */; };
+		446CF4371F322D0500142F2F /* Diagnostics+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446CF4331F322D0500142F2F /* Diagnostics+CoreDataProperties.swift */; };
+		446CF4381F322D0500142F2F /* Medicines+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446CF4341F322D0500142F2F /* Medicines+CoreDataClass.swift */; };
+		446CF4391F322D0500142F2F /* Medicines+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 446CF4351F322D0500142F2F /* Medicines+CoreDataProperties.swift */; };
+		446F39551F4C8C7200819F05 /* countries.json in Resources */ = {isa = PBXBuildFile; fileRef = 446F39541F4C8C7200819F05 /* countries.json */; };
+		4480FD651F72B47F00CE5AC0 /* PatientModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4480FD641F72B47F00CE5AC0 /* PatientModel.swift */; };
+		4483831C1F4744DB001DD8A2 /* FilterAppointments+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483831A1F4744DB001DD8A2 /* FilterAppointments+CoreDataClass.swift */; };
+		4483831D1F4744DB001DD8A2 /* FilterAppointments+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4483831B1F4744DB001DD8A2 /* FilterAppointments+CoreDataProperties.swift */; };
 		448C9C541ECEF25C00FF9B0E /* AddRX.swift in Sources */ = {isa = PBXBuildFile; fileRef = 448C9C531ECEF25C00FF9B0E /* AddRX.swift */; };
 		448C9C561ECEF97A00FF9B0E /* RXCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 448C9C551ECEF97A00FF9B0E /* RXCell.swift */; };
 		448C9C5A1ECF14AE00FF9B0E /* RXDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 448C9C591ECF14AE00FF9B0E /* RXDetail.swift */; };
 		448C9C5C1ECF3CC800FF9B0E /* Codes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 448C9C5B1ECF3CC800FF9B0E /* Codes.swift */; };
 		448C9C5E1ECF3CF100FF9B0E /* Cpt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 448C9C5D1ECF3CF100FF9B0E /* Cpt.swift */; };
 		448C9C601ECF3CFD00FF9B0E /* Dx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 448C9C5F1ECF3CFD00FF9B0E /* Dx.swift */; };
+		449925521F34775D00FA0CC2 /* Payment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4499254E1F34775D00FA0CC2 /* Payment.swift */; };
+		449925531F34775D00FA0CC2 /* Subscriptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4499254F1F34775D00FA0CC2 /* Subscriptions.swift */; };
+		449925541F34775D00FA0CC2 /* QATranscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449925501F34775D00FA0CC2 /* QATranscription.swift */; };
+		449925551F34775D00FA0CC2 /* AutomatedVoiceToText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449925511F34775D00FA0CC2 /* AutomatedVoiceToText.swift */; };
+		449925591F3477A600FA0CC2 /* SubscriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449925561F3477A600FA0CC2 /* SubscriptionCell.swift */; };
+		4499255A1F3477A600FA0CC2 /* VoiceToTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449925571F3477A600FA0CC2 /* VoiceToTextCell.swift */; };
+		4499255B1F3477A600FA0CC2 /* QATranscriptionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 449925581F3477A600FA0CC2 /* QATranscriptionCell.swift */; };
+		4499255E1F347A3F00FA0CC2 /* SubscriptionsList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4499255C1F347A3F00FA0CC2 /* SubscriptionsList+CoreDataClass.swift */; };
+		4499255F1F347A3F00FA0CC2 /* SubscriptionsList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4499255D1F347A3F00FA0CC2 /* SubscriptionsList+CoreDataProperties.swift */; };
 		44B509401E9B947000A3C285 /* ROSPlayBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B5093F1E9B947000A3C285 /* ROSPlayBack.swift */; };
 		44B509421E9B948200A3C285 /* PlanPlayBack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B509411E9B948200A3C285 /* PlanPlayBack.swift */; };
+		44B5F8981F348C8500A7C276 /* Card+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B5F8961F348C8500A7C276 /* Card+CoreDataClass.swift */; };
+		44B5F8991F348C8500A7C276 /* Card+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B5F8971F348C8500A7C276 /* Card+CoreDataProperties.swift */; };
 		44C5330D1ED8603800469055 /* RxList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C5330B1ED8603800469055 /* RxList+CoreDataClass.swift */; };
 		44C5330E1ED8603800469055 /* RxList+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C5330C1ED8603800469055 /* RxList+CoreDataProperties.swift */; };
+		44D92B371F3CA32500561E51 /* FetchCptCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D92B361F3CA32500561E51 /* FetchCptCell.swift */; };
+		44D92B391F3CA33E00561E51 /* FetchDxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D92B381F3CA33E00561E51 /* FetchDxCell.swift */; };
+		44D92B3B1F3CA36F00561E51 /* FetchCptList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D92B3A1F3CA36F00561E51 /* FetchCptList.swift */; };
+		44D92B3D1F3CA38000561E51 /* FetchDxList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D92B3C1F3CA38000561E51 /* FetchDxList.swift */; };
 		44E9897C1EB0F48100417E9E /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44E9897B1EB0F48100417E9E /* Lato-Light.ttf */; };
 		44F262DB1E9E21D400CD0657 /* PrintTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F262DA1E9E21D400CD0657 /* PrintTemplate.swift */; };
 		44F68DAE1EE937EF00E66896 /* DiagnosticList+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F68DAC1EE937EF00E66896 /* DiagnosticList+CoreDataClass.swift */; };
@@ -84,32 +116,28 @@
 /* Begin PBXFileReference section */
 		1D3FA5AF1E9058D200E8777E /* PatientCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientCell.swift; sourceTree = "<group>"; };
 		3BA235B27CB4DAE2E1DEEA17 /* Pods-Medilexis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Medilexis.release.xcconfig"; path = "Pods/Target Support Files/Pods-Medilexis/Pods-Medilexis.release.xcconfig"; sourceTree = "<group>"; };
+		4403F88F1F39FD5000CF3B2C /* FetchRxList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchRxList.swift; sourceTree = "<group>"; };
+		4403F8911F3A074200CF3B2C /* FetchRxCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchRxCell.swift; sourceTree = "<group>"; };
+		44257F391F434136001419A6 /* Encounter+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Encounter+CoreDataClass.swift"; sourceTree = "<group>"; };
+		44257F3A1F434136001419A6 /* Encounter+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Encounter+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		442C0ED11EB2133400558095 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
 		442C0ED21EB2290D00558095 /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
+		442D847B1EFA6D1400D5ADC2 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		44338EE81EDE9E9B0058E446 /* UpdateCodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCodes.swift; sourceTree = "<group>"; };
 		44338EEA1EDE9EB50058E446 /* UpdateCpt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCpt.swift; sourceTree = "<group>"; };
 		44338EEC1EDE9EC40058E446 /* UpdateDx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateDx.swift; sourceTree = "<group>"; };
 		44338EEE1EDEA40A0058E446 /* UpdateCptCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCptCell.swift; sourceTree = "<group>"; };
 		44338EF01EDEA4280058E446 /* UpdateDxCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateDxCell.swift; sourceTree = "<group>"; };
-		44338EF31EDEB7890058E446 /* Medilexis.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Medilexis.xcdatamodel; sourceTree = "<group>"; };
-		44338EF91EDEB7CD0058E446 /* Diagnostics+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Diagnostics+CoreDataClass.swift"; sourceTree = "<group>"; };
-		44338EFA1EDEB7CD0058E446 /* Diagnostics+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Diagnostics+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		44353DD21EE15DE10043BB61 /* Patients+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Patients+CoreDataClass.swift"; sourceTree = "<group>"; };
-		44353DD31EE15DE10043BB61 /* Patients+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Patients+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		4435FB581E8E6B2900413102 /* Connection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		4435FF821E794C6B00E006D4 /* PlanDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlanDictation.swift; sourceTree = "<group>"; };
 		4435FF841E794F0C00E006D4 /* Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Network.swift; sourceTree = "<group>"; };
 		443666A51E81160F007AD22C /* ForgetPassword.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ForgetPassword.swift; sourceTree = "<group>"; };
 		4437E0011ED58249003E277A /* UpdateRXDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateRXDetail.swift; sourceTree = "<group>"; };
-		4437E02B1ED5D3C7003E277A /* Sounds+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sounds+CoreDataClass.swift"; sourceTree = "<group>"; };
-		4437E02C1ED5D3C7003E277A /* Sounds+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sounds+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		4437E02F1ED5D3D4003E277A /* Medicines+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Medicines+CoreDataClass.swift"; sourceTree = "<group>"; };
-		4437E0301ED5D3D4003E277A /* Medicines+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Medicines+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		44390EB31ECB2AE7001ED088 /* PhotoDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoDictation.swift; sourceTree = "<group>"; };
 		44390EB51ECB2B00001ED088 /* AnotherPhotoDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnotherPhotoDictation.swift; sourceTree = "<group>"; };
 		443C2E5C1ED6DC9E00F919F0 /* CptCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CptCell.swift; sourceTree = "<group>"; };
 		443C2E5E1ED6DCAF00F919F0 /* DxCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DxCell.swift; sourceTree = "<group>"; };
-		443C4CC61E94EDDD000F7D06 /* SearchPatients.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchPatients.swift; sourceTree = "<group>"; };
+		443C4CC61E94EDDD000F7D06 /* SearchAppointments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchAppointments.swift; sourceTree = "<group>"; };
 		443C4CC81E94EE0C000F7D06 /* SearchPatientsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchPatientsCell.swift; sourceTree = "<group>"; };
 		4448E5031E76A9F00071B2C1 /* Medilexis.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Medilexis.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4448E5061E76A9F00071B2C1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -117,13 +145,12 @@
 		4448E51D1E76AAAC0071B2C1 /* fontawesome-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "fontawesome-webfont.ttf"; sourceTree = "<group>"; };
 		4448E51E1E76AAAC0071B2C1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4448E51F1E76AAAC0071B2C1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		4448E5251E76AAF80071B2C1 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		4448E5281E76AB5C0071B2C1 /* Selection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Selection.swift; sourceTree = "<group>"; };
 		4448E5291E76AB5C0071B2C1 /* Login.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		4448E52A1E76AB5C0071B2C1 /* Register.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Register.swift; sourceTree = "<group>"; };
 		4448E52B1E76AB5C0071B2C1 /* Dashboard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dashboard.swift; sourceTree = "<group>"; };
-		4448E52C1E76AB5C0071B2C1 /* WalkIn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalkIn.swift; sourceTree = "<group>"; };
-		4448E52D1E76AB5C0071B2C1 /* PatientsData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientsData.swift; sourceTree = "<group>"; wrapsLines = 1; };
+		4448E52C1E76AB5C0071B2C1 /* NewAppointment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewAppointment.swift; sourceTree = "<group>"; };
+		4448E52D1E76AB5C0071B2C1 /* ScheduledAppointments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScheduledAppointments.swift; sourceTree = "<group>"; wrapsLines = 1; };
 		4448E5311E76AB5C0071B2C1 /* RecordingPlayback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecordingPlayback.swift; sourceTree = "<group>"; };
 		4448E5331E76AB5C0071B2C1 /* CCDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CCDictation.swift; sourceTree = "<group>"; };
 		4448E5341E76AB5C0071B2C1 /* HPIDictation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HPIDictation.swift; sourceTree = "<group>"; };
@@ -135,9 +162,16 @@
 		4448E53E1E76AB5C0071B2C1 /* ChangePassword.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChangePassword.swift; sourceTree = "<group>"; };
 		4448E8EE1E9B7FD600AC5675 /* HPIPlayBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HPIPlayBack.swift; sourceTree = "<group>"; };
 		4448E8F01E9B7FE700AC5675 /* HXPlayBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HXPlayBack.swift; sourceTree = "<group>"; };
-		44490B2F1EEAAA5100E9FB0C /* Users+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Users+CoreDataClass.swift"; sourceTree = "<group>"; };
-		44490B301EEAAA5100E9FB0C /* Users+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Users+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		444EA4751E97C80400BB53CC /* CCPlayBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CCPlayBack.swift; sourceTree = "<group>"; };
+		444F12C41F0F881F005C0D05 /* AddPatient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddPatient.swift; sourceTree = "<group>"; };
+		444F12CE1F0FA78F005C0D05 /* Patients+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Patients+CoreDataClass.swift"; sourceTree = "<group>"; };
+		444F12CF1F0FA78F005C0D05 /* Patients+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Patients+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		444F12D21F0FB85E005C0D05 /* PatientsList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientsList.swift; sourceTree = "<group>"; };
+		444F12D41F0FBF44005C0D05 /* PatientsListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientsListCell.swift; sourceTree = "<group>"; };
+		445272041F349A4300DDD6C5 /* Users+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Users+CoreDataClass.swift"; sourceTree = "<group>"; };
+		445272051F349A4300DDD6C5 /* Users+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Users+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		4454918A1F45EE41005BE254 /* FilterSearchAppointments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterSearchAppointments.swift; sourceTree = "<group>"; };
+		4455A6221F68202F0030997C /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		445D3C3B1ED4760300E2FBAC /* UpdateRX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateRX.swift; sourceTree = "<group>"; };
 		445D3C3D1ED482F100E2FBAC /* UpdateRXCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateRXCell.swift; sourceTree = "<group>"; };
 		44650A2A1EB72B020026DB25 /* Lato-Hairline.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Hairline.ttf"; sourceTree = "<group>"; };
@@ -145,18 +179,48 @@
 		446511D41EA4C432004DF84E /* SWRevealViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWRevealViewController.h; sourceTree = "<group>"; };
 		446511D51EA4C432004DF84E /* SWRevealViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWRevealViewController.m; sourceTree = "<group>"; };
 		446511D71EA4C61E004DF84E /* Menu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
+		44659E431F44A63300DC86C5 /* CustomSearchBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomSearchBar.swift; sourceTree = "<group>"; };
+		44659E441F44A63300DC86C5 /* CustomSearchController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomSearchController.swift; sourceTree = "<group>"; };
 		4469B6401ED30AC300218FE1 /* PhotoDictationPlayback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoDictationPlayback.swift; sourceTree = "<group>"; };
 		4469B6421ED3230500218FE1 /* AnotherPhotoPlayback.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnotherPhotoPlayback.swift; sourceTree = "<group>"; };
+		446B2E1D1F4F30E7005A3E82 /* Appointments+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Appointments+CoreDataClass.swift"; sourceTree = "<group>"; };
+		446B2E1E1F4F30E7005A3E82 /* Appointments+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Appointments+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		446CF4241F31C6DD00142F2F /* Medilexis.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Medilexis.xcdatamodel; sourceTree = "<group>"; };
+		446CF42E1F31F3C300142F2F /* Sounds+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sounds+CoreDataClass.swift"; sourceTree = "<group>"; };
+		446CF42F1F31F3C300142F2F /* Sounds+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Sounds+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		446CF4321F322D0500142F2F /* Diagnostics+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Diagnostics+CoreDataClass.swift"; sourceTree = "<group>"; };
+		446CF4331F322D0500142F2F /* Diagnostics+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Diagnostics+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		446CF4341F322D0500142F2F /* Medicines+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Medicines+CoreDataClass.swift"; sourceTree = "<group>"; };
+		446CF4351F322D0500142F2F /* Medicines+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Medicines+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		446F39541F4C8C7200819F05 /* countries.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = countries.json; sourceTree = "<group>"; };
+		4480FD641F72B47F00CE5AC0 /* PatientModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PatientModel.swift; sourceTree = "<group>"; };
+		4483831A1F4744DB001DD8A2 /* FilterAppointments+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FilterAppointments+CoreDataClass.swift"; sourceTree = "<group>"; };
+		4483831B1F4744DB001DD8A2 /* FilterAppointments+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "FilterAppointments+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		448C9C531ECEF25C00FF9B0E /* AddRX.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddRX.swift; sourceTree = "<group>"; };
 		448C9C551ECEF97A00FF9B0E /* RXCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RXCell.swift; sourceTree = "<group>"; };
 		448C9C591ECF14AE00FF9B0E /* RXDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RXDetail.swift; sourceTree = "<group>"; };
 		448C9C5B1ECF3CC800FF9B0E /* Codes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Codes.swift; sourceTree = "<group>"; };
 		448C9C5D1ECF3CF100FF9B0E /* Cpt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cpt.swift; sourceTree = "<group>"; };
 		448C9C5F1ECF3CFD00FF9B0E /* Dx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dx.swift; sourceTree = "<group>"; };
+		4499254E1F34775D00FA0CC2 /* Payment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Payment.swift; sourceTree = "<group>"; };
+		4499254F1F34775D00FA0CC2 /* Subscriptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscriptions.swift; sourceTree = "<group>"; };
+		449925501F34775D00FA0CC2 /* QATranscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QATranscription.swift; sourceTree = "<group>"; };
+		449925511F34775D00FA0CC2 /* AutomatedVoiceToText.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutomatedVoiceToText.swift; sourceTree = "<group>"; };
+		449925561F3477A600FA0CC2 /* SubscriptionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionCell.swift; sourceTree = "<group>"; };
+		449925571F3477A600FA0CC2 /* VoiceToTextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VoiceToTextCell.swift; sourceTree = "<group>"; };
+		449925581F3477A600FA0CC2 /* QATranscriptionCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QATranscriptionCell.swift; sourceTree = "<group>"; };
+		4499255C1F347A3F00FA0CC2 /* SubscriptionsList+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SubscriptionsList+CoreDataClass.swift"; sourceTree = "<group>"; };
+		4499255D1F347A3F00FA0CC2 /* SubscriptionsList+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SubscriptionsList+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		44B5093F1E9B947000A3C285 /* ROSPlayBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ROSPlayBack.swift; sourceTree = "<group>"; };
 		44B509411E9B948200A3C285 /* PlanPlayBack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlanPlayBack.swift; sourceTree = "<group>"; };
+		44B5F8961F348C8500A7C276 /* Card+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Card+CoreDataClass.swift"; sourceTree = "<group>"; };
+		44B5F8971F348C8500A7C276 /* Card+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Card+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		44C5330B1ED8603800469055 /* RxList+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RxList+CoreDataClass.swift"; sourceTree = "<group>"; };
 		44C5330C1ED8603800469055 /* RxList+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RxList+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		44D92B361F3CA32500561E51 /* FetchCptCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchCptCell.swift; sourceTree = "<group>"; };
+		44D92B381F3CA33E00561E51 /* FetchDxCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchDxCell.swift; sourceTree = "<group>"; };
+		44D92B3A1F3CA36F00561E51 /* FetchCptList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchCptList.swift; sourceTree = "<group>"; };
+		44D92B3C1F3CA38000561E51 /* FetchDxList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchDxList.swift; sourceTree = "<group>"; };
 		44E9897A1EB0ED3400417E9E /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
 		44E9897B1EB0F48100417E9E /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
 		44E9897D1EB0F74A00417E9E /* Lato-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Regular.ttf"; sourceTree = "<group>"; };
@@ -227,6 +291,7 @@
 				4435FB581E8E6B2900413102 /* Connection.swift */,
 				442C0ED21EB2290D00558095 /* Lato-Bold.ttf */,
 				4435FF841E794F0C00E006D4 /* Network.swift */,
+				446F39541F4C8C7200819F05 /* countries.json */,
 				44650A2A1EB72B020026DB25 /* Lato-Hairline.ttf */,
 				442C0ED11EB2133400558095 /* Lato-Black.ttf */,
 				44E9897A1EB0ED3400417E9E /* Lato-Thin.ttf */,
@@ -243,7 +308,7 @@
 		4448E5241E76AAD20071B2C1 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				4448E5251E76AAF80071B2C1 /* Main.storyboard */,
+				4455A6221F68202F0030997C /* Main.storyboard */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -255,8 +320,8 @@
 				4448E5291E76AB5C0071B2C1 /* Login.swift */,
 				4448E52A1E76AB5C0071B2C1 /* Register.swift */,
 				4448E52B1E76AB5C0071B2C1 /* Dashboard.swift */,
-				4448E52C1E76AB5C0071B2C1 /* WalkIn.swift */,
-				4448E52D1E76AB5C0071B2C1 /* PatientsData.swift */,
+				4448E52C1E76AB5C0071B2C1 /* NewAppointment.swift */,
+				4448E52D1E76AB5C0071B2C1 /* ScheduledAppointments.swift */,
 				4448E5311E76AB5C0071B2C1 /* RecordingPlayback.swift */,
 				4448E5331E76AB5C0071B2C1 /* CCDictation.swift */,
 				4448E5341E76AB5C0071B2C1 /* HPIDictation.swift */,
@@ -270,7 +335,7 @@
 				4448E53D1E76AB5C0071B2C1 /* EditProfile.swift */,
 				4448E53E1E76AB5C0071B2C1 /* ChangePassword.swift */,
 				443666A51E81160F007AD22C /* ForgetPassword.swift */,
-				443C4CC61E94EDDD000F7D06 /* SearchPatients.swift */,
+				443C4CC61E94EDDD000F7D06 /* SearchAppointments.swift */,
 				444EA4751E97C80400BB53CC /* CCPlayBack.swift */,
 				4448E8EE1E9B7FD600AC5675 /* HPIPlayBack.swift */,
 				4448E8F01E9B7FE700AC5675 /* HXPlayBack.swift */,
@@ -290,6 +355,19 @@
 				44338EE81EDE9E9B0058E446 /* UpdateCodes.swift */,
 				44338EEA1EDE9EB50058E446 /* UpdateCpt.swift */,
 				44338EEC1EDE9EC40058E446 /* UpdateDx.swift */,
+				442D847B1EFA6D1400D5ADC2 /* Settings.swift */,
+				444F12C41F0F881F005C0D05 /* AddPatient.swift */,
+				444F12D21F0FB85E005C0D05 /* PatientsList.swift */,
+				4499254E1F34775D00FA0CC2 /* Payment.swift */,
+				4499254F1F34775D00FA0CC2 /* Subscriptions.swift */,
+				449925501F34775D00FA0CC2 /* QATranscription.swift */,
+				449925511F34775D00FA0CC2 /* AutomatedVoiceToText.swift */,
+				4403F88F1F39FD5000CF3B2C /* FetchRxList.swift */,
+				44D92B3A1F3CA36F00561E51 /* FetchCptList.swift */,
+				44D92B3C1F3CA38000561E51 /* FetchDxList.swift */,
+				44659E431F44A63300DC86C5 /* CustomSearchBar.swift */,
+				44659E441F44A63300DC86C5 /* CustomSearchController.swift */,
+				4454918A1F45EE41005BE254 /* FilterSearchAppointments.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -297,20 +375,30 @@
 		444EA4641E978FDD00BB53CC /* Entity */ = {
 			isa = PBXGroup;
 			children = (
-				44490B2F1EEAAA5100E9FB0C /* Users+CoreDataClass.swift */,
-				44490B301EEAAA5100E9FB0C /* Users+CoreDataProperties.swift */,
+				446B2E1D1F4F30E7005A3E82 /* Appointments+CoreDataClass.swift */,
+				446B2E1E1F4F30E7005A3E82 /* Appointments+CoreDataProperties.swift */,
+				4483831A1F4744DB001DD8A2 /* FilterAppointments+CoreDataClass.swift */,
+				4483831B1F4744DB001DD8A2 /* FilterAppointments+CoreDataProperties.swift */,
+				44257F391F434136001419A6 /* Encounter+CoreDataClass.swift */,
+				44257F3A1F434136001419A6 /* Encounter+CoreDataProperties.swift */,
+				445272041F349A4300DDD6C5 /* Users+CoreDataClass.swift */,
+				445272051F349A4300DDD6C5 /* Users+CoreDataProperties.swift */,
+				44B5F8961F348C8500A7C276 /* Card+CoreDataClass.swift */,
+				44B5F8971F348C8500A7C276 /* Card+CoreDataProperties.swift */,
+				4499255C1F347A3F00FA0CC2 /* SubscriptionsList+CoreDataClass.swift */,
+				4499255D1F347A3F00FA0CC2 /* SubscriptionsList+CoreDataProperties.swift */,
+				446CF4321F322D0500142F2F /* Diagnostics+CoreDataClass.swift */,
+				446CF4331F322D0500142F2F /* Diagnostics+CoreDataProperties.swift */,
+				446CF4341F322D0500142F2F /* Medicines+CoreDataClass.swift */,
+				446CF4351F322D0500142F2F /* Medicines+CoreDataProperties.swift */,
+				446CF42E1F31F3C300142F2F /* Sounds+CoreDataClass.swift */,
+				446CF42F1F31F3C300142F2F /* Sounds+CoreDataProperties.swift */,
+				444F12CE1F0FA78F005C0D05 /* Patients+CoreDataClass.swift */,
+				444F12CF1F0FA78F005C0D05 /* Patients+CoreDataProperties.swift */,
 				44F68DAC1EE937EF00E66896 /* DiagnosticList+CoreDataClass.swift */,
 				44F68DAD1EE937EF00E66896 /* DiagnosticList+CoreDataProperties.swift */,
-				44353DD21EE15DE10043BB61 /* Patients+CoreDataClass.swift */,
-				44353DD31EE15DE10043BB61 /* Patients+CoreDataProperties.swift */,
-				44338EF91EDEB7CD0058E446 /* Diagnostics+CoreDataClass.swift */,
-				44338EFA1EDEB7CD0058E446 /* Diagnostics+CoreDataProperties.swift */,
 				44C5330B1ED8603800469055 /* RxList+CoreDataClass.swift */,
 				44C5330C1ED8603800469055 /* RxList+CoreDataProperties.swift */,
-				4437E02F1ED5D3D4003E277A /* Medicines+CoreDataClass.swift */,
-				4437E0301ED5D3D4003E277A /* Medicines+CoreDataProperties.swift */,
-				4437E02B1ED5D3C7003E277A /* Sounds+CoreDataClass.swift */,
-				4437E02C1ED5D3C7003E277A /* Sounds+CoreDataProperties.swift */,
 			);
 			name = Entity;
 			sourceTree = "<group>";
@@ -328,7 +416,8 @@
 		446511D21EA4C3E7004DF84E /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				44338EF21EDEB7890058E446 /* Medilexis.xcdatamodeld */,
+				446CF4231F31C6DD00142F2F /* Medilexis.xcdatamodeld */,
+				4480FD641F72B47F00CE5AC0 /* PatientModel.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -344,6 +433,13 @@
 				443C2E5E1ED6DCAF00F919F0 /* DxCell.swift */,
 				44338EEE1EDEA40A0058E446 /* UpdateCptCell.swift */,
 				44338EF01EDEA4280058E446 /* UpdateDxCell.swift */,
+				444F12D41F0FBF44005C0D05 /* PatientsListCell.swift */,
+				449925561F3477A600FA0CC2 /* SubscriptionCell.swift */,
+				449925571F3477A600FA0CC2 /* VoiceToTextCell.swift */,
+				449925581F3477A600FA0CC2 /* QATranscriptionCell.swift */,
+				4403F8911F3A074200CF3B2C /* FetchRxCell.swift */,
+				44D92B361F3CA32500561E51 /* FetchCptCell.swift */,
+				44D92B381F3CA33E00561E51 /* FetchDxCell.swift */,
 			);
 			name = cells;
 			sourceTree = "<group>";
@@ -422,8 +518,9 @@
 			files = (
 				44E9897C1EB0F48100417E9E /* Lato-Light.ttf in Resources */,
 				4448E5211E76AAAC0071B2C1 /* fontawesome-webfont.ttf in Resources */,
-				4448E5261E76AAF80071B2C1 /* Main.storyboard in Resources */,
 				4448E5221E76AAAC0071B2C1 /* LaunchScreen.storyboard in Resources */,
+				4455A6231F68202F0030997C /* Main.storyboard in Resources */,
+				446F39551F4C8C7200819F05 /* countries.json in Resources */,
 				4448E5201E76AAAC0071B2C1 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -437,9 +534,40 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Medilexis/Pods-Medilexis-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AWSAutoScaling/AWSAutoScaling.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSCloudWatch/AWSCloudWatch.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSCognito/AWSCognito.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSCognitoIdentityProvider/AWSCognitoIdentityProvider.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSCore/AWSCore.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSDynamoDB/AWSDynamoDB.framework",
+				"${BUILT_PRODUCTS_DIR}/AWSS3/AWSS3.framework",
+				"${BUILT_PRODUCTS_DIR}/IQKeyboardManagerSwift/IQKeyboardManagerSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/M13Checkbox/M13Checkbox.framework",
+				"${BUILT_PRODUCTS_DIR}/SearchTextField/SearchTextField.framework",
+				"${BUILT_PRODUCTS_DIR}/SimplePDFSwift/SimplePDFSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SkyFloatingLabelTextField/SkyFloatingLabelTextField.framework",
+				"${BUILT_PRODUCTS_DIR}/Stripe/Stripe.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftSpinner/SwiftSpinner.framework",
+				"${BUILT_PRODUCTS_DIR}/XLActionController/XLActionController.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSAutoScaling.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCloudWatch.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognito.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCognitoIdentityProvider.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSCore.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSDynamoDB.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AWSS3.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/IQKeyboardManagerSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/M13Checkbox.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SearchTextField.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SimplePDFSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkyFloatingLabelTextField.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Stripe.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftSpinner.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/XLActionController.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -467,13 +595,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Medilexis-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -484,71 +615,102 @@
 			buildActionMask = 2147483647;
 			files = (
 				4469B6411ED30AC300218FE1 /* PhotoDictationPlayback.swift in Sources */,
+				446CF4311F31F3C300142F2F /* Sounds+CoreDataProperties.swift in Sources */,
+				44659E451F44A63300DC86C5 /* CustomSearchBar.swift in Sources */,
+				4480FD651F72B47F00CE5AC0 /* PatientModel.swift in Sources */,
 				4448E5511E76AB5C0071B2C1 /* HPIDictation.swift in Sources */,
 				44B509401E9B947000A3C285 /* ROSPlayBack.swift in Sources */,
+				444F12D01F0FA78F005C0D05 /* Patients+CoreDataClass.swift in Sources */,
+				449925521F34775D00FA0CC2 /* Payment.swift in Sources */,
+				44D92B3D1F3CA38000561E51 /* FetchDxList.swift in Sources */,
+				446CF4391F322D0500142F2F /* Medicines+CoreDataProperties.swift in Sources */,
+				4483831D1F4744DB001DD8A2 /* FilterAppointments+CoreDataProperties.swift in Sources */,
+				4483831C1F4744DB001DD8A2 /* FilterAppointments+CoreDataClass.swift in Sources */,
+				449925551F34775D00FA0CC2 /* AutomatedVoiceToText.swift in Sources */,
+				446CF4361F322D0500142F2F /* Diagnostics+CoreDataClass.swift in Sources */,
 				4437E0021ED58249003E277A /* UpdateRXDetail.swift in Sources */,
-				4437E02D1ED5D3C7003E277A /* Sounds+CoreDataClass.swift in Sources */,
 				44338EF11EDEA4280058E446 /* UpdateDxCell.swift in Sources */,
+				446CF4371F322D0500142F2F /* Diagnostics+CoreDataProperties.swift in Sources */,
 				4448E5581E76AB5C0071B2C1 /* selectDictation.swift in Sources */,
+				444F12D31F0FB85E005C0D05 /* PatientsList.swift in Sources */,
+				446CF4251F31C6DD00142F2F /* Medilexis.xcdatamodeld in Sources */,
+				44B5F8981F348C8500A7C276 /* Card+CoreDataClass.swift in Sources */,
 				445D3C3E1ED482F100E2FBAC /* UpdateRXCell.swift in Sources */,
-				4448E5491E76AB5C0071B2C1 /* WalkIn.swift in Sources */,
+				4448E5491E76AB5C0071B2C1 /* NewAppointment.swift in Sources */,
 				44338EED1EDE9EC40058E446 /* UpdateDx.swift in Sources */,
 				44F68DAE1EE937EF00E66896 /* DiagnosticList+CoreDataClass.swift in Sources */,
 				444EA4761E97C80400BB53CC /* CCPlayBack.swift in Sources */,
 				1D3FA5B01E9058D200E8777E /* PatientCell.swift in Sources */,
-				44338EFC1EDEB7CD0058E446 /* Diagnostics+CoreDataProperties.swift in Sources */,
 				4448E8EF1E9B7FD600AC5675 /* HPIPlayBack.swift in Sources */,
 				448C9C5A1ECF14AE00FF9B0E /* RXDetail.swift in Sources */,
-				4437E0321ED5D3D4003E277A /* Medicines+CoreDataProperties.swift in Sources */,
 				4448E55B1E76AB5C0071B2C1 /* ChangePassword.swift in Sources */,
+				4499255B1F3477A600FA0CC2 /* QATranscriptionCell.swift in Sources */,
 				448C9C561ECEF97A00FF9B0E /* RXCell.swift in Sources */,
+				44B5F8991F348C8500A7C276 /* Card+CoreDataProperties.swift in Sources */,
 				443666A61E81160F007AD22C /* ForgetPassword.swift in Sources */,
 				4435FF831E794C6B00E006D4 /* PlanDictation.swift in Sources */,
 				4448E5481E76AB5C0071B2C1 /* Dashboard.swift in Sources */,
-				44338EFB1EDEB7CD0058E446 /* Diagnostics+CoreDataClass.swift in Sources */,
+				446CF4301F31F3C300142F2F /* Sounds+CoreDataClass.swift in Sources */,
 				4435FB591E8E6B2900413102 /* Connection.swift in Sources */,
 				4448E5521E76AB5C0071B2C1 /* HXDIctation.swift in Sources */,
 				4448E55A1E76AB5C0071B2C1 /* EditProfile.swift in Sources */,
+				44257F3B1F434136001419A6 /* Encounter+CoreDataClass.swift in Sources */,
 				443C2E5F1ED6DCAF00F919F0 /* DxCell.swift in Sources */,
 				44C5330E1ED8603800469055 /* RxList+CoreDataProperties.swift in Sources */,
+				445272061F349A4300DDD6C5 /* Users+CoreDataClass.swift in Sources */,
 				4435FF851E794F0C00E006D4 /* Network.swift in Sources */,
+				445272071F349A4300DDD6C5 /* Users+CoreDataProperties.swift in Sources */,
 				4448E8F11E9B7FE700AC5675 /* HXPlayBack.swift in Sources */,
 				4448E5591E76AB5C0071B2C1 /* singleDictation.swift in Sources */,
+				449925541F34775D00FA0CC2 /* QATranscription.swift in Sources */,
+				4499255E1F347A3F00FA0CC2 /* SubscriptionsList+CoreDataClass.swift in Sources */,
+				4454918B1F45EE41005BE254 /* FilterSearchAppointments.swift in Sources */,
 				4469B6431ED3230500218FE1 /* AnotherPhotoPlayback.swift in Sources */,
-				443C4CC71E94EDDD000F7D06 /* SearchPatients.swift in Sources */,
+				443C4CC71E94EDDD000F7D06 /* SearchAppointments.swift in Sources */,
 				443C4CC91E94EE0C000F7D06 /* SearchPatientsCell.swift in Sources */,
 				446511D61EA4C432004DF84E /* SWRevealViewController.m in Sources */,
-				44490B321EEAAA5100E9FB0C /* Users+CoreDataProperties.swift in Sources */,
-				44353DD51EE15DE10043BB61 /* Patients+CoreDataProperties.swift in Sources */,
+				444F12D51F0FBF44005C0D05 /* PatientsListCell.swift in Sources */,
 				4448E5531E76AB5C0071B2C1 /* ROSDictation.swift in Sources */,
 				44F68DAF1EE937EF00E66896 /* DiagnosticList+CoreDataProperties.swift in Sources */,
-				44490B311EEAAA5100E9FB0C /* Users+CoreDataClass.swift in Sources */,
-				44353DD41EE15DE10043BB61 /* Patients+CoreDataClass.swift in Sources */,
 				4448E5451E76AB5C0071B2C1 /* Selection.swift in Sources */,
+				4403F8901F39FD5000CF3B2C /* FetchRxList.swift in Sources */,
 				446511D81EA4C61E004DF84E /* Menu.swift in Sources */,
-				44338EF41EDEB7890058E446 /* Medilexis.xcdatamodeld in Sources */,
-				4437E0311ED5D3D4003E277A /* Medicines+CoreDataClass.swift in Sources */,
-				4448E54A1E76AB5C0071B2C1 /* PatientsData.swift in Sources */,
+				44257F3C1F434136001419A6 /* Encounter+CoreDataProperties.swift in Sources */,
+				446B2E201F4F30E7005A3E82 /* Appointments+CoreDataProperties.swift in Sources */,
+				4448E54A1E76AB5C0071B2C1 /* ScheduledAppointments.swift in Sources */,
+				44D92B391F3CA33E00561E51 /* FetchDxCell.swift in Sources */,
 				4448E5461E76AB5C0071B2C1 /* Login.swift in Sources */,
+				44D92B3B1F3CA36F00561E51 /* FetchCptList.swift in Sources */,
+				444F12C51F0F881F005C0D05 /* AddPatient.swift in Sources */,
+				442D847C1EFA6D1400D5ADC2 /* Settings.swift in Sources */,
 				4448E5501E76AB5C0071B2C1 /* CCDictation.swift in Sources */,
 				448C9C5E1ECF3CF100FF9B0E /* Cpt.swift in Sources */,
 				4448E54E1E76AB5C0071B2C1 /* RecordingPlayback.swift in Sources */,
 				44390EB41ECB2AE7001ED088 /* PhotoDictation.swift in Sources */,
+				4403F8921F3A074200CF3B2C /* FetchRxCell.swift in Sources */,
 				448C9C541ECEF25C00FF9B0E /* AddRX.swift in Sources */,
 				4448E5071E76A9F00071B2C1 /* AppDelegate.swift in Sources */,
 				443C2E5D1ED6DC9E00F919F0 /* CptCell.swift in Sources */,
 				4448E5471E76AB5C0071B2C1 /* Register.swift in Sources */,
-				4437E02E1ED5D3C7003E277A /* Sounds+CoreDataProperties.swift in Sources */,
+				44D92B371F3CA32500561E51 /* FetchCptCell.swift in Sources */,
 				44338EE91EDE9E9B0058E446 /* UpdateCodes.swift in Sources */,
 				44338EEB1EDE9EB50058E446 /* UpdateCpt.swift in Sources */,
+				44659E461F44A63300DC86C5 /* CustomSearchController.swift in Sources */,
+				446B2E1F1F4F30E7005A3E82 /* Appointments+CoreDataClass.swift in Sources */,
+				449925591F3477A600FA0CC2 /* SubscriptionCell.swift in Sources */,
 				44338EEF1EDEA40A0058E446 /* UpdateCptCell.swift in Sources */,
+				4499255F1F347A3F00FA0CC2 /* SubscriptionsList+CoreDataProperties.swift in Sources */,
 				44B509421E9B948200A3C285 /* PlanPlayBack.swift in Sources */,
+				4499255A1F3477A600FA0CC2 /* VoiceToTextCell.swift in Sources */,
+				446CF4381F322D0500142F2F /* Medicines+CoreDataClass.swift in Sources */,
+				449925531F34775D00FA0CC2 /* Subscriptions.swift in Sources */,
 				445D3C3C1ED4760300E2FBAC /* UpdateRX.swift in Sources */,
 				44390EB61ECB2B00001ED088 /* AnotherPhotoDictation.swift in Sources */,
 				44F262DB1E9E21D400CD0657 /* PrintTemplate.swift in Sources */,
 				448C9C5C1ECF3CC800FF9B0E /* Codes.swift in Sources */,
 				44C5330D1ED8603800469055 /* RxList+CoreDataClass.swift in Sources */,
 				448C9C601ECF3CFD00FF9B0E /* Dx.swift in Sources */,
+				444F12D11F0FA78F005C0D05 /* Patients+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -716,12 +878,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		44338EF21EDEB7890058E446 /* Medilexis.xcdatamodeld */ = {
+		446CF4231F31C6DD00142F2F /* Medilexis.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				44338EF31EDEB7890058E446 /* Medilexis.xcdatamodel */,
+				446CF4241F31C6DD00142F2F /* Medilexis.xcdatamodel */,
 			);
-			currentVersion = 44338EF31EDEB7890058E446 /* Medilexis.xcdatamodel */;
+			currentVersion = 446CF4241F31C6DD00142F2F /* Medilexis.xcdatamodel */;
 			path = Medilexis.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

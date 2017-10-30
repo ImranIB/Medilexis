@@ -26,18 +26,18 @@ class Login: UIViewController{
         emailTextField.iconColor = UIColor.lightGray
         emailTextField.title = "Email"
         emailTextField.titleFormatter = { $0 }
-        emailTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        emailTextField.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
+        emailTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 12)
+        emailTextField.iconMarginBottom = 0.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         emailTextField.iconMarginLeft = 2.0
         self.view.addSubview(emailTextField)
         
-        passwordTextField.iconFont = UIFont(name: "FontAwesome", size: 12)
+        passwordTextField.iconFont = UIFont(name: "FontAwesome", size: 11)
         passwordTextField.iconText = "\u{f13e}"
         passwordTextField.iconColor = UIColor.lightGray
         passwordTextField.title = "Password"
         passwordTextField.titleFormatter = { $0 }
-        passwordTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 10)
-        passwordTextField.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
+        passwordTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 12)
+        passwordTextField.iconMarginBottom = 0.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         passwordTextField.iconMarginLeft = 2.0
         self.view.addSubview(emailTextField)
         
@@ -89,7 +89,7 @@ class Login: UIViewController{
                         guard let data = data else { return }
                         guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] else { return }
                         
-                       // print(json)
+                        //print(json)
                         
                      
                         //let details = status?[0] as! [String:Any]
@@ -125,6 +125,11 @@ class Login: UIViewController{
                                 userDefaults.set(details["token"]!, forKey: "Token")
                                 userDefaults.set(details["userID"]!, forKey: "UserID")
                                 userDefaults.set(details["email"]!, forKey: "Email")
+                                userDefaults.set(true, forKey: "photos")
+                                userDefaults.set(true, forKey: "cpt")
+                                userDefaults.set(true, forKey: "rx")
+                                userDefaults.set(true, forKey: "anotherphoto")
+                                userDefaults.set(false, forKey: "qaTranscription")
                                 
                                 SwiftSpinner.hide()
                                 
@@ -143,15 +148,13 @@ class Login: UIViewController{
                             
                             DispatchQueue.main.async {
                         
+                                SwiftSpinner.hide()
+                                
                                 let alert = UIAlertController(title: "Hold On", message: "Invalid Credentials", preferredStyle: UIAlertControllerStyle.alert)
                                 let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
                                 alert.addAction(action)
                                 
                                 self.present(alert, animated: true, completion: nil);
-                                
-                                
-                                SwiftSpinner.hide()
-                                
                                 
                                 return
                             }
@@ -161,6 +164,21 @@ class Login: UIViewController{
                     } catch {
                         
                         print("error:", error)
+                        
+                        DispatchQueue.main.async {
+                            
+                            let alert = UIAlertController(title: "Notice", message: "Unable to login! Please try again later.", preferredStyle: UIAlertControllerStyle.alert)
+                            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                            alert.addAction(action)
+                            
+                            self.present(alert, animated: true, completion: nil);
+                            
+                            
+                            SwiftSpinner.hide()
+                            
+                            
+                            return
+                        }
                         
                     }
                 }

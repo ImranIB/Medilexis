@@ -76,7 +76,6 @@ class ChangePassword: UIViewController {
     @IBAction func save(_ sender: UIButton) {
         
         let defaults = UserDefaults.standard
-        //let cpassword = defaults.value(forKey: "Password") as! String
         
         let token = defaults.value(forKey: "Token")
         
@@ -126,7 +125,7 @@ class ChangePassword: UIViewController {
                     do {
                         guard let data = data else { return }
                         guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] else { return }
-                       // print("json:", json)
+                        //print("json:", json)
                     
                        let status = json["status"] as? String
                        
@@ -161,7 +160,7 @@ class ChangePassword: UIViewController {
                                 self.newPasswordTextField.text = ""
                                 self.reTypePasswordTextField.text = ""
                                 
-                                let alert = UIAlertController(title: "Notice", message: "Incorrect correct password", preferredStyle: UIAlertControllerStyle.alert)
+                                let alert = UIAlertController(title: "Notice", message: "Incorrect Current Password", preferredStyle: UIAlertControllerStyle.alert)
                                 let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
                                 alert.addAction(action)
                                 

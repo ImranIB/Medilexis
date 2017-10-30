@@ -26,10 +26,20 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     @IBOutlet weak var transcribe: UIButton!
     @IBOutlet weak var saveNext: UIButton!
     @IBOutlet weak var saveExit: UIButton!
+    @IBOutlet var saveButton: UIButton!
+    @IBOutlet var skipButton: UIButton!
     @IBOutlet weak var transcribeLabel: UILabel!
     @IBOutlet weak var saveExitLabel: UILabel!
     @IBOutlet weak var saveNextLabel: UILabel!
-    
+    @IBOutlet var saveLabel: UILabel!
+    @IBOutlet var skipLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    @IBOutlet var nextLine: UIView!
+    @IBOutlet var exitLine: UIView!
+    @IBOutlet var printLine: UIView!
+    @IBOutlet var skipLine: UIView!
+    @IBOutlet var transcribeLine: UIView!
+
     let defaults = UserDefaults.standard
     var PLANfileURL: URL!
     var timer:Timer!
@@ -42,23 +52,29 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
         super.viewDidLoad()
         
         activityIndicator.isHidden = true
-
-        //saveExitLabel.isHidden = true
-        //saveNext.isHidden = true
-        //saveExit.isHidden = true
-        //saveNextLabel.isHidden = true
         progressView.isEnabled = false
         pause.isEnabled = false
         stop.isEnabled = false
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
+        saveLine.isHidden = true
+        saveNext.isHidden = true
+        saveNextLabel.isHidden = true
+        nextLine.isHidden = true
+        saveExit.isHidden = true
+        saveExitLabel.isHidden = true
+        exitLine.isHidden = true
+        transcribeLine.isHidden = true
+        printLine.isHidden = true
         recordedTransciption.delegate = self
         recordedTransciption.layer.cornerRadius = 10
         fetchTranscription()
         
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         let type = "PLAN"
         
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientid, type)
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID, type)
         fetchRequest.predicate = predicate
         
         do {
@@ -71,8 +87,6 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                 for item in fetchResult {
                     
                     if item.recordingURL != "N/A" {
-                        
-                        //let selectedAudioFileName = defaults.value(forKey: "RecordingName") as! String
                         
                         progressView.isEnabled = false
                         pause.isEnabled = false
@@ -140,14 +154,25 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
         self.view.endEditing(true)
         
         if recordedTransciption.text == ""{
-            recordedTransciption.text = "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."
+            recordedTransciption.text = "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"
+            saveExitLabel.isHidden = true
+            saveNext.isHidden = true
+            saveExit.isHidden = true
+            saveNextLabel.isHidden = true
         }
         
-        if recordedTransciption.text != "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."{
+        if recordedTransciption.text != "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"{
+         
+            saveExit.isHidden = false
             saveExitLabel.isHidden = false
             saveNext.isHidden = false
-            saveExit.isHidden = false
             saveNextLabel.isHidden = false
+            saveButton.isHidden = false
+            saveLabel.isHidden = false
+            saveLine.isHidden = false
+            skipButton.isHidden = true
+            skipLabel.isHidden = true
+            skipLine.isHidden = true
         }
         
     }
@@ -221,7 +246,10 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                                 
                                 self.activityIndicator.stopAnimating()
                                 self.activityIndicator.isHidden = true
-                                
+                                self.saveLine.isHidden = false
+                                self.nextLine.isHidden = true
+                                self.exitLine.isHidden = true
+                                self.skipLine.isHidden = true
                             }
                             
                             
@@ -230,6 +258,10 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                             self.recordedTransciption.text = result?.bestTranscription.formattedString
                             self.activityIndicator.stopAnimating()
                             self.activityIndicator.isHidden = true
+                            self.saveLine.isHidden = false
+                            self.nextLine.isHidden = true
+                            self.exitLine.isHidden = true
+                            self.skipLine.isHidden = true
                             
                         }
                     }
@@ -263,11 +295,11 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         let type = "PLAN"
         
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientid, type)
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID, type)
         fetchRequest.predicate = predicate
         
         do {
@@ -297,7 +329,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     }
     
     func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-        let alert = UIAlertController(title: "Recorder Pro", message: "Decoding Error: \(error?.localizedDescription)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Recorder Pro", message: "Decoding Error: \(String(describing: error?.localizedDescription))", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
@@ -310,11 +342,11 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     
     func fetchTranscription(){
         
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         let type = "PLAN"
         
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientid, type)
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID, type)
         fetchRequest.predicate = predicate
         
         do {
@@ -323,7 +355,6 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
             for item in fetchResult {
                 
                 recordedTransciption.text = item.transcription
-                
                 
             }
         }catch {
@@ -339,150 +370,42 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     @IBAction func navigateToHome(_ sender: UIBarButtonItem) {
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateRX") as! UpdateRX
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
         self.present(nextViewController, animated:true, completion:nil)
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if recordedTransciption.text == "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text." {
+        if recordedTransciption.text == "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)" {
             recordedTransciption.text = nil
         }
     }
     
     @IBAction func saveNext(_ sender: UIButton) {
         
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "PhotoDictationPlayback") as! PhotoDictationPlayback
+        self.present(nextViewController, animated:true, completion:nil)
         
-        let patientID = defaults.value(forKey: "PatientID")
-        let type = "PLAN"
-        recordedTransciption.resignFirstResponder()
-        
-        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientID as! CVarArg, type)
-        fetchRequest.predicate = predicate
-        
-        do {
-            
-            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
-            
-            if count > 0 {
-                
-                let fetchResult = try getContext().fetch(fetchRequest)
-                
-                for item in fetchResult {
-                    
-                    item.transcription! =  recordedTransciption.text
-                    try context.save()
-                    
-                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "PhotoDictationPlayback") as! PhotoDictationPlayback
-                    self.present(nextViewController, animated:true, completion:nil)
-                }
-            } else {
-                
-                ///insert into sounds
-                let patientid = defaults.value(forKey: "PatientID") as! String
-                let context = getContext()
-                
-                let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
-                
-                let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
-                
-                managedObj.setValue(patientid, forKey: "patientID")
-                managedObj.setValue("N/A", forKey: "recordingName")
-                managedObj.setValue("N/A", forKey: "recordingURL")
-                managedObj.setValue(recordedTransciption.text, forKey: "transcription")
-                managedObj.setValue("PLAN", forKey: "type")
-                
-                do {
-                    try context.save()
-                    recordedTransciption.resignFirstResponder()
-                    saveNext.isEnabled = false
-                    saveExit.isEnabled = false
-                    saveExitLabel.isEnabled = false
-                    saveNextLabel.isEnabled = false
-                    
-                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "PhotoDictationPlayback") as! PhotoDictationPlayback
-                    self.present(nextViewController, animated:true, completion:nil)
-                    
-                } catch {
-                    print(error.localizedDescription)
-                }
-            }
-            
-            
-        }catch {
-            print(error.localizedDescription)
-            
-        }
+        saveLine.isHidden = true
+        nextLine.isHidden = true
+        exitLine.isHidden = true
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
+        saveNext.isHidden = true
+        saveNextLabel.isHidden = true
+        saveExit.isHidden = true
+        saveExitLabel.isHidden = true
+        skipButton.isHidden = false
+        skipLabel.isHidden = false
+        skipLine.isHidden = false
         
     }
     
     @IBAction func saveExit(_ sender: UIButton) {
         
-        let patientID = defaults.value(forKey: "PatientID")
-        let type = "PLAN"
-        recordedTransciption.resignFirstResponder()
-        
-        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@) AND (type = %@)", patientID as! CVarArg, type)
-        fetchRequest.predicate = predicate
-        
-        do {
-            
-            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
-            
-            if count > 0 {
-                
-                let fetchResult = try getContext().fetch(fetchRequest)
-                
-                for item in fetchResult {
-                    
-                    item.transcription! =  recordedTransciption.text
-                    try context.save()
-                    
-                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                    self.present(nextViewController, animated:true, completion:nil)
-                }
-            } else {
-                
-                ///insert into sounds
-                let patientid = defaults.value(forKey: "PatientID") as! String
-                let context = getContext()
-                
-                let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
-                
-                let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
-                
-                managedObj.setValue(patientid, forKey: "patientID")
-                managedObj.setValue("N/A", forKey: "recordingName")
-                managedObj.setValue("N/A", forKey: "recordingURL")
-                managedObj.setValue(recordedTransciption.text, forKey: "transcription")
-                managedObj.setValue("PLAN", forKey: "type")
-                
-                do {
-                    try context.save()
-                    recordedTransciption.resignFirstResponder()
-                    saveNext.isEnabled = false
-                    saveExit.isEnabled = false
-                    saveExitLabel.isEnabled = false
-                    saveNextLabel.isEnabled = false
-                    
-                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                    self.present(nextViewController, animated:true, completion:nil)
-                    
-                } catch {
-                    print(error.localizedDescription)
-                }
-            }
-            
-            
-        }catch {
-            print(error.localizedDescription)
-            
-        }
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
         
     }
     
@@ -549,7 +472,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
         
         let dos = defaults.value(forKey: "DOS") as! NSDate
         let pname = defaults.value(forKey: "PatientName") as! String
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = DateFormatter.Style.long
@@ -569,7 +492,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
         pdf.addBodyText(date)
         
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@)", patientid)
+        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
         fetchRequest.predicate = predicate
         
         do {
@@ -634,7 +557,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                     
                     if item.logo != nil {
                         
-                        let retrievedImg = UIImage(data: item.logo as! Data)!
+                        let retrievedImg = UIImage(data: item.logo! as Data)!
                         
                         let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
                                                                     image:retrievedImg, imageHeight: 55, alignment: .right)
@@ -650,7 +573,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                         leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
                         leftHeaderAttrString.addAttribute(NSFontAttributeName, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
                         leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
-                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, 1), attributedString: leftHeaderAttrString)
+                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, Int.max), attributedString: leftHeaderAttrString)
                         pdf.headerFooterTexts.append(header)
                         
                     }
@@ -662,7 +585,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                         let link = NSMutableAttributedString(string: item.footer!)
                         link.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, link.length))
                         link.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, link.length))
-                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, 1), attributedString: link)
+                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, Int.max), attributedString: link)
                         pdf.headerFooterTexts.append(appLinkFooter)
                     }
                     
@@ -677,6 +600,91 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
+        
+        if recordedTransciption.text == ""{
+            recordedTransciption.text = "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"
+            saveExit.isHidden = true
+            saveExitLabel.isHidden = true
+            saveNext.isHidden = true
+            saveNextLabel.isHidden = true
+        }
+        
+        if recordedTransciption.text != "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"{
+            saveExit.isHidden = false
+            saveExitLabel.isHidden = false
+            saveNext.isHidden = false
+            saveNextLabel.isHidden = false
+        }
     }
+    
+    @IBAction func savePressed(_ sender: UIButton) {
+        
+        let type = "PLAN"
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID as CVarArg, type)
+        fetchRequest.predicate = predicate
+        
+        do {
+            
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count > 0 {
+                
+                let fetchResult = try getContext().fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    item.transcription! =  recordedTransciption.text
+                    try context.save()
+                    saveLine.isHidden = true
+                    transcribeLine.isHidden = true
+                    exitLine.isHidden = true
+                    skipLine.isHidden = true
+                    nextLine.isHidden = false
+                }
+                
+            } else {
+                
+                ///insert into sounds
+                let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+                let context = getContext()
+                
+                let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
+                
+                let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
+                
+                managedObj.setValue(AppointmentID, forKey: "appointmentID")
+                managedObj.setValue("N/A", forKey: "recordingName")
+                managedObj.setValue("N/A", forKey: "recordingURL")
+                managedObj.setValue(recordedTransciption.text, forKey: "transcription")
+                managedObj.setValue("PLAN", forKey: "type")
+                
+                do {
+                    try context.save()
+                    saveLine.isHidden = true
+                    transcribeLine.isHidden = true
+                    exitLine.isHidden = true
+                    skipLine.isHidden = true
+                    nextLine.isHidden = false
+                    
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+            
+            
+        }catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    @IBAction func skipPressed(_ sender: UIButton) {
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "PhotoDictationPlayback") as! PhotoDictationPlayback
+        self.present(nextViewController, animated:true, completion:nil)
+    }
+    
 
 }

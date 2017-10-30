@@ -2,7 +2,7 @@
 //  Patients+CoreDataProperties.swift
 //  Medilexis
 //
-//  Created by iOS Developer on 02/06/2017.
+//  Created by iOS Developer on 07/07/2017.
 //  Copyright © 2017 NX3. All rights reserved.
 //
 
@@ -16,18 +16,13 @@ extension Patients {
         return NSFetchRequest<Patients>(entityName: "Patients");
     }
 
-    @NSManaged public var anotherImage: NSData?
+    @NSManaged public var id: String?
+    @NSManaged public var firstName: String?
+    @NSManaged public var lastName: String?
     @NSManaged public var dateBirth: String?
-    @NSManaged public var dateSchedule: NSDate?
-    @NSManaged public var image: NSData?
-    @NSManaged public var isRecording: Bool
-    @NSManaged public var isTranscribed: Bool
-    @NSManaged public var patientID: String?
-    @NSManaged public var patientName: String?
-    @NSManaged public var recordingStatus: String?
-    @NSManaged public var type: String?
+    @NSManaged public var phone: String?
+    @NSManaged public var email: String?
+    @NSManaged public var address: String?
     @NSManaged public var userID: Int32
-    @NSManaged public var visitType: String?
-    @NSManaged public var isUploading: Bool
 
 }

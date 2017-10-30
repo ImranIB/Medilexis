@@ -13,6 +13,7 @@ class SearchPatientsCell: UITableViewCell {
     
     @IBOutlet weak var patientName: UILabel!
     @IBOutlet weak var patientSchedule: UILabel!
+    @IBOutlet var appointmentTime: UILabel!
     @IBOutlet weak var recordingIcon: UIImageView!
     @IBOutlet weak var transcriptionIcon: UIImageView!
     @IBOutlet weak var cardView: UIView!

@@ -23,8 +23,12 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     @IBOutlet weak var startDate: SkyFloatingLabelTextField!
     @IBOutlet weak var endDate: SkyFloatingLabelTextField!
     @IBOutlet weak var notes: SkyFloatingLabelTextField!
+    @IBOutlet var total: SkyFloatingLabelTextField!
+    
 
     var selectedRX = String()
+    var startSelectedDate: NSDate!
+    var endSelectedDate: NSDate!
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let defaults = UserDefaults.standard
     var doseStrength = ["mg", "mL"]
@@ -86,6 +90,11 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         notes.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         self.view.addSubview(notes)
         
+        total.title = "Total"
+        total.titleFormatter = { $0 }
+        total.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
+        self.view.addSubview(total)
+        
         let pickerView = UIPickerView()
         
         pickerView.delegate = self
@@ -103,7 +112,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         toolBar.backgroundColor = UIColor.black
         
         
-        let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.doneDoseStrengthBtnPressed))
+       // let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.doneDoseStrengthBtnPressed))
         
         let flexSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -121,7 +130,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn = UIBarButtonItem(customView: doseWeight)
         
-        toolBar.setItems([flexSpace,textBtn,flexSpace,doneButton], animated: true)
+        toolBar.setItems([flexSpace,textBtn,flexSpace], animated: true)
         
         weight.inputAccessoryView = toolBar
       
@@ -138,10 +147,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         toolBar1.tintColor = UIColor.white
         
         toolBar1.backgroundColor = UIColor.black
-        
-        
-        let doneButton1 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.doneTimesLength))
-        
+    
         let flexSpace1 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
         let doseWeight1 = UILabel(frame: CGRect(x: 0, y: 10, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
@@ -158,7 +164,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn1 = UIBarButtonItem(customView: doseWeight1)
         
-        toolBar1.setItems([flexSpace1,textBtn1,flexSpace1,doneButton1], animated: true)
+        toolBar1.setItems([flexSpace1,textBtn1,flexSpace1], animated: true)
         
         timesLength.inputAccessoryView = toolBar1
         
@@ -176,9 +182,6 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         toolBar2.backgroundColor = UIColor.black
         
-        
-        let doneButton2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.doneDispense))
-        
         let flexSpace2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
         let doseWeight2 = UILabel(frame: CGRect(x: 0, y: 10, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
@@ -195,7 +198,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn2 = UIBarButtonItem(customView: doseWeight2)
         
-        toolBar2.setItems([flexSpace2,textBtn2,flexSpace2,doneButton2], animated: true)
+        toolBar2.setItems([flexSpace2,textBtn2,flexSpace2], animated: true)
         
         quantity.inputAccessoryView = toolBar2
         
@@ -213,9 +216,6 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         toolBar3.backgroundColor = UIColor.black
         
-        
-        let doneButton3 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.doneRoute))
-        
         let flexSpace3 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
         let doseWeight3 = UILabel(frame: CGRect(x: 0, y: 10, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
@@ -232,7 +232,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn3 = UIBarButtonItem(customView: doseWeight3)
         
-        toolBar3.setItems([flexSpace3,textBtn3, flexSpace3, doneButton3], animated: true)
+        toolBar3.setItems([flexSpace3,textBtn3, flexSpace3], animated: true)
         
         route.inputAccessoryView = toolBar3
         
@@ -251,8 +251,6 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let defaultButton4 = UIBarButtonItem(title: "Today", style: UIBarButtonItemStyle.plain, target: self, action: #selector(RXDetail.startDefaultBtn))
         
-        let doneButton4 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.selectDoneStartButton))
-        
         let flexSpace4 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
         let label4 = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
@@ -269,7 +267,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn4 = UIBarButtonItem(customView: label4)
         
-        toolBar4.setItems([defaultButton4,flexSpace4,textBtn4,flexSpace4,doneButton4], animated: true)
+        toolBar4.setItems([defaultButton4,flexSpace4,textBtn4,flexSpace4], animated: true)
         
         startDate.inputAccessoryView = toolBar4
         
@@ -288,7 +286,6 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let defaultButton5 = UIBarButtonItem(title: "Today", style: UIBarButtonItemStyle.plain, target: self, action: #selector(RXDetail.endDefaultBtn))
         
-        let doneButton5 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.selectDoneEndButton))
         
         let flexSpace5 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -306,7 +303,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn5 = UIBarButtonItem(customView: label5)
         
-        toolBar5.setItems([defaultButton5,flexSpace5,textBtn5,flexSpace5,doneButton5], animated: true)
+        toolBar5.setItems([defaultButton5,flexSpace5,textBtn5,flexSpace5], animated: true)
         
         endDate.inputAccessoryView = toolBar5
 
@@ -360,13 +357,17 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         
         if weight.isEditing{
-        weight.text = doseStrength[row]
+           weight.text = doseStrength[row]
+           let _ = weight.resignFirstResponder()
         } else if timesLength.isEditing{
             timesLength.text = timeDuration[row]
+            let _ = timesLength.resignFirstResponder()
         } else if quantity.isEditing{
             quantity.text = dispense[row]
+          let _ = quantity.resignFirstResponder()
         }else if route.isEditing{
             route.text = routes[row]
+           let _ = route.resignFirstResponder()
         }
     }
     
@@ -389,18 +390,6 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     }
     
     @IBAction func saveNext(_ sender: UIButton) {
-        
-        if dose.text == "" || unit.text == "" || weight.text == "" || times.text == "" || timesLength.text == "" || quantity.text == "" || route.text == "" || startDate.text == "" || endDate.text == "" || notes.text == ""   {
-            
-            let alert = UIAlertController(title: "Notice", message: "Please fill all the fields", preferredStyle: UIAlertControllerStyle.alert)
-            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-            alert.addAction(action)
-            
-            self.present(alert, animated: true, completion: nil);
-            
-            return
-            
-        } else {
             
             let medicineID = defaults.value(forKey: "medicineID") as! String
             
@@ -423,26 +412,19 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
                         item.route = route.text
                         item.startDate = startDate.text
                         item.endDate = endDate.text
+                        item.total = total.text
                         item.notes = notes.text
                         
                     print("Saved Success")
                         
                     try context.save()
                         
-                    let alert = UIAlertController(title: "Success", message: "Detail addedd successfully", preferredStyle: UIAlertControllerStyle.alert)
-                    let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-                    alert.addAction(action)
-                        
-                    self.present(alert, animated: true, completion: nil);
-                        
-                    return
+                    dismiss(animated: true, completion: nil)
                     
                 }
             }catch {
                 print(error.localizedDescription)
             }
-            
-        }
 
     }
 
@@ -525,7 +507,32 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
-        startDate.text = dateFormatter.string(from: sender.date)
+        
+        let date = NSDate()
+        let todayDate = dateWithOutTime(datDate: date)
+        
+        startSelectedDate = dateWithOutTime(datDate: sender.date as NSDate!)
+        
+        switch startSelectedDate.compare(todayDate as Date) {
+        case .orderedAscending     :   print("Date A is earlier than date B")
+        case .orderedDescending    :   print("Date A is later than date B")
+        case .orderedSame          :   print("The two dates are the same")
+        }
+        
+        if startSelectedDate.compare(todayDate as Date) == .orderedAscending {
+            
+            let alert = UIAlertController(title: "Notice", message: "Start date should not be selected before today's date", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+            let _ = startDate.resignFirstResponder()
+            
+        } else {
+            
+            startDate.text = dateFormatter.string(from: sender.date)
+        }
         
     }
     
@@ -551,7 +558,32 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
-        endDate.text = dateFormatter.string(from: sender.date)
+        
+        let date = NSDate()
+        let todayDate = dateWithOutTime(datDate: date)
+        
+        endSelectedDate = dateWithOutTime(datDate: sender.date as NSDate!)
+        
+        switch endSelectedDate.compare(todayDate as Date) {
+        case .orderedAscending     :   print("Date A is earlier than date B")
+        case .orderedDescending    :   print("Date A is later than date B")
+        case .orderedSame          :   print("The two dates are the same")
+        }
+        
+        if endSelectedDate.compare(todayDate as Date) == .orderedAscending {
+            
+            let alert = UIAlertController(title: "Notice", message: "End date should not be selected before today's date", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+            let _ = endDate.resignFirstResponder()
+            
+        } else {
+            
+            endDate.text = dateFormatter.string(from: sender.date)
+        }
         
     }
     
@@ -566,5 +598,11 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         calendar.timeZone = NSTimeZone(forSecondsFromGMT: 0) as TimeZone
         return calendar.startOfDay(for: datDate as Date) as (Date) as NSDate
     }
+    
+    @IBAction func checkDuration(_ sender: UITextField) {
+        
+    
+    }
+    
 
 }

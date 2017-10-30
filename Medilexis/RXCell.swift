@@ -12,7 +12,7 @@ class RXCell: UITableViewCell {
     
     @IBOutlet weak var cardView: UIView!
     @IBOutlet weak var medicineName: UILabel!
-    @IBOutlet var editButton: UIButton!
+    
 
     
     override func awakeFromNib() {

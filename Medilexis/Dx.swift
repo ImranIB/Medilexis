@@ -8,36 +8,25 @@
 
 import UIKit
 import CoreData
+import XLActionController
 import SkyFloatingLabelTextField
 
 class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var dxTableView: UITableView!
-    @IBOutlet weak var descriptionTextField: SkyFloatingLabelTextField!
-    @IBOutlet weak var codeTextField: SkyFloatingLabelTextField!
+    @IBOutlet var saveExitButton: UIButton!
+    @IBOutlet var saveExitLabel: UILabel!
+
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let defaults = UserDefaults.standard
     var DXCodes = [DiagnosticList]()
-    var dxDescription = ["Infectious and parasitic diseases", "Neoplasms", "Mental disorders", "Diseases of the nervous system", "Congenital anomalies", "Injury and poisoning"]
-    var dxCode = ["001-139", "140-239", "290-319", "320-359", "740-759", "800-999"]
+    var dxDescription = ["Infectious and parasitic diseases", "Neoplasms", "Mental disorders", "Diseases of the nervous system", "Diseases of the sense organs", "Diseases of the circulatory system", "Diseases of the respiratory system" , "Congenital anomalies", "Symptoms, signs, and ill-defined conditions",  "Injury and poisoning"]
+    var dxCode = ["001-139", "140-239", "290-319", "320-359", "360-389", "390-459", "460-519","740-759", "780-799", "800-999"]
     var dxIsSelected = Array(repeating: false, count: 1000)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        //self.view.backgroundColor =  UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
-       // self.dxTableView.backgroundColor = UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
-        
-        descriptionTextField.title = "Description"
-        descriptionTextField.titleFormatter = { $0 }
-        descriptionTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        self.view.addSubview(descriptionTextField)
-        
-        codeTextField.title = "Code"
-        codeTextField.titleFormatter = { $0 }
-        codeTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        self.view.addSubview(codeTextField)
         
         let DxCodesGenerated = "DxCodesGenerated"
         let codesValue = defaults.bool(forKey: DxCodesGenerated)
@@ -71,6 +60,9 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 
             }
         }
+        
+        saveExitButton.isEnabled = false
+        saveExitLabel.isEnabled = false
     }
 
     override func didReceiveMemoryWarning() {
@@ -103,13 +95,16 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
         if self.dxIsSelected[indexPath.row] == false {
 
+            saveExitButton.isEnabled = true
+            saveExitLabel.isEnabled = true
+            
             // Toggle check-in and undo-check-in
             self.dxIsSelected[indexPath.row] = self.dxIsSelected[indexPath.row] ? false : true
             cell?.accessoryType = self.dxIsSelected[indexPath.row] ? .checkmark : .none
             cell?.tintColor = UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0)
             
             let userID = defaults.value(forKey: "UserID") as! Int32
-            let patientID = defaults.value(forKey: "PatientID")
+            let AppointmentID = defaults.value(forKey: "AppointmentID")
             
             let context = getContext()
             
@@ -119,7 +114,7 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
             
             managedObj.setValue(detail.codeID!, forKey: "diagnosticID")
             managedObj.setValue(userID, forKey: "userID")
-            managedObj.setValue(patientID, forKey: "patientID")
+            managedObj.setValue(AppointmentID, forKey: "appointmentID")
             managedObj.setValue(detail.name, forKey: "discription")
             managedObj.setValue(detail.code!, forKey: "code")
             managedObj.setValue("DX", forKey: "type")
@@ -137,9 +132,11 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
        
             // Toggle check-in and undo-check-in
             self.dxIsSelected[indexPath.row] = self.dxIsSelected[indexPath.row] ? false : true
+            cell?.accessoryType = self.dxIsSelected[indexPath.row] ? .checkmark : .none
+            cell?.tintColor = UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0)
             
             let fetchRequest: NSFetchRequest<Diagnostics> = Diagnostics.fetchRequest()
-            let predicate = NSPredicate(format: "(diagnosticID = %@)", detail.codeID!)
+            let predicate = NSPredicate(format: "(diagnosticID = %@) AND (type = %@)", detail.codeID!, "DX")
             fetchRequest.predicate = predicate
             
             do {
@@ -151,51 +148,14 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
                     
                     try context.save()
                     
+                    checkDX()
+                    
                 }
             }catch {
                 print(error.localizedDescription)
             }
         }
         
-    }
-    
-    @IBAction func addDX(_ sender: UIButton) {
-        
-        if descriptionTextField.text == "" || codeTextField.text == "" {
-            
-            let alert = UIAlertController(title: "Notice", message: "Please fill all the fields", preferredStyle: UIAlertControllerStyle.alert)
-            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-            alert.addAction(action)
-            
-            self.present(alert, animated: true, completion: nil);
-            
-        } else {
-            
-            let codesId = NSUUID().uuidString.lowercased() as String
-            
-            let context = getContext()
-            
-            let entity = NSEntityDescription.entity(forEntityName: "DiagnosticList", in: context)
-            
-            let managedObj = NSManagedObject(entity: entity!, insertInto: context)
-            
-            managedObj.setValue(descriptionTextField.text, forKey: "name")
-            managedObj.setValue(codeTextField.text, forKey: "code")
-            managedObj.setValue(codesId, forKey: "codeID")
-            managedObj.setValue("DX", forKey: "type")
-            
-            do {
-                try context.save()
-                
-                descriptionTextField.text = ""
-                codeTextField.text = ""
-                getDXCodes()
-                dxTableView.reloadData()
-                
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
     }
     
     
@@ -233,6 +193,9 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         dxTableView.reloadData()
         getDXCodes()
+        
+        saveExitButton.isEnabled = false
+        saveExitButton.isEnabled = false
     }
 
     func getContext () -> NSManagedObjectContext {
@@ -240,5 +203,140 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         return appDelegate.persistentContainer.viewContext
     }
-
+    
+    @IBAction func addDX(_ sender: UIButton) {
+        
+        let alertController = UIAlertController(title: "Add New DX", message: "", preferredStyle: .alert)
+        
+        let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
+            alert -> Void in
+            
+            let descriptionTextField = alertController.textFields![0] as UITextField
+            let codeTextField = alertController.textFields![1] as UITextField
+            
+            if descriptionTextField.text == "" || codeTextField.text == "" {
+                
+                let alert = UIAlertController(title: "Notice", message: "Please fill all the fields", preferredStyle: UIAlertControllerStyle.alert)
+                let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                alert.addAction(action)
+                
+                self.present(alert, animated: true, completion: nil);
+                
+            } else {
+                
+                let description = descriptionTextField.text?.capitalized
+                let codesId = NSUUID().uuidString.lowercased() as String
+                
+                let context = self.getContext()
+                
+                let entity = NSEntityDescription.entity(forEntityName: "DiagnosticList", in: context)
+                
+                let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+                
+                managedObj.setValue(description, forKey: "name")
+                managedObj.setValue(codeTextField.text, forKey: "code")
+                managedObj.setValue(codesId, forKey: "codeID")
+                managedObj.setValue("DX", forKey: "type")
+                
+                do {
+                    try context.save()
+                    
+                    descriptionTextField.text = ""
+                    codeTextField.text = ""
+                    self.getDXCodes()
+                    self.dxTableView.reloadData()
+                    
+                } catch {
+                    print(error.localizedDescription)
+                }
+                
+            }
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: {
+            (action : UIAlertAction!) -> Void in
+            
+        })
+        
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Description"
+        }
+        
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Code"
+        }
+        
+        alertController.addAction(saveAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    @IBAction func saveExit(_ sender: UIButton) {
+        
+        if defaults.value(forKey: "qaTranscription") != nil{
+            let switchON: Bool = defaults.value(forKey: "qaTranscription")  as! Bool
+           
+            if switchON == true{
+               
+                let alert = UIAlertController(title: "Completed", message: "Encounter completed.Do you want this encounter to be Transcribed?", preferredStyle: UIAlertControllerStyle.alert)
+                let yes = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: done)
+                let no = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: noTranscribe)
+                alert.addAction(yes)
+                alert.addAction(no)
+                self.present(alert, animated: true, completion: nil);
+                
+            }
+            else if switchON == false{
+              
+                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+                self.present(nextViewController, animated:true, completion:nil)
+                
+            }
+        }
+        
+     
+    }
+    
+    func done(alert: UIAlertAction){
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+        
+    }
+    
+    func noTranscribe(alert: UIAlertAction){
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+        
+    }
+    
+    func checkDX(){
+        
+        let AppointmentID = defaults.value(forKey: "AppointmentID")
+        let fetchRequest: NSFetchRequest<Diagnostics> = Diagnostics.fetchRequest()
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID! as! CVarArg, "DX")
+        fetchRequest.predicate = predicate
+        
+        do {
+            let count = try self.getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count == 0 {
+           
+                self.saveExitButton.isEnabled = false
+                self.saveExitLabel.isEnabled = false
+            }
+            
+        }catch {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
+    
+    
 }

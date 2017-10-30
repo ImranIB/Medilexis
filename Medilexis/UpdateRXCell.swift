@@ -18,7 +18,7 @@ class UpdateRXCell: UITableViewCell {
         super.awakeFromNib()
         // Initialization code
         
-        updateUI()
+        self.updateUI()
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -26,7 +26,7 @@ class UpdateRXCell: UITableViewCell {
 
         // Configure the view for the selected state
     }
-
+    
     func updateUI(){
         
         cardView.backgroundColor = UIColor.white

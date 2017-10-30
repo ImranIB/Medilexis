@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import SwiftSpinner
 import XLActionController
 
 class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
@@ -21,6 +22,7 @@ class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate,
     let picker = UIImagePickerController()
     var lastPoint = CGPoint.zero
     var swiped = false
+    var timer: Timer!
     
     var red:CGFloat = 0.0
     var green:CGFloat = 0.0
@@ -36,9 +38,9 @@ class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate,
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let patientid = defaults.value(forKey: "PatientID") as! String
-        let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@)", patientid)
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+        let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
+        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
         fetchRequest.predicate = predicate
         
         do {
@@ -52,7 +54,7 @@ class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate,
                     
                     if item.image != nil {
                         
-                        let newImage = UIImage(data: item.image as! Data)!
+                        let newImage = UIImage(data: item.image! as Data)!
                         imageView.image = newImage
                         photoLabel.isHidden = true
                     } else {
@@ -88,10 +90,14 @@ class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate,
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
-        swiped = false
-        if let touch = touches.first {
-            lastPoint = touch.location(in: self.view)
+        if self.imageView.image != nil{
+            
+            swiped = false
+            if let touch = touches.first {
+                lastPoint = touch.location(in: self.view)
+            }
         }
+
     }
     
     func drawLines(fromPoint:CGPoint,toPoint:CGPoint) {
@@ -115,20 +121,30 @@ class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate,
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        swiped = true
         
-        if let touch = touches.first {
-            let currentPoint = touch.location(in: self.view)
-            drawLines(fromPoint: lastPoint, toPoint: currentPoint)
+        if self.imageView.image != nil{
             
-            lastPoint = currentPoint
+            swiped = true
+            
+            if let touch = touches.first {
+                let currentPoint = touch.location(in: self.view)
+                drawLines(fromPoint: lastPoint, toPoint: currentPoint)
+                
+                lastPoint = currentPoint
+            }
         }
+
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        if !swiped {
-            drawLines(fromPoint: lastPoint, toPoint: lastPoint)
+        
+        if self.imageView.image != nil{
+            
+            if !swiped {
+                drawLines(fromPoint: lastPoint, toPoint: lastPoint)
+            }
         }
+
     }
     
     func imageTapped(gesture: UIGestureRecognizer) {
@@ -191,6 +207,7 @@ class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate,
     {
         selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage
         imageView.image = selectedImage
+        photoLabel.isHidden = true
         dismiss(animated: true, completion: nil)//5
     }
     
@@ -209,44 +226,9 @@ class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate,
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func reset(_ sender: UIButton) {
-        
-        let patientid = defaults.value(forKey: "PatientID") as! String
-        let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@)", patientid)
-        fetchRequest.predicate = predicate
-        
-        do {
-            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
-            
-            if count > 0 {
-                
-                let fetchResult = try getContext().fetch(fetchRequest)
-                
-                for item in fetchResult {
-                    
-                    if item.image != nil {
-                        
-                        let newImage = UIImage(data: item.image as! Data)!
-                        imageView.image = newImage
-                        photoLabel.isHidden = true
-                    } else {
-                        photoLabel.isHidden = false
-                    }
-                    
-                }
-            } else {
-                
-            }
-            
-        }catch {
-            print(error.localizedDescription)
-        }
-    }
-    
     @IBAction func save(_ sender: UIButton) {
         
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         let actionController = YoutubeActionController()
         
         actionController.addAction(Action(ActionData(title: "Save and Next", image: UIImage(named: "saveNext")!), style: .default, handler: { action in
@@ -260,9 +242,9 @@ class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate,
             } else {
                 
                 ///update into patients
-                let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
+                let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
                 
-                let predicate = NSPredicate(format: "(patientID = %@)", patientid)
+                let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
                 fetchRequest.predicate = predicate
                 
                 do {
@@ -301,9 +283,9 @@ class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate,
             } else {
                 
                 ///update into patients
-                let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
+                let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
                 
-                let predicate = NSPredicate(format: "(patientID = %@)", patientid)
+                let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
                 fetchRequest.predicate = predicate
                 
                 do {
@@ -330,12 +312,62 @@ class PhotoDictationPlayback: UIViewController, UIImagePickerControllerDelegate,
             
         }))
         
+        actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "AnotherPhotoPlayback") as! AnotherPhotoPlayback
+            self.present(nextViewController, animated:true, completion:nil)
+            
+        }))
+
+        
         actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
         }))
         
         present(actionController, animated: true, completion: nil)
         
+    }
+    
+    @IBAction func backPressed(_ sender: UIBarButtonItem) {
+        
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func navigateToHome(_ sender: UIBarButtonItem) {
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+
+
+        SwiftSpinner.show("Proceeding to next screen")
+        
+        if defaults.value(forKey: "photos") != nil{
+            let switchON: Bool = defaults.value(forKey: "photos")  as! Bool
+       
+            if switchON == false{
+                
+            timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector:  #selector(AnotherPhotoPlayback.methodToBeCalled), userInfo: nil, repeats: true)
+        
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "AnotherPhotoPlayback") as! AnotherPhotoPlayback
+            self.present(nextViewController, animated:true, completion:nil)
+                
+            }  else {
+                SwiftSpinner.hide()
+            }
+            
+        }
         
     }
+    
+    func methodToBeCalled(){
+        
+        SwiftSpinner.hide()
+    }
+
 
 }

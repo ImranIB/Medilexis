@@ -9,36 +9,43 @@
 import UIKit
 import SkyFloatingLabelTextField
 import CoreData
+import SwiftSpinner
+import XLActionController
 
-class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate , UISearchResultsUpdating{
 
-    @IBOutlet weak var medicineTextField: SkyFloatingLabelTextFieldWithIcon!
+    @IBOutlet var addRxButton: UIBarButtonItem!
     @IBOutlet weak var updateRXTableView: UITableView!
     @IBOutlet weak var noMedicineLabel: UILabel!
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let defaults = UserDefaults.standard
     var medicines = [Medicines]()
+    var searchController: UISearchController!
+    var searchResults:[Medicines] = []
+    var timer: Timer!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.view.backgroundColor =  UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
         self.updateRXTableView.backgroundColor = UIColor(red: 240/255.0, green: 240/255.0, blue: 240/255.0, alpha: 1.0)
         
-        medicineTextField.iconFont = UIFont(name: "FontAwesome", size: 12)
-        medicineTextField.iconText = "\u{f0fa}"
-        medicineTextField.iconColor = UIColor.lightGray
-        medicineTextField.title = "Medicine Name"
-        medicineTextField.titleFormatter = { $0 }
-        medicineTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        medicineTextField.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
-        medicineTextField.iconMarginLeft = 2.0
-        self.view.addSubview(medicineTextField)
+        // Add a search bar
+        searchController = UISearchController(searchResultsController: nil)
+        updateRXTableView.tableHeaderView = searchController.searchBar
+        searchController.searchResultsUpdater = self
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search Medications"
+        searchController.searchBar.backgroundImage = UIImage()
+        searchController.searchBar.barTintColor = UIColor(red: 236.0/255.0, green: 236.0/255.0, blue: 236.0/255.0, alpha: 1.0)
+        UISearchBar.appearance().tintColor = UIColor.black
+        definesPresentationContext = true
         
         self.updateRXTableView.reloadData()
         
         getMedicines()
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -48,14 +55,17 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return medicines.count
-        
+        if searchController.isActive {
+            return searchResults.count
+        } else {
+            return medicines.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UpdateRX") as! UpdateRXCell
-        
-        let medicine = medicines[indexPath.row]
+        let medicine = (searchController.isActive) ? searchResults[indexPath.row] : medicines[indexPath.row]
+        //let medicine = medicines[indexPath.row]
         cell.medicineName?.text = medicine.medicineName
         return cell
     }
@@ -74,12 +84,12 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate {
     func getMedicines(){
         
         let uid = defaults.value(forKey: "UserID")
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID")
         
         medicines.removeAll()
         
         let fetchRequest:NSFetchRequest<Medicines> = Medicines.fetchRequest()
-        let predicate = NSPredicate(format: "(userID = %@) AND (patientID = %@)", uid as! CVarArg, patientid)
+        let predicate = NSPredicate(format: "(userID = %@) AND (appointmentID = %@)", uid as! CVarArg, AppointmentID as! CVarArg)
         fetchRequest.predicate = predicate
         
         do {
@@ -92,7 +102,6 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 
                 for item in fetchResult {
                     
-                    //print(item.patientID! + " " + item.medicineName!)
                     medicines.append(item)
                     updateRXTableView.reloadData()
                     checkMedicines()
@@ -106,50 +115,6 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate {
         }catch {
             print(error.localizedDescription)
         }
-    }
-    
-    @IBAction func addMedicine(_ sender: UIButton) {
-        
-        if medicineTextField.text == "" {
-            
-            let alert = UIAlertController(title: "Notice", message: "Add Medicine name", preferredStyle: UIAlertControllerStyle.alert)
-            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-            alert.addAction(action)
-            
-            self.present(alert, animated: true, completion: nil);
-            
-        } else {
-            
-            let medicineId = NSUUID().uuidString.lowercased() as String
-            let patientid = defaults.value(forKey: "PatientID") as! String
-            let userID = defaults.value(forKey: "UserID") as! Int32
-            
-            let context = getContext()
-            
-            let entity = NSEntityDescription.entity(forEntityName: "Medicines", in: context)
-            
-            let managedObj = NSManagedObject(entity: entity!, insertInto: context)
-            
-            managedObj.setValue(medicineId, forKey: "medicineID")
-            managedObj.setValue(medicineTextField.text, forKey: "medicineName")
-            managedObj.setValue(patientid, forKey: "patientID")
-            managedObj.setValue(userID, forKey: "userID")
-            
-            do {
-                try context.save()
-                
-                medicineTextField.text = ""
-                getMedicines()
-                updateRXTableView.reloadData()
-                checkMedicines()
-                
-                
-            } catch {
-                print(error.localizedDescription)
-            }
-            
-        }
-        
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -185,13 +150,42 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
         self.updateRXTableView.reloadData()
         getMedicines()
+        
     }
     
     @IBAction func navigateToHome(_ sender: UIBarButtonItem) {
         
-        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-        self.present(nextViewController, animated:true, completion:nil)
+        let actionController = YoutubeActionController()
+        
+        actionController.addAction(Action(ActionData(title: "Home", image: UIImage(named: "home-icon")!), style: .default, handler: { action in
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+            self.present(nextViewController, animated:true, completion:nil)
+            
+        }))
+        
+        actionController.addAction(Action(ActionData(title: "Medications List", image: UIImage(named: "list")!), style: .default, handler: { action in
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "RxList") as! FetchRxList
+            self.present(nextViewController, animated:true, completion:nil)
+            
+        }))
+        
+        actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Updatecodes") as! UpdateCodes
+            self.present(nextViewController, animated:true, completion:nil)
+            
+        }))
+        
+        actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
+        }))
+        
+        present(actionController, animated: true, completion: nil)
+       
     }
     
     @IBAction func dismissUpdateRX(_ sender: UIBarButtonItem) {
@@ -199,5 +193,130 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate {
         dismiss(animated: true, completion: nil)
     }
     
-
+    // MARK: - Search Controller
+    
+    func filterContent(for searchText: String) {
+        searchResults = medicines.filter({ (medicine) -> Bool in
+            if let name = medicine.medicineName{
+                let isMatch = name.localizedCaseInsensitiveContains(searchText)
+                return isMatch
+            }
+            
+            return false
+        })
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        if let searchText = searchController.searchBar.text {
+            filterContent(for: searchText)
+            updateRXTableView.reloadData()
+        }
+    }
+    
+    @IBAction func addMedication(_ sender: UIButton) {
+        
+        let alertController = UIAlertController(title: "Enter Medication Name", message: "", preferredStyle: .alert)
+        
+        let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
+            alert -> Void in
+            
+            let medicineTextField = alertController.textFields![0] as UITextField
+            
+            
+            if medicineTextField.text == "" {
+                
+                let alert = UIAlertController(title: "Notice", message: "Please fill the field", preferredStyle: UIAlertControllerStyle.alert)
+                let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                alert.addAction(action)
+                
+                self.present(alert, animated: true, completion: nil);
+                
+            } else {
+                
+                let medicine = medicineTextField.text?.capitalized
+                let medicineId = NSUUID().uuidString.lowercased() as String
+                let AppointmentID = self.defaults.value(forKey: "AppointmentID") as! String
+                let userID = self.defaults.value(forKey: "UserID") as! Int32
+                
+                let context = self.getContext()
+                
+                let entity = NSEntityDescription.entity(forEntityName: "Medicines", in: context)
+                
+                let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+                
+                managedObj.setValue(medicineId, forKey: "medicineID")
+                managedObj.setValue(medicine, forKey: "medicineName")
+                managedObj.setValue(AppointmentID, forKey: "appointmentID")
+                managedObj.setValue(userID, forKey: "userID")
+                
+                do {
+                    try context.save()
+                    
+                    medicineTextField.text = ""
+                    self.getMedicines()
+                    self.updateRXTableView.reloadData()
+                    self.checkMedicines()
+                    
+                    
+                } catch {
+                    print(error.localizedDescription)
+                }
+                
+            }
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: {
+            (action : UIAlertAction!) -> Void in
+            
+        })
+        
+        alertController.addTextField { (textField : UITextField!) -> Void in
+            textField.placeholder = "Medication Name"
+        }
+        
+        alertController.addAction(saveAction)
+        alertController.addAction(cancelAction)
+        
+        self.present(alertController, animated: true, completion: nil)
+        
+    }
+    
+    @IBAction func saveNext(_ sender: UIButton) {
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Updatecodes") as! UpdateCodes
+        self.present(nextViewController, animated:true, completion:nil)
+        
+    }
+    
+    @IBAction func saveExit(_ sender: UIButton) {
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+       /* SwiftSpinner.show("Proceeding to next screen")
+        
+        if defaults.value(forKey: "rx") != nil{
+            let switchON: Bool = defaults.value(forKey: "rx")  as! Bool
+            if switchON == false{
+                
+                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Updatecodes") as! UpdateCodes
+                self.present(nextViewController, animated:true, completion:nil)
+                
+                    timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector:  #selector(UpdateRX.UpdateRXLoaderHide), userInfo: nil, repeats: true)
+            } else {
+                SwiftSpinner.hide()
+            }
+        }*/
+    }
+    
+    func UpdateRXLoaderHide(){
+        
+        SwiftSpinner.hide()
+    }
 }

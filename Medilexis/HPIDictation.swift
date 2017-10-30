@@ -26,8 +26,17 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
     @IBOutlet weak var saveExitLabel: UILabel!
     @IBOutlet weak var saveNext: UIButton!
     @IBOutlet weak var saveNextLabel: UILabel!
+    @IBOutlet var skipButton: UIButton!
+    @IBOutlet var skipLabel: UILabel!
     @IBOutlet weak var hpiActivityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var progressView: UISlider!
+    @IBOutlet weak var saveButton: UIButton!
+    @IBOutlet weak var saveLabel: UILabel!
+    @IBOutlet weak var transcribeLine: UIView!
+    @IBOutlet weak var saveLine: UIView!
+    @IBOutlet weak var nextLine: UIView!
+    @IBOutlet weak var slipLine: UIView!
+    @IBOutlet weak var exitLine: UIView!
     
     
     let defaults = UserDefaults.standard
@@ -37,12 +46,15 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
     var soundFileName: String!
     var meterTimer:Timer!
     var timer: Timer?
+    var audioTimer: Timer?
     var recording: String!
     var elapsedTimeInSecond: Int = 0
+    var fileHPIStored = ""
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         stop.isEnabled = false
         play.isEnabled = false
         transcribe.isHidden = true
@@ -51,6 +63,12 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
         transcribeLabel.isHidden = true
         saveExitLabel.isHidden = true
         saveNextLabel.isHidden = true
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
+        transcribeLine.isHidden = true
+        saveLine.isHidden = true
+        nextLine.isHidden = true
+        exitLine.isHidden = true
         hpiActivityIndicator.isHidden = true
         transcribeText.layer.cornerRadius = 10
         progressView.isEnabled = false
@@ -66,7 +84,7 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
         toolBar.setItems([flexibleSpace, doneButton], animated: false)
         transcribeText.inputAccessoryView = toolBar
         
-         defaults.set("false", forKey: "HPIRecording")
+        defaults.set("false", forKey: "HPIRecording")
     }
     
     func doneClicked(){
@@ -74,18 +92,30 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
         self.view.endEditing(true)
         
         if transcribeText.text == ""{
-            transcribeText.text = "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."
+            transcribeText.text = "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"
         }
         
-        if transcribeText.text != "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."{
+        if transcribeText.text != "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"{
+            
             saveExit.isHidden = false
             saveExitLabel.isHidden = false
+            exitLine.isHidden = true
             saveNext.isHidden = false
             saveNextLabel.isHidden = false
+            nextLine.isHidden = true
+            saveButton.isHidden = false
+            saveLabel.isHidden = false
+            saveLine.isHidden = false
+            skipButton.isHidden = true
+            skipLabel.isHidden = true
+            slipLine.isHidden = true
+            transcribeLine.isHidden = true
+            
+            fileHPIStored = "false"
         }
         
     }
-
+    
     func getContext () -> NSManagedObjectContext {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -106,36 +136,34 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
             let s = String(format: "%02d:%02d", min, sec)
             statusLabel.text = s
             recorder.updateMeters()
-
+            
         }
         
     }
     
     @IBAction func recordPauseBtn(_ sender: UIButton) {
         
-        let hpiStatus = defaults.value(forKey: "HPIRecording") as! String
+        let status = defaults.value(forKey: "HPIRecording") as! String
         
-        if hpiStatus == "false"{
-            
+        if status == "false"{
             if player != nil && player.isPlaying {
                 player.stop()
             }
             
             if recorder == nil {
-                print("recording. recorder nil")
                 recordPause.setImage(UIImage(named: "pause-btn"), for: UIControlState.normal)
                 play.isEnabled = false
                 stop.isEnabled = true
                 progressView.isEnabled = false
                 recordWithPermission(true)
                 startTimer()
-                
+                defaults.set("false", forKey: "HPIRecording")
+                audioTimer =  Timer.scheduledTimer(timeInterval: 180.0, target: self, selector: #selector(stopRecording), userInfo: nil, repeats: false)
                 
                 return
             }
             
             if recorder != nil && recorder.isRecording {
-                print("pausing")
                 pauseTimer()
                 recorder.pause()
                 recordPause.setImage(UIImage(named: "rec-btn"), for: UIControlState.normal)
@@ -143,16 +171,13 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
             } else {
                 
                 startTimer()
-                print("on else")
                 recordPause.setImage(UIImage(named: "pause-btn"), for: UIControlState.normal)
                 play.isEnabled = false
                 stop.isEnabled = true
-                transcribe.isEnabled = false
                 recordWithPermission(false)
                 
                 
             }
-            
         } else {
             
             let alert = UIAlertController(title: "Overwrite Dictation", message: "Are you sure you want to overwrite your existing dictation?", preferredStyle: UIAlertControllerStyle.alert)
@@ -163,6 +188,7 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
             
             self.present(alert, animated: true, completion: nil);
         }
+        
         
     }
     
@@ -182,12 +208,21 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
             transcribeLabel.isHidden = true
             saveExitLabel.isHidden = true
             saveNextLabel.isHidden = true
+            saveButton.isHidden = true
+            saveLabel.isHidden = true
+            transcribeLine.isHidden = true
+            saveLine.isHidden = true
+            nextLine.isHidden = true
+            exitLine.isHidden = true
+            skipButton.isHidden = false
+            skipLabel.isHidden = false
+            slipLine.isHidden = false
             play.isEnabled = false
             stop.isEnabled = true
             progressView.isEnabled = false
             recordWithPermission(true)
             startTimer()
-            
+            audioTimer =  Timer.scheduledTimer(timeInterval: 180.0, target: self, selector: #selector(stopRecording), userInfo: nil, repeats: false)
             
             return
         }
@@ -212,6 +247,46 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
     func dismiss(alert: UIAlertAction){
     }
     
+    func stopRecording(){
+        
+        recorder?.stop()
+        player?.stop()
+        resetTimer()
+        
+        recordPause.setImage(UIImage(named: "rec-btn"), for: UIControlState.normal)
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setActive(false)
+            stop.isEnabled = false
+            play.isEnabled = true
+            transcribe.isHidden = false
+            transcribeLabel.isHidden = false
+            recordPause.isEnabled = true
+            saveExit.isHidden = false
+            saveExitLabel.isHidden = false
+            saveNext.isHidden = false
+            saveNextLabel.isHidden = false
+            saveButton.isHidden = false
+            saveLabel.isHidden = false
+            skipButton.isHidden = true
+            skipLabel.isHidden = true
+            slipLine.isHidden  = true
+            transcribeLine.isHidden = false
+            nextLine.isHidden = true
+            saveLine.isHidden = true
+            exitLine.isHidden = true
+            progressView.isEnabled = true
+            progressView.isEnabled = true
+            progressView.value = 0
+            fileHPIStored = "false"
+            defaults.set("true", forKey: "HPIRecording")
+            
+        } catch let error as NSError {
+            print("could not make session inactive")
+            print(error.localizedDescription)
+        }
+    }
+    
     @IBAction func stop(_ sender: UIButton) {
         
         recorder?.stop()
@@ -231,9 +306,20 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
             saveExit.isHidden = false
             saveNextLabel.isHidden = false
             saveExitLabel.isHidden = false
+            saveButton.isHidden = false
+            saveLabel.isHidden = false
+            skipButton.isHidden = true
+            skipLabel.isHidden = true
+            slipLine.isHidden  = true
+            transcribeLine.isHidden = false
+            nextLine.isHidden = true
+            exitLine.isHidden = true
+            saveLine.isHidden = true
             progressView.isEnabled = true
             progressView.value = 0
+            fileHPIStored = "false"
             defaults.set("true", forKey: "HPIRecording")
+            
         } catch let error as NSError {
             print("could not make session inactive")
             print(error.localizedDescription)
@@ -366,15 +452,11 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
         if (session.responds(to: #selector(AVAudioSession.requestRecordPermission(_:)))) {
             AVAudioSession.sharedInstance().requestRecordPermission({(granted: Bool)-> Void in
                 if granted {
-                    //print("Permission to record granted")
+                    // print("Permission to record granted")
                     self.setSessionPlayAndRecord()
-                    //self.meterTimer = Timer.scheduledTimer(timeInterval: 0.1,
-                    //target:self,
-                    // selector:#selector(DictationVC.updateAudioMeter(_:)),
-                    // userInfo:nil,
-                    //repeats:true)
+                    
                     if setup {
-                       // print("setup")
+                        //print("setup")
                         self.setupRecorder()
                     }
                     
@@ -425,7 +507,7 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
     
     @IBAction func transcribe(_ sender: UIButton) {
         
-         if currentReachabilityStatus == .reachableViaWiFi ||  currentReachabilityStatus == .reachableViaWWAN {
+        if currentReachabilityStatus == .reachableViaWiFi ||  currentReachabilityStatus == .reachableViaWWAN {
             
             hpiActivityIndicator.isHidden = false
             hpiActivityIndicator.startAnimating()
@@ -442,7 +524,7 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
                             print(error)
                             
                             DispatchQueue.main.async {
-                            
+                                
                                 let alert = UIAlertController(title: "Voice not recognized", message: "Unable to recognize voice", preferredStyle: UIAlertControllerStyle.alert)
                                 let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
                                 alert.addAction(action)
@@ -451,22 +533,48 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
                                 
                                 self.hpiActivityIndicator.stopAnimating()
                                 self.hpiActivityIndicator.isHidden = true
+                                self.saveLine.isHidden = false
+                                self.transcribeLine.isHidden = true
+                                self.nextLine.isHidden = true
+                                self.exitLine.isHidden = true
+                                self.slipLine.isHidden = true
                             }
                             
                             
                         } else {
+                            
                             self.transcribeText.text = ""
                             self.transcribeText.text = result?.bestTranscription.formattedString
-                            
                             self.hpiActivityIndicator.stopAnimating()
                             self.hpiActivityIndicator.isHidden = true
+                            self.saveLine.isHidden = false
+                            self.transcribeLine.isHidden = true
+                            self.nextLine.isHidden = true
+                            self.exitLine.isHidden = true
+                            self.slipLine.isHidden = true
                             
                         }
                     }
+                    
+                } else {
+                    
+                    DispatchQueue.main.async {
+                        
+                        let alert = UIAlertController(title: "No permission", message: "Allow permission to convert recorded audio file into text. Kindly enable permission from device settings app.", preferredStyle: UIAlertControllerStyle.alert)
+                        let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                        alert.addAction(action)
+                        
+                        self.present(alert, animated: true, completion: nil);
+                        
+                        self.hpiActivityIndicator.stopAnimating()
+                        self.hpiActivityIndicator.isHidden = true
+                        
+                    }
                 }
+                
             }
             
-         } else {
+        } else {
             
             DispatchQueue.main.async {
                 
@@ -477,170 +585,64 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
                 self.present(alert, animated: true, completion: nil);
             }
         }
-   
+        
     }
     
     @IBAction func HPINext(_ sender: UIButton) {
-      
-        if audioFileURL == nil {
-            ///insert into sounds
+        
+        if fileHPIStored == "false" {
             
-            let patientid = defaults.value(forKey: "PatientID") as! String
-            
-            let context = getContext()
-            
-            let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
-            
-            let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
-            
-            managedObj.setValue(patientid, forKey: "patientID")
-            managedObj.setValue("N/A", forKey: "recordingName")
-            managedObj.setValue("N/A", forKey: "recordingURL")
-            managedObj.setValue(transcribeText.text, forKey: "transcription")
-            managedObj.setValue("HPI", forKey: "type")
-            
-            do {
-                try context.save()
-                print("saved!")
-                
-            } catch {
-                print(error.localizedDescription)
-            }
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: yes)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
             
             
-            ///update into patients
-            let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
-            
-            let predicate = NSPredicate(format: "(patientID = %@)", patientid)
-            fetchRequest.predicate = predicate
-            
-            do {
-                let fetchResult = try context.fetch(fetchRequest)
-                
-                for item in fetchResult {
-                    
-                    print(item.isTranscribed)
-                    print(item.recordingStatus!)
-                    
-                    if item.isTranscribed != true {
-                        
-                        if transcribeText.text == "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text." {
-                            item.isTranscribed = false
-                        } else {
-                            item.isTranscribed = true
-                        }
-                        
-                        
-                        try context.save()
-                    }
-                    
-                    if item.recordingStatus == "true" {
-                        
-                        self.tabBarController?.selectedIndex = 2
-                        
-                    } else {
-                        
-                        item.type = "Chart"
-                        item.isRecording = true
-                        item.recordingStatus = "N/A"
-                        
-                        
-                        try context.save()
-                        transcribeText.resignFirstResponder()
-                        saveNext.isEnabled = false
-                        saveExit.isEnabled = false
-                        
-                        self.tabBarController?.selectedIndex = 2
-                    }
-                    
-                }
-            }catch {
-                print(error.localizedDescription)
-            }
+            self.present(alert, animated: true, completion: nil);
             
         } else {
             
-            ///insert into sounds
-            let urlString: String = audioFileURL.absoluteString
-            let patientid = defaults.value(forKey: "PatientID") as! String
-            let context = getContext()
+            self.tabBarController?.selectedIndex = 2
             
-            let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
-            
-            let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
-            
-            managedObj.setValue(patientid, forKey: "patientID")
-            managedObj.setValue(recording, forKey: "recordingName")
-            managedObj.setValue(urlString, forKey: "recordingURL")
-            managedObj.setValue(transcribeText.text, forKey: "transcription")
-            managedObj.setValue("HPI", forKey: "type")
-            
-            do {
-                try context.save()
-                print("saved!")
-                
-            } catch {
-                print(error.localizedDescription)
-            }
-            
-            
-            ///update into patients
-            let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
-            
-            let predicate = NSPredicate(format: "(patientID = %@)", patientid)
-            fetchRequest.predicate = predicate
-            
-            do {
-                let fetchResult = try context.fetch(fetchRequest)
-                
-                for item in fetchResult {
-                    
-                    print(item.isTranscribed)
-                    print(item.recordingStatus!)
-                    
-                    if item.isTranscribed != true {
-                        
-                        if transcribeText.text == "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text." {
-                            item.isTranscribed = false
-                        } else {
-                            item.isTranscribed = true
-                        }
-                        
-                        
-                        try context.save()
-                    }
-                    
-                    if item.recordingStatus == "true" {
-                        
-                        self.tabBarController?.selectedIndex = 2
-                        
-                    } else {
-                        
-                        item.type = "Chart"
-                        item.isRecording = true
-                        item.recordingStatus = "true"
-                        
-                        
-                        try context.save()
-                        transcribeText.resignFirstResponder()
-                        saveNext.isEnabled = false
-                        saveExit.isEnabled = false
-                        
-                        self.tabBarController?.selectedIndex = 2
-                    }
-                    
-                }
-            }catch {
-                print(error.localizedDescription)
-            }
         }
+    }
+    
+    func yes(alert: UIAlertAction){
+        
+        transcribe.isHidden = true
+        saveExit.isHidden = true
+        saveNext.isHidden = true
+        transcribeLabel.isHidden = true
+        saveExitLabel.isHidden = true
+        saveNextLabel.isHidden = true
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
+        transcribeLine.isHidden = true
+        saveLine.isHidden = true
+        nextLine.isHidden = true
+        exitLine.isHidden = true
+        skipButton.isHidden = false
+        skipLabel.isHidden = false
+        slipLine.isHidden = false
+        
+        self.tabBarController?.selectedIndex = 2
         
     }
-
+    
+    func yesExit(alert: UIAlertAction){
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+        
+    }
+    
+    
     @IBAction func HPIBackBtn(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
     }
-
+    
     @IBAction func showHomeView(_ sender: UIBarButtonItem) {
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
@@ -650,182 +652,23 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
     
     @IBAction func saveExitBtn(_ sender: UIButton) {
         
-        if audioFileURL == nil {
-            ///insert into sounds
+       if fileHPIStored == "false"  {
             
-            let patientid = defaults.value(forKey: "PatientID") as! String
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: yesExit)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
             
-            let context = getContext()
             
-            let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
-            
-            let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
-            
-            managedObj.setValue(patientid, forKey: "patientID")
-            managedObj.setValue("N/A", forKey: "recordingName")
-            managedObj.setValue("N/A", forKey: "recordingURL")
-            managedObj.setValue(transcribeText.text, forKey: "transcription")
-            managedObj.setValue("HPI", forKey: "type")
-            
-            do {
-                try context.save()
-                transcribeText.resignFirstResponder()
-                saveNext.isEnabled = false
-                saveNextLabel.isEnabled = false
-                saveExitLabel.isEnabled = false
-                saveExit.isEnabled = false
-                
-                
-            } catch {
-                print(error.localizedDescription)
-            }
-            
-            ///update into patients
-            let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
-            
-            let predicate = NSPredicate(format: "(patientID = %@)", patientid)
-            fetchRequest.predicate = predicate
-            
-            do {
-                let fetchResult = try context.fetch(fetchRequest)
-                
-                for item in fetchResult {
-                    
-                    if item.isTranscribed != true {
-                        
-                        if transcribeText.text == "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text." {
-                            item.isTranscribed = false
-                        } else {
-                            item.isTranscribed = true
-                        }
-                        
-                        
-                        try context.save()
-                    }
-                    
-                    if item.recordingStatus == "true" {
-                        
-                        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                        self.present(nextViewController, animated:true, completion:nil)
-                        
-                    } else {
-                        
-                        item.type = "Chart"
-                        item.isRecording = true
-                        item.recordingStatus = "N/A"
-                        
-                        
-                        try context.save()
-                        transcribeText.resignFirstResponder()
-                        saveNext.isEnabled = false
-                        saveExit.isEnabled = false
-                        
-                        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                        self.present(nextViewController, animated:true, completion:nil)
-                    }
-                    
-                }
-            }catch {
-                print(error.localizedDescription)
-            }
-            
+            self.present(alert, animated: true, completion: nil);
             
         } else {
             
-            ///insert into sounds
-            let urlString: String = audioFileURL.absoluteString
-            let patientid = defaults.value(forKey: "PatientID") as! String
-            let context = getContext()
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+            self.present(nextViewController, animated:true, completion:nil)
             
-            let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
-            
-            let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
-            
-            managedObj.setValue(patientid, forKey: "patientID")
-            managedObj.setValue(recording, forKey: "recordingName")
-            managedObj.setValue(urlString, forKey: "recordingURL")
-            managedObj.setValue(transcribeText.text, forKey: "transcription")
-            managedObj.setValue("HPI", forKey: "type")
-            
-            do {
-                try context.save()
-                transcribeText.resignFirstResponder()
-                saveNext.isEnabled = false
-                saveNextLabel.isEnabled = false
-                saveExitLabel.isEnabled = false
-                saveExit.isEnabled = false
-                
-            } catch {
-                print(error.localizedDescription)
-            }
-            
-            ///update into patients
-            let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
-            
-            let predicate = NSPredicate(format: "(patientID = %@)", patientid)
-            fetchRequest.predicate = predicate
-            
-            do {
-                let fetchResult = try context.fetch(fetchRequest)
-                
-                for item in fetchResult {
-                    
-                    if item.isTranscribed != true {
-                        
-                        if transcribeText.text == "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text." {
-                            item.isTranscribed = false
-                        } else {
-                            item.isTranscribed = true
-                        }
-                        
-                        
-                        try context.save()
-                    }
-                    
-                    if item.recordingStatus == "true" {
-                        
-                        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                        self.present(nextViewController, animated:true, completion:nil)
-                        
-                    } else {
-                        
-                        item.type = "Chart"
-                        item.isRecording = true
-                        item.recordingStatus = "true"
-                        
-                        
-                        try context.save()
-                        transcribeText.resignFirstResponder()
-                        saveNext.isEnabled = false
-                        saveExit.isEnabled = false
-                        
-                        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                        self.present(nextViewController, animated:true, completion:nil)
-                    }
-                    
-                }
-            }catch {
-                print(error.localizedDescription)
-            }
-        }
-    }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-        
-        if transcribeText.text == ""{
-            transcribeText.text = "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."
-        }
-        
-        if transcribeText.text != "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."{
-            saveExit.isHidden = false
-            saveExitLabel.isHidden = false
-            saveNext.isHidden = false
-            saveNextLabel.isHidden = false
         }
     }
     
@@ -840,7 +683,7 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if transcribeText.text == "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text." {
+        if transcribeText.text == "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)" {
             transcribeText.text = nil
         }
     }
@@ -868,4 +711,260 @@ class HPIDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDele
         statusLabel.text = String(format: "%02d:%02d", minutes, seconds)
         
     }
+    
+    @IBAction func savePressed(_ sender: UIButton) {
+        
+        let type = "HPI"
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
+        let predicate = NSPredicate(format: "(appointmentID = %@) AND (type = %@)", AppointmentID, type)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count > 0 {
+                
+                print("record exists")
+                let fetchResult = try context.fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    if audioFileURL == nil {
+                        ///update into sounds
+                        
+                        item.recordingName = "N/A"
+                        item.recordingURL = "N/A"
+                        item.transcription = transcribeText.text
+                        item.type = "HPI"
+                        
+                        ///update into patients
+                        let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
+                        
+                        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
+                        fetchRequest.predicate = predicate
+                        
+                        do {
+                            let fetchResult = try context.fetch(fetchRequest)
+                            
+                            for item in fetchResult {
+                                
+                                item.type = "Chart"
+                                item.isRecording = true
+                                item.recordingStatus = "N/A"
+                                
+                                if transcribeText.text == "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)" {
+                                    item.isTranscribed = false
+                                } else {
+                                    item.isTranscribed = true
+                                }
+                                
+                                
+                                try context.save()
+                                transcribeText.resignFirstResponder()
+                                
+                                saveLine.isHidden = true
+                                transcribeLine.isHidden = true
+                                slipLine.isHidden = true
+                                exitLine.isHidden = true
+                                nextLine.isHidden = false
+                                
+                                fileHPIStored = "true"
+                            }
+                        }catch {
+                            print(error.localizedDescription)
+                        }
+                        
+                    } else {
+                        
+                        ///update into sounds
+                        let urlString: String = audioFileURL.absoluteString
+                        item.recordingName = recording
+                        item.recordingURL = urlString
+                        item.transcription = transcribeText.text
+                        item.type = "HPI"
+                        
+                        ///update into patients
+                        let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
+                        
+                        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
+                        fetchRequest.predicate = predicate
+                        
+                        do {
+                            let fetchResult = try context.fetch(fetchRequest)
+                            
+                            for item in fetchResult {
+                                
+                                item.type = "Chart"
+                                item.isRecording = true
+                                item.recordingStatus = "true"
+                                
+                                if transcribeText.text == "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)" {
+                                    item.isTranscribed = false
+                                } else {
+                                    item.isTranscribed = true
+                                }
+                                
+                                
+                                try context.save()
+                                transcribeText.resignFirstResponder()
+                                
+                                saveLine.isHidden = true
+                                transcribeLine.isHidden = true
+                                slipLine.isHidden = true
+                                exitLine.isHidden = true
+                                nextLine.isHidden = false
+                                
+                                fileHPIStored = "true"
+                                
+                            }
+                        }catch {
+                            print(error.localizedDescription)
+                        }
+                    }
+                }
+                
+            } else {
+                
+                if audioFileURL == nil {
+                    ///insert into sounds
+                    
+                    let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+                    
+                    let context = getContext()
+                    
+                    let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
+                    
+                    let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
+                    
+                    managedObj.setValue(AppointmentID, forKey: "appointmentID")
+                    managedObj.setValue("N/A", forKey: "recordingName")
+                    managedObj.setValue("N/A", forKey: "recordingURL")
+                    managedObj.setValue(transcribeText.text, forKey: "transcription")
+                    managedObj.setValue("HPI", forKey: "type")
+                    
+                    do {
+                        try context.save()
+                        //print("saved!")
+                        
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                    
+                    
+                    ///update into patients
+                    let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
+                    
+                    let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
+                    fetchRequest.predicate = predicate
+                    
+                    do {
+                        let fetchResult = try context.fetch(fetchRequest)
+                        
+                        for item in fetchResult {
+                            
+                            item.type = "Chart"
+                            item.isRecording = true
+                            item.recordingStatus = "N/A"
+                            
+                            if transcribeText.text == "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)" {
+                                item.isTranscribed = false
+                            } else {
+                                item.isTranscribed = true
+                            }
+                            
+                            
+                            try context.save()
+                            transcribeText.resignFirstResponder()
+                            
+                            saveLine.isHidden = true
+                            transcribeLine.isHidden = true
+                            slipLine.isHidden = true
+                            exitLine.isHidden = true
+                            nextLine.isHidden = false
+                            
+                            fileHPIStored = "true"
+                            
+                        }
+                    }catch {
+                        print(error.localizedDescription)
+                    }
+                    
+                } else {
+                    
+                    ///insert into sounds
+                    let urlString: String = audioFileURL.absoluteString
+                    let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+                    let context = getContext()
+                    
+                    let sounds = NSEntityDescription.entity(forEntityName: "Sounds", in: context)
+                    
+                    let managedObj = NSManagedObject(entity: sounds!, insertInto: context)
+                    
+                    managedObj.setValue(AppointmentID, forKey: "appointmentID")
+                    managedObj.setValue(recording, forKey: "recordingName")
+                    managedObj.setValue(urlString, forKey: "recordingURL")
+                    managedObj.setValue(transcribeText.text, forKey: "transcription")
+                    managedObj.setValue("HPI", forKey: "type")
+                    
+                    do {
+                        try context.save()
+                        //print("saved!")
+                        
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                    
+                    
+                    ///update into patients
+                    let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
+                    
+                    let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
+                    fetchRequest.predicate = predicate
+                    
+                    do {
+                        let fetchResult = try context.fetch(fetchRequest)
+                        
+                        for item in fetchResult {
+                            
+                            item.type = "Chart"
+                            item.isRecording = true
+                            item.recordingStatus = "true"
+                            
+                            if transcribeText.text == "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)" {
+                                item.isTranscribed = false
+                            } else {
+                                item.isTranscribed = true
+                            }
+                            
+                            
+                            try context.save()
+                            transcribeText.resignFirstResponder()
+                            
+                            saveLine.isHidden = true
+                            transcribeLine.isHidden = true
+                            slipLine.isHidden = true
+                            exitLine.isHidden = true
+                            nextLine.isHidden = false
+                            
+                            fileHPIStored = "true"
+                            
+                        }
+                    }catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
+    }
+    
+    
+    @IBAction func skipPressed(_ sender: UIButton) {
+        
+        self.tabBarController?.selectedIndex = 2
+    }
+    
+    
 }

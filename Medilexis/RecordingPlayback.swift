@@ -27,6 +27,13 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
     @IBOutlet weak var transcribeLabel: UILabel!
     @IBOutlet weak var saveExit: UIButton!
     @IBOutlet weak var saveExitLabel: UILabel!
+    @IBOutlet var exitButton: UIButton!
+    @IBOutlet var exitLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    @IBOutlet var transcribeLine: UIView!
+    @IBOutlet var printLine: UIView!
+    @IBOutlet var exitLine: UIView!
+    
     
     
     
@@ -50,6 +57,9 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
         activityIndicator.isHidden = true
         saveExit.isHidden = true
         saveExitLabel.isHidden = true
+        saveLine.isHidden = true
+        transcribeLine.isHidden = true
+        printLine.isHidden = true
         progressView.isEnabled = false
         pause.isEnabled = false
         stop.isEnabled = false
@@ -58,10 +68,10 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
         fetchTranscription()
         
         
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@)", patientid)
+        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
         fetchRequest.predicate = predicate
         
         do {
@@ -136,12 +146,20 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
         
         self.view.endEditing(true)
         if recordedTransciption.text == ""{
-            recordedTransciption.text = "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."
+            recordedTransciption.text = "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"
+            saveExit.isHidden = true
+            saveExitLabel.isHidden = true
         }
         
-        if recordedTransciption.text != "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."{
-            saveExit.isHidden = false
-            saveExitLabel.isHidden = false
+        if recordedTransciption.text != "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"{
+           saveLine.isHidden = false
+           transcribeLine.isHidden = true
+           printLine.isHidden = true
+           exitLine.isHidden = true
+           saveExit.isHidden = false
+           saveExitLabel.isHidden = false
+           exitButton.isHidden = true
+           exitLabel.isHidden = true
         }
         
     }
@@ -213,7 +231,7 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
     }
     
     func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
-        let alert = UIAlertController(title: "Recorder Pro", message: "Decoding Error: \(error?.localizedDescription)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "Recorder Pro", message: "Decoding Error: \(String(describing: error?.localizedDescription))", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
@@ -229,10 +247,10 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
     
     override func viewWillDisappear(_ animated: Bool) {
        
-        let patientid = defaults.value(forKey: "PatientID") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
-        let predicate = NSPredicate(format: "(patientID = %@)", patientid)
+        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
         fetchRequest.predicate = predicate
         
         do {
@@ -288,6 +306,9 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
                                 
                                 self.activityIndicator.stopAnimating()
                                 self.activityIndicator.isHidden = true
+                                self.exitLine.isHidden = true
+                                self.printLine.isHidden = true
+                                self.saveLine.isHidden = false
                                 
                             }
                             
@@ -297,6 +318,9 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
                             self.recordedTransciption.text = result?.bestTranscription.formattedString
                             self.activityIndicator.stopAnimating()
                             self.activityIndicator.isHidden = true
+                            self.exitLine.isHidden = true
+                            self.printLine.isHidden = true
+                            self.saveLine.isHidden = false
                             
                         }
                     }
@@ -326,11 +350,11 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
     
     func fetchTranscription(){
         
-            let patientid = defaults.value(forKey: "PatientID") as! String
+            let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         
             let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
             
-            let predicate = NSPredicate(format: "(patientID = %@)", patientid)
+            let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
 
             fetchRequest.predicate = predicate
         
@@ -339,10 +363,7 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
                 
                 for item in fetchResult {
                     
-                  
-                   // recordedTransciption.text = ""
                     recordedTransciption.text = item.transcription
-                    
                     
                 }
             }catch {
@@ -353,12 +374,12 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
     
     @IBAction func saveButton(_ sender: UIButton) {
         
-        let patientID = defaults.value(forKey: "PatientID")
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         recordedTransciption.resignFirstResponder()
         
         let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
         
-        let predicate = NSPredicate(format: "(patientID = %@)", patientID as! CVarArg)
+        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID as CVarArg)
         
         fetchRequest.predicate = predicate
         
@@ -369,12 +390,13 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
                 
                 item.transcription! =  recordedTransciption.text
                 try context.save()
-  
-                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                self.present(nextViewController, animated:true, completion:nil)
-                
-                
+                saveLine.isHidden = true
+                transcribeLine.isHidden = true
+                printLine.isHidden = true
+                exitLine.isHidden = false
+                exitButton.isHidden = false
+                exitLabel.isHidden = false
+
             }
         }catch {
             print(error.localizedDescription)
@@ -382,9 +404,9 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
        }
         
         ///update into patients
-        let patientsFetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
+        let patientsFetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
         
-        let patientPredicate = NSPredicate(format: "(patientID = %@)", patientID as! CVarArg)
+        let patientPredicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID as CVarArg)
         patientsFetchRequest.predicate = patientPredicate
         
         do {
@@ -441,7 +463,7 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        if recordedTransciption.text == "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text." {
+        if recordedTransciption.text == "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)" {
             recordedTransciption.text = nil
         }
     }
@@ -539,7 +561,7 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
                     
                     if item.logo != nil {
                         
-                        let retrievedImg = UIImage(data: item.logo as! Data)!
+                        let retrievedImg = UIImage(data: item.logo! as Data)!
                         
                         let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
                                                                     image:retrievedImg, imageHeight: 55, alignment: .right)
@@ -555,7 +577,7 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
                         leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
                         leftHeaderAttrString.addAttribute(NSFontAttributeName, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
                         leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
-                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, 1), attributedString: leftHeaderAttrString)
+                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, Int.max), attributedString: leftHeaderAttrString)
                         pdf.headerFooterTexts.append(header)
                     
                     }
@@ -567,7 +589,7 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
                         let link = NSMutableAttributedString(string: item.footer!)
                         link.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, link.length))
                         link.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, link.length))
-                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, 1), attributedString: link)
+                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, Int.max), attributedString: link)
                         pdf.headerFooterTexts.append(appLinkFooter)
                     }
                     
@@ -605,15 +627,13 @@ class RecordingPlayback: UIViewController, AVAudioPlayerDelegate, UITextViewDele
         let minutes = (changedValue / 60) % 60
         progressTime.text = String(format: "%02d:%02d", minutes, seconds)
        
-      
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-        if recordedTransciption.text == ""{
-            recordedTransciption.text = "Tap in the box to start typing or click on transcribe button below to convert your recorded voice file to text."
-        }
+    @IBAction func exitPressed(_ sender: UIButton) {
         
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
     }
     
 

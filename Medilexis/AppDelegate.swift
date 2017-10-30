@@ -36,11 +36,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             
         } else {
             
+            userDefaults.set(false, forKey: "qaTranscription")
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            
-            let MainViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-            window!.rootViewController = MainViewController
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+             window!.rootViewController = nextViewController
         }
+        
+        
+        UIApplication.shared.statusBarStyle = .lightContent
         
          UITabBarItem.appearance().setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Lato", size: 14)!], for: .normal)
         

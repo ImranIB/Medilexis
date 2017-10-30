@@ -13,6 +13,7 @@ class PatientCell: UITableViewCell {
     
     @IBOutlet weak var patientName: UILabel!
     @IBOutlet weak var patientSchedule: UILabel!
+    @IBOutlet var appointmentTime: UILabel!
     @IBOutlet weak var cardView: UIView!
 
 
