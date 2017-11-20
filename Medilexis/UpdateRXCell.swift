@@ -9,15 +9,14 @@
 import UIKit
 
 class UpdateRXCell: UITableViewCell {
-    
-    
-    @IBOutlet weak var cardView: UIView!
+
     @IBOutlet weak var medicineName: UILabel!
+    @IBOutlet var cardView: UIView!
+    
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
-        
+      
         self.updateUI()
     }
 
@@ -37,4 +36,6 @@ class UpdateRXCell: UITableViewCell {
         cardView.layer.shadowOffset = CGSize(width: 0, height: 0)
         cardView.layer.shadowOpacity = 0.8
     }
+
+   
 }

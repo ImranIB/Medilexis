@@ -34,6 +34,7 @@ class AnotherPhotoPlayback: UIViewController, UIImagePickerControllerDelegate, U
     var isDrawing = true
     var selectedImage:UIImage!
     let defaults = UserDefaults.standard
+    var fileAnotherPhotoDictationPlayback = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -129,11 +130,10 @@ class AnotherPhotoPlayback: UIViewController, UIImagePickerControllerDelegate, U
           if self.imageView.image != nil{
             
             swiped = true
-            
+            fileAnotherPhotoDictationPlayback = "false"
             if let touch = touches.first {
                 let currentPoint = touch.location(in: self.view)
                 drawLines(fromPoint: lastPoint, toPoint: currentPoint)
-                
                 lastPoint = currentPoint
             }
         }
@@ -212,6 +212,7 @@ class AnotherPhotoPlayback: UIViewController, UIImagePickerControllerDelegate, U
         selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage
         imageView.image = selectedImage
         photoLabel.isHidden = true
+        fileAnotherPhotoDictationPlayback = "false"
         dismiss(animated: true, completion: nil)//5
     }
     
@@ -230,17 +231,28 @@ class AnotherPhotoPlayback: UIViewController, UIImagePickerControllerDelegate, U
         
         let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
         
-        let actionController = YoutubeActionController()
-        
-        actionController.addAction(Action(ActionData(title: "Save and Next", image: UIImage(named: "saveNext")!), style: .default, handler: { action in
+        if fileAnotherPhotoDictationPlayback == "" {
             
-            if self.imageView.image == nil {
+            let actionController = YoutubeActionController()
+            
+            actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
                 
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Updatecodes") as! UpdateCodes
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateRX") as! UpdateRX
                 self.present(nextViewController, animated:true, completion:nil)
                 
-            } else {
+            }))
+            
+            actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
+            }))
+            
+            present(actionController, animated: true, completion: nil)
+            
+        } else {
+            
+            let actionController = YoutubeActionController()
+            
+            actionController.addAction(Action(ActionData(title: "Save", image: UIImage(named: "saveImage")!), style: .default, handler: { action in
                 
                 ///update into patients
                 let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
@@ -257,75 +269,56 @@ class AnotherPhotoPlayback: UIViewController, UIImagePickerControllerDelegate, U
                         item.anotherImage = newImageData as NSData?
                         
                         try self.context.save()
-                        print("Done")
+                        self.fileAnotherPhotoDictationPlayback = "true"
+                        
+                        if let image = self.imageView.image {
+                            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+                        }
                         
                     }
                 }catch {
                     print(error.localizedDescription)
                     
+                    
                 }
                 
-            }
+            }))
             
-            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateRX") as! UpdateRX
-            self.present(nextViewController, animated:true, completion:nil)
+            actionController.addAction(Action(ActionData(title: "Next", image: UIImage(named: "saveNext")!), style: .default, handler: { action in
+                
+                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateRX") as! UpdateRX
+                self.present(nextViewController, animated:true, completion:nil)
+                
+            }))
             
-        }))
-        
-        actionController.addAction(Action(ActionData(title: "Save and Exit", image: UIImage(named: "saveExit")!), style: .default, handler: { action in
-            
-            if self.imageView.image == nil {
+            actionController.addAction(Action(ActionData(title: "Exit", image: UIImage(named: "exit")!), style: .default, handler: { action in
                 
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
                 let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
                 self.present(nextViewController, animated:true, completion:nil)
                 
-            } else {
+            }))
+            
+            actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
                 
-                ///update into patients
-                let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
+                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateRX") as! UpdateRX
+                self.present(nextViewController, animated:true, completion:nil)
                 
-                let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
-                fetchRequest.predicate = predicate
-                
-                do {
-                    let fetchResult = try self.context.fetch(fetchRequest)
-                    
-                    for item in fetchResult {
-                        
-                        let newImageData = UIImagePNGRepresentation(self.imageView.image!)
-                        item.anotherImage = newImageData as NSData?
-                        
-                        try self.context.save()
-                        print("Done")
-                        
-                    }
-                }catch {
-                    print(error.localizedDescription)
-                    
-                }
-            }
+            }))
             
-            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-            self.present(nextViewController, animated:true, completion:nil)
+            actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
+            }))
             
-        }))
+            present(actionController, animated: true, completion: nil)
+        }
         
-        actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
-            
-            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateRX") as! UpdateRX
-            self.present(nextViewController, animated:true, completion:nil)
-            
-        }))
-       
+
         
-        actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
-        }))
         
-        present(actionController, animated: true, completion: nil)
+        
+        
         
     }
 

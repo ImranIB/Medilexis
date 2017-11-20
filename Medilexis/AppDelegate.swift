@@ -24,13 +24,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             statusBar.backgroundColor = UIColor.gray
         }
         
-       let userDefaults = Foundation.UserDefaults.standard
+        let userDefaults = Foundation.UserDefaults.standard
+        let walkthrough  = userDefaults.string(forKey: "hasViewedWalkthrough")
         let value  = userDefaults.string(forKey: "login")
         
-        if value == nil || value == "" {
+        if walkthrough == nil || walkthrough == "" {
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "WalkthroughScreens", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "WalkthroughController") as! WalkthroughPageView
+            window!.rootViewController = nextViewController
+            
+        } else if value == nil || value == "" {
             
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            
             let loginViewController = storyBoard.instantiateViewController(withIdentifier: "selection") as! Selection
             window!.rootViewController = loginViewController
             
@@ -41,7 +47,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
              window!.rootViewController = nextViewController
         }
-        
         
         UIApplication.shared.statusBarStyle = .lightContent
         

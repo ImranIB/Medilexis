@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Walkthrough Page View-->
+        <scene sceneID="Lz2-CL-5fz">
+            <objects>
+                <pageViewController storyboardIdentifier="WalkthroughController" autoresizesArchivedViewToFullSize="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" transitionStyle="scroll" navigationOrientation="horizontal" spineLocation="none" id="OHn-hx-1Mv" customClass="WalkthroughPageView" customModule="Medilexis" customModuleProvider="target" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Zzq-gp-qu7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-644" y="137"/>
+        </scene>
+        <!--Screen One-->
+        <scene sceneID="kBV-zA-OT1">
+            <objects>
+                <viewController storyboardIdentifier="screenOne" useStoryboardIdentifierAsRestorationIdentifier="YES" id="TbW-B6-KFB" customClass="ScreenOne" customModule="Medilexis" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Oob-Cz-kff"/>
+                        <viewControllerLayoutGuide type="bottom" id="Yvf-cj-SFP"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="4Ab-Ud-W0Y">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="scr-1" translatesAutoresizingMaskIntoConstraints="NO" id="ryA-Dc-4hh">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Lr7-Te-9Gz" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="104.8" y="137.18140929535232"/>
+        </scene>
+        <!--Screen Two-->
+        <scene sceneID="xKa-C4-YMv">
+            <objects>
+                <viewController storyboardIdentifier="screenTwo" useStoryboardIdentifierAsRestorationIdentifier="YES" id="MXZ-vO-6gl" customClass="ScreenTwo" customModule="Medilexis" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="EzC-0O-ktK"/>
+                        <viewControllerLayoutGuide type="bottom" id="GDE-Ok-ja8"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="vTg-FE-VqX">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="scr-2" translatesAutoresizingMaskIntoConstraints="NO" id="BFQ-4L-sYa">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Sdm-bZ-VLg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="792.79999999999995" y="137.18140929535232"/>
+        </scene>
+        <!--Screen Three-->
+        <scene sceneID="H1e-6e-X34">
+            <objects>
+                <viewController storyboardIdentifier="screenThree" useStoryboardIdentifierAsRestorationIdentifier="YES" id="fzE-78-fDJ" customClass="ScreenThree" customModule="Medilexis" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="lEh-Yt-pM9"/>
+                        <viewControllerLayoutGuide type="bottom" id="YBw-Je-6wb"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="t6G-ku-gGA">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="scr-3" translatesAutoresizingMaskIntoConstraints="NO" id="IJQ-GA-Ali">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xey-lX-tvt" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1508" y="139.880059970015"/>
+        </scene>
+        <!--Screen Four-->
+        <scene sceneID="u8g-iR-hyq">
+            <objects>
+                <viewController storyboardIdentifier="screenFour" useStoryboardIdentifierAsRestorationIdentifier="YES" id="ZGq-0V-NU9" customClass="ScreenFour" customModule="Medilexis" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="01x-5T-BnJ"/>
+                        <viewControllerLayoutGuide type="bottom" id="FyX-f2-dlf"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="pev-vM-FFR">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="scr-4" translatesAutoresizingMaskIntoConstraints="NO" id="aM1-aZ-VFE">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oC8-D8-WOv" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2199.1999999999998" y="142.57871064467767"/>
+        </scene>
+        <!--Screen Five-->
+        <scene sceneID="upb-SV-iKt">
+            <objects>
+                <viewController storyboardIdentifier="screenFive" useStoryboardIdentifierAsRestorationIdentifier="YES" id="aTb-ao-S4o" customClass="ScreenFive" customModule="Medilexis" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="FMf-QG-lww"/>
+                        <viewControllerLayoutGuide type="bottom" id="pcR-JO-3O6"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Jcs-3Y-zCe">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="scr-5" translatesAutoresizingMaskIntoConstraints="NO" id="3Pz-LE-m4d">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2C7-EA-eET" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2917.5999999999999" y="138.98050974512745"/>
+        </scene>
+        <!--Screen Six-->
+        <scene sceneID="ubW-bR-mle">
+            <objects>
+                <viewController storyboardIdentifier="screenSix" useStoryboardIdentifierAsRestorationIdentifier="YES" id="flR-1Z-0yp" customClass="ScreenSix" customModule="Medilexis" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="7vX-9U-Fns"/>
+                        <viewControllerLayoutGuide type="bottom" id="HMW-Ny-0bZ"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="5bI-rm-GM1">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="scr-6" translatesAutoresizingMaskIntoConstraints="NO" id="DgO-4i-xII">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Gez-It-yAX" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="3580" y="138.98050974512745"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="scr-1" width="450" height="800"/>
+        <image name="scr-2" width="450" height="800"/>
+        <image name="scr-3" width="450" height="800"/>
+        <image name="scr-4" width="450" height="800"/>
+        <image name="scr-5" width="450" height="800"/>
+        <image name="scr-6" width="450" height="800"/>
+    </resources>
+</document>

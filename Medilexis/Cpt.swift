@@ -11,12 +11,22 @@ import SkyFloatingLabelTextField
 import XLActionController
 import CoreData
 
+
 class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var cptTableView: UITableView!
-    @IBOutlet var addCPTButton: UIBarButtonItem!
     @IBOutlet var saveExitBUtton: UIButton!
     @IBOutlet var saveExitLabel: UILabel!
+    @IBOutlet var exitLine: UIView!
+    @IBOutlet var saveButton: UIButton!
+    @IBOutlet var saveLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    @IBOutlet var nextButton: UIButton!
+    @IBOutlet var nextLabel: UILabel!
+    @IBOutlet var nextLine: UIView!
+    @IBOutlet var skipButton: UIButton!
+    @IBOutlet var skipLabel: UILabel!
+    @IBOutlet var skipLine: UIView!
     
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -25,6 +35,7 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
     var cptName = ["Evaluation and Management", "Anesthesia", "Surgery", "Radiology", "Pathology and Laboratory", "Medicine", "Composite measures", "Patient management", " Patient history", "Physical examination"]
     var cptCode = ["99201 – 99499", "99100 – 9914", "10021 – 69990", "70010 – 79999", "80047 – 89398", "90281 – 99199", "0001F-0015F", "0500F-0575F", "1000F-1220F", "2000F-2050F"]
     var cptIsSelected = Array(repeating: false, count: 1000)
+    var fileCptStored = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,8 +73,15 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
           
         }
         
-        saveExitBUtton.isEnabled = false
-        saveExitLabel.isEnabled = false
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
+        saveLine.isHidden = true
+        nextButton.isHidden = true
+        nextLabel.isHidden = true
+        nextLine.isHidden = true
+        saveExitBUtton.isHidden = true
+        saveExitLabel.isHidden = true
+        exitLine.isHidden = true
         
     }
 
@@ -93,12 +111,25 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
        
         let detail = codes[indexPath.row]
         let cell = cptTableView.cellForRow(at: indexPath)
-        
+        fileCptStored = "false"
         
         if self.cptIsSelected[indexPath.row] == false {
     
             saveExitBUtton.isEnabled = true
             saveExitLabel.isEnabled = true
+            
+            saveButton.isHidden = false
+            saveLabel.isHidden = false
+            saveLine.isHidden = false
+            nextButton.isHidden = false
+            nextLabel.isHidden = false
+            nextLine.isHidden = true
+            saveExitBUtton.isHidden = false
+            saveExitLabel.isHidden = false
+            exitLine.isHidden = true
+            skipButton.isHidden = true
+            skipLabel.isHidden = true
+            skipLine.isHidden = true
             
             // Toggle check-in and undo-check-in
             self.cptIsSelected[indexPath.row] = self.cptIsSelected[indexPath.row] ? false : true
@@ -213,7 +244,77 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
     }
     
+    @IBAction func nextButton(_ sender: UIButton) {
+        
+        if self.fileCptStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesExit)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            
+            saveButton.isHidden = true
+            saveLabel.isHidden = true
+            saveLine.isHidden = true
+            nextButton.isHidden = true
+            nextLabel.isHidden = true
+            nextLine.isHidden = true
+            saveExitBUtton.isHidden = true
+            saveExitLabel.isHidden = true
+            exitLine.isHidden = true
+            skipButton.isHidden = false
+            skipLabel.isHidden = false
+            skipLine.isHidden = false
+            
+        }
+    }
+    
+    func yesExit(alert: UIAlertAction){
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+        
+    }
+    
+    @IBAction func saveButton(_ sender: UIButton) {
+        
+        fileCptStored = "true"
+        saveLine.isHidden = true
+        nextLine.isHidden = false
+        exitLine.isHidden = true
+    }
+    
+    @IBAction func skipBtton(_ sender: UIButton) {
+    }
+    
     @IBAction func saveExit(_ sender: UIButton) {
+        
+        if self.fileCptStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesExit)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+            self.present(nextViewController, animated:true, completion:nil)
+            
+        }
         
         if defaults.value(forKey: "qaTranscription") != nil{
             let switchON: Bool = defaults.value(forKey: "qaTranscription")  as! Bool

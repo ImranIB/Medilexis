@@ -14,9 +14,21 @@ import XLActionController
 
 class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate , UISearchResultsUpdating{
 
-    @IBOutlet var addRxButton: UIBarButtonItem!
     @IBOutlet weak var updateRXTableView: UITableView!
     @IBOutlet weak var noMedicineLabel: UILabel!
+    @IBOutlet var saveButton: UIButton!
+    @IBOutlet var saveLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    @IBOutlet var nextButton: UIButton!
+    @IBOutlet var nextLabel: UILabel!
+    @IBOutlet var nextLine: UIView!
+    @IBOutlet var exitButton: UIButton!
+    @IBOutlet var exitLabel: UILabel!
+    @IBOutlet var exitLine: UIView!
+    @IBOutlet var skipButton: UIButton!
+    @IBOutlet var skipLabel: UILabel!
+    @IBOutlet var skipLine: UIView!
+    
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let defaults = UserDefaults.standard
@@ -45,6 +57,16 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate , U
         self.updateRXTableView.reloadData()
         
         getMedicines()
+        
+        saveButton.isHidden = true
+        nextButton.isHidden = true
+        exitButton.isHidden = true
+        saveLabel.isHidden = true
+        nextLabel.isHidden = true
+        exitLabel.isHidden = true
+        saveLine.isHidden = true
+        nextLine.isHidden = true
+        exitLine.isHidden = true
         
     }
 
@@ -105,6 +127,7 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate , U
                     medicines.append(item)
                     updateRXTableView.reloadData()
                     checkMedicines()
+                  
                 }
             } else {
                 medicines.removeAll()
@@ -173,6 +196,88 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate , U
             
         }))
         
+        actionController.addAction(Action(ActionData(title: "Add New Medication", image: UIImage(named: "add")!), style: .default, handler: { action in
+            
+            let alertController = UIAlertController(title: "Enter Medication Name", message: "", preferredStyle: .alert)
+            
+            let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
+                alert -> Void in
+                
+                let medicineTextField = alertController.textFields![0] as UITextField
+                
+                
+                if medicineTextField.text == "" {
+                    
+                    let alert = UIAlertController(title: "Notice", message: "Please fill the field", preferredStyle: UIAlertControllerStyle.alert)
+                    let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                    alert.addAction(action)
+                    
+                    self.present(alert, animated: true, completion: nil);
+                    
+                } else {
+                    
+                    self.saveButton.isHidden = false
+                    self.nextButton.isHidden = false
+                    self.exitButton.isHidden = false
+                    self.skipButton.isHidden = true
+                    self.saveLabel.isHidden = false
+                    self.nextLabel.isHidden = false
+                    self.exitLabel.isHidden = false
+                    self.skipLabel.isHidden = true
+                    self.saveLine.isHidden = false
+                    self.nextLine.isHidden = true
+                    self.exitLine.isHidden = true
+                    self.skipLine.isHidden = true
+                    
+                    let medicine = medicineTextField.text?.capitalized
+                    let medicineId = NSUUID().uuidString.lowercased() as String
+                    let AppointmentID = self.defaults.value(forKey: "AppointmentID") as! String
+                    let userID = self.defaults.value(forKey: "UserID") as! Int32
+                    
+                    let context = self.getContext()
+                    
+                    let entity = NSEntityDescription.entity(forEntityName: "Medicines", in: context)
+                    
+                    let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+                    
+                    managedObj.setValue(medicineId, forKey: "medicineID")
+                    managedObj.setValue(medicine, forKey: "medicineName")
+                    managedObj.setValue(AppointmentID, forKey: "appointmentID")
+                    managedObj.setValue(userID, forKey: "userID")
+                    
+                    do {
+                        try context.save()
+                        
+                        medicineTextField.text = ""
+                        self.getMedicines()
+                        self.updateRXTableView.reloadData()
+                        self.checkMedicines()
+                    
+                        
+                        
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                    
+                }
+            })
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: {
+                (action : UIAlertAction!) -> Void in
+                
+            })
+            
+            alertController.addTextField { (textField : UITextField!) -> Void in
+                textField.placeholder = "Medication Name"
+            }
+            
+            alertController.addAction(saveAction)
+            alertController.addAction(cancelAction)
+            
+            self.present(alertController, animated: true, completion: nil)
+            
+        }))
+        
         actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
             
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
@@ -213,75 +318,27 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate , U
         }
     }
     
-    @IBAction func addMedication(_ sender: UIButton) {
+    @IBAction func save(_ sender: UIButton) {
         
-        let alertController = UIAlertController(title: "Enter Medication Name", message: "", preferredStyle: .alert)
-        
-        let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
-            alert -> Void in
-            
-            let medicineTextField = alertController.textFields![0] as UITextField
-            
-            
-            if medicineTextField.text == "" {
-                
-                let alert = UIAlertController(title: "Notice", message: "Please fill the field", preferredStyle: UIAlertControllerStyle.alert)
-                let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-                alert.addAction(action)
-                
-                self.present(alert, animated: true, completion: nil);
-                
-            } else {
-                
-                let medicine = medicineTextField.text?.capitalized
-                let medicineId = NSUUID().uuidString.lowercased() as String
-                let AppointmentID = self.defaults.value(forKey: "AppointmentID") as! String
-                let userID = self.defaults.value(forKey: "UserID") as! Int32
-                
-                let context = self.getContext()
-                
-                let entity = NSEntityDescription.entity(forEntityName: "Medicines", in: context)
-                
-                let managedObj = NSManagedObject(entity: entity!, insertInto: context)
-                
-                managedObj.setValue(medicineId, forKey: "medicineID")
-                managedObj.setValue(medicine, forKey: "medicineName")
-                managedObj.setValue(AppointmentID, forKey: "appointmentID")
-                managedObj.setValue(userID, forKey: "userID")
-                
-                do {
-                    try context.save()
-                    
-                    medicineTextField.text = ""
-                    self.getMedicines()
-                    self.updateRXTableView.reloadData()
-                    self.checkMedicines()
-                    
-                    
-                } catch {
-                    print(error.localizedDescription)
-                }
-                
-            }
-        })
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: {
-            (action : UIAlertAction!) -> Void in
-            
-        })
-        
-        alertController.addTextField { (textField : UITextField!) -> Void in
-            textField.placeholder = "Medication Name"
-        }
-        
-        alertController.addAction(saveAction)
-        alertController.addAction(cancelAction)
-        
-        self.present(alertController, animated: true, completion: nil)
-        
+        saveLine.isHidden = true
+        nextLine.isHidden = false
+        exitLine.isHidden = true
     }
     
     @IBAction func saveNext(_ sender: UIButton) {
+        
+        saveButton.isHidden = true
+        nextButton.isHidden = true
+        exitButton.isHidden = true
+        skipButton.isHidden = false
+        saveLabel.isHidden = true
+        nextLabel.isHidden = true
+        exitLabel.isHidden = true
+        skipLabel.isHidden = false
+        saveLine.isHidden = true
+        nextLine.isHidden = true
+        exitLine.isHidden = true
+        skipLine.isHidden = false
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Updatecodes") as! UpdateCodes
@@ -296,6 +353,13 @@ class UpdateRX: UIViewController, UITableViewDataSource, UITableViewDelegate , U
         self.present(nextViewController, animated:true, completion:nil)
     }
     
+    @IBAction func skip(_ sender: UIButton) {
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Updatecodes") as! UpdateCodes
+        self.present(nextViewController, animated:true, completion:nil)
+        
+    }
     override func viewWillAppear(_ animated: Bool) {
         
        /* SwiftSpinner.show("Proceeding to next screen")

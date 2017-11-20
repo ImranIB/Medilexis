@@ -26,7 +26,7 @@ class Menu: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         
-        if indexPath.row == 5 && indexPath.section == 1 {
+        if indexPath.row == 6 && indexPath.section == 1 {
             
             let alert = UIAlertController(title: "Logout", message: "Are you sure you want to logout?", preferredStyle: UIAlertControllerStyle.alert)
             let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: logout)
@@ -35,6 +35,14 @@ class Menu: UITableViewController {
             alert.addAction(cancel)
             
             self.present(alert, animated: true, completion: nil);
+            
+        }
+        
+        if indexPath.row == 5 && indexPath.section == 1 {
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Support", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "support") as! Support
+            self.present(nextViewController, animated:true, completion:nil)
             
         }
         

@@ -831,6 +831,31 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         formatter.timeStyle = .short
         appointmentTimeTextField.text = formatter.string(from: sender.date)
         
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "h:mm a"
+        let date = dateFormatter.date(from: appointmentTimeTextField.text!)
+        
+        dateFormatter.dateFormat = "HH:mm"
+        let selectedTime = dateFormatter.string(from: date!)
+        print(selectedTime)
+        
+        let dat = Date()
+        let datFormatter = DateFormatter()
+        datFormatter.dateFormat = "HH:mm"
+        let currentTime = datFormatter.string(from: dat)
+        print(currentTime)
+        
+        if selectedTime < currentTime {
+            
+            print("Time not valid")
+        
+        } else {
+            
+            print("Time valid")
+        }
+
+    
+        
     }
     
 }

@@ -18,8 +18,16 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
     @IBOutlet weak var noMedicineLabel: UILabel!
     @IBOutlet var saveNextButton: UIButton!
     @IBOutlet var saveExitButton: UIButton!
+    @IBOutlet var saveButton: UIButton!
+    @IBOutlet var skipButton: UIButton!
     @IBOutlet var saveNextLabel: UILabel!
     @IBOutlet var saveExitLabel: UILabel!
+    @IBOutlet var saveLabel: UILabel!
+    @IBOutlet var skipLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    @IBOutlet var nextLine: UIView!
+    @IBOutlet var exitLine: UIView!
+    @IBOutlet var skipLine: UIView!
     
     
     var RxName = ["Acetaminophen", "Adderall", "Alprazolam" , "Amitriptyline", "Amoxicillin", "Ciprofloxacin" , "Codeine", "Doxycycline", "Gabapentin", "Hydrochlorothiazide", "Ibuprofen", "Lexapro", "Losartan", "Meloxicam", "Naproxen", "Oxycodone", "Prednisone", "Tramadol", "Wellbutrin", "Xanax", "Zoloft"]
@@ -30,6 +38,7 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
     var searchController: UISearchController!
     var searchResults:[RxList] = []
     var restaurantIsVisited = Array(repeating: false, count: 1000)
+    var fileRxStored = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,10 +87,15 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
             }
         }
         
-        saveNextButton.isEnabled = false
-        saveExitButton.isEnabled = false
-        saveNextLabel.isEnabled = false
-        saveExitLabel.isEnabled = false
+        saveNextButton.isHidden = true
+        saveExitButton.isHidden = true
+        saveButton.isHidden = true
+        saveNextLabel.isHidden = true
+        saveExitLabel.isHidden = true
+        saveLabel.isHidden = true
+        saveLine.isHidden = true
+        nextLine.isHidden = true
+        exitLine.isHidden = true
 
     }
 
@@ -116,16 +130,25 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
         
         let selectMedicine = medicines[indexPath.row]
         let cell = medicineTableView.cellForRow(at: indexPath)
+        fileRxStored = "false"
         
         if self.restaurantIsVisited[indexPath.row] == false {
            
             defaults.set(selectMedicine.medicineName!, forKey: "MedicineName")
             defaults.set(selectMedicine.medicineID!, forKey: "medicineID")
             
-            saveNextButton.isEnabled = true
-            saveExitButton.isEnabled = true
-            saveNextLabel.isEnabled = true
-            saveExitLabel.isEnabled = true
+            saveNextButton.isHidden = false
+            saveExitButton.isHidden = false
+            saveButton.isHidden = false
+            skipButton.isHidden = true
+            saveNextLabel.isHidden = false
+            saveExitLabel.isHidden = false
+            saveLabel.isHidden = false
+            skipLabel.isHidden = true
+            saveLine.isHidden = false
+            nextLine.isHidden = true
+            exitLine.isHidden = true
+            skipLine.isHidden = true
             
             self.restaurantIsVisited[indexPath.row] = self.restaurantIsVisited[indexPath.row] ? false : true
             cell?.accessoryType = self.restaurantIsVisited[indexPath.row] ? .checkmark : .none
@@ -279,11 +302,64 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
             
         }))
         
-        actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
+        actionController.addAction(Action(ActionData(title: "Add New Medication", image: UIImage(named: "add")!), style: .default, handler: { action in
             
-            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "codes") as! Codes
-            self.present(nextViewController, animated:true, completion:nil)
+            let alertController = UIAlertController(title: "Enter Medication Name", message: "", preferredStyle: .alert)
+            
+            let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
+                alert -> Void in
+                
+                let medicineTextField = alertController.textFields![0] as UITextField
+                
+                if medicineTextField.text == "" {
+                    
+                    let alert = UIAlertController(title: "Notice", message: "Please fill all the fields", preferredStyle: UIAlertControllerStyle.alert)
+                    let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                    alert.addAction(action)
+                    
+                    self.present(alert, animated: true, completion: nil);
+                    
+                } else {
+                    
+                    let medicine = medicineTextField.text?.capitalized
+                    let medicineId = NSUUID().uuidString.lowercased() as String
+                    
+                    let context = self.getContext()
+                    
+                    let entity = NSEntityDescription.entity(forEntityName: "RxList", in: context)
+                    
+                    let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+                    
+                    managedObj.setValue(medicineId, forKey: "medicineID")
+                    managedObj.setValue(medicine, forKey: "medicineName")
+                    
+                    do {
+                        try context.save()
+                        
+                        self.getMedicines()
+                        self.medicineTableView.reloadData()
+                        self.checkMedicines()
+                        
+                        
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+            })
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: {
+                (action : UIAlertAction!) -> Void in
+                
+            })
+            
+            alertController.addTextField { (textField : UITextField!) -> Void in
+                textField.placeholder = "Medication Name"
+            }
+            
+            alertController.addAction(saveAction)
+            alertController.addAction(cancelAction)
+            
+            self.present(alertController, animated: true, completion: nil)
             
         }))
         
@@ -327,18 +403,87 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
     
     @IBAction func saveNext(_ sender: UIButton) {
         
+        if self.fileRxStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesExit)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "codes") as! Codes
+            self.present(nextViewController, animated:true, completion:nil)
+            
+            saveNextButton.isHidden = true
+            saveExitButton.isHidden = true
+            saveButton.isHidden = true
+            skipLine.isHidden = false
+            saveNextLabel.isHidden = true
+            saveExitLabel.isHidden = true
+            saveLabel.isHidden = true
+            skipLabel.isHidden = false
+            saveLine.isHidden = true
+            nextLine.isHidden = true
+            exitLine.isHidden = true
+            skipLine.isHidden = false
+         
+        }
+        
+    }
+    
+    func yesExit(alert: UIAlertAction){
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+        
+    }
+    
+    @IBAction func saveExit(_ sender: UIButton) {
+        
+        if self.fileRxStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesExit)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+            self.present(nextViewController, animated:true, completion:nil)
+            
+        }
+    }
+
+    @IBAction func skipPressed(_ sender: UIButton) {
+        
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "codes") as! Codes
         self.present(nextViewController, animated:true, completion:nil)
     }
     
-    @IBAction func saveExit(_ sender: UIButton) {
+    @IBAction func savePressed(_ sender: UIButton) {
         
-        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-        self.present(nextViewController, animated:true, completion:nil)
+        fileRxStored = "true"
+        saveLine.isHidden = true
+        nextLine.isHidden = false
+        exitLine.isHidden = true
     }
-
+    
+    
     func checkRecord(){
         
         let AppointmentID = defaults.value(forKey: "AppointmentID")
@@ -361,66 +506,6 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
             print(error.localizedDescription)
         }
 
-    }
-    
-    @IBAction func addMedication(_ sender: UIButton) {
-        
-        let alertController = UIAlertController(title: "Enter Medication Name", message: "", preferredStyle: .alert)
-        
-        let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
-            alert -> Void in
-            
-            let medicineTextField = alertController.textFields![0] as UITextField
-            
-            if medicineTextField.text == "" {
-                
-                let alert = UIAlertController(title: "Notice", message: "Please fill all the fields", preferredStyle: UIAlertControllerStyle.alert)
-                let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-                alert.addAction(action)
-                
-                self.present(alert, animated: true, completion: nil);
-                
-            } else {
-                
-                let medicine = medicineTextField.text?.capitalized
-                let medicineId = NSUUID().uuidString.lowercased() as String
-                
-                let context = self.getContext()
-                
-                let entity = NSEntityDescription.entity(forEntityName: "RxList", in: context)
-                
-                let managedObj = NSManagedObject(entity: entity!, insertInto: context)
-                
-                managedObj.setValue(medicineId, forKey: "medicineID")
-                managedObj.setValue(medicine, forKey: "medicineName")
-                
-                do {
-                    try context.save()
-                    
-                    self.getMedicines()
-                    self.medicineTableView.reloadData()
-                    self.checkMedicines()
-                    
-                    
-                } catch {
-                    print(error.localizedDescription)
-                }
-            }
-        })
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: {
-            (action : UIAlertAction!) -> Void in
-            
-        })
-        
-        alertController.addTextField { (textField : UITextField!) -> Void in
-            textField.placeholder = "Medication Name"
-        }
-        
-        alertController.addAction(saveAction)
-        alertController.addAction(cancelAction)
-        
-        self.present(alertController, animated: true, completion: nil)
     }
     
     override func viewWillAppear(_ animated: Bool) {

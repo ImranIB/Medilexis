@@ -12,7 +12,17 @@
 		4403F8921F3A074200CF3B2C /* FetchRxCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4403F8911F3A074200CF3B2C /* FetchRxCell.swift */; };
 		44257F3B1F434136001419A6 /* Encounter+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44257F391F434136001419A6 /* Encounter+CoreDataClass.swift */; };
 		44257F3C1F434136001419A6 /* Encounter+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44257F3A1F434136001419A6 /* Encounter+CoreDataProperties.swift */; };
+		442CDDC71FBC9579005F9FD9 /* Support.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 442CDDC61FBC9579005F9FD9 /* Support.storyboard */; };
+		442CDDC91FBC95C2005F9FD9 /* Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442CDDC81FBC95C2005F9FD9 /* Support.swift */; };
 		442D847C1EFA6D1400D5ADC2 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442D847B1EFA6D1400D5ADC2 /* Settings.swift */; };
+		442F1AC61FBDDA4C00E13838 /* WalkthroughScreens.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 442F1AC51FBDDA4C00E13838 /* WalkthroughScreens.storyboard */; };
+		442F1AC81FBDDB3C00E13838 /* WalkthroughPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442F1AC71FBDDB3C00E13838 /* WalkthroughPageView.swift */; };
+		442F1ACA1FBDDD3F00E13838 /* ScreenOne.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442F1AC91FBDDD3F00E13838 /* ScreenOne.swift */; };
+		442F1ACC1FBDDD5300E13838 /* ScreenTwo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442F1ACB1FBDDD5300E13838 /* ScreenTwo.swift */; };
+		442F1ACE1FBDDD6900E13838 /* ScreenThree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442F1ACD1FBDDD6900E13838 /* ScreenThree.swift */; };
+		442F1AD01FBDDD7C00E13838 /* ScreenFour.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442F1ACF1FBDDD7C00E13838 /* ScreenFour.swift */; };
+		442F1AD21FBDDD8C00E13838 /* ScreenSix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442F1AD11FBDDD8C00E13838 /* ScreenSix.swift */; };
+		442F1AD41FBDDD9C00E13838 /* ScreenFive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 442F1AD31FBDDD9C00E13838 /* ScreenFive.swift */; };
 		44338EE91EDE9E9B0058E446 /* UpdateCodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44338EE81EDE9E9B0058E446 /* UpdateCodes.swift */; };
 		44338EEB1EDE9EB50058E446 /* UpdateCpt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44338EEA1EDE9EB50058E446 /* UpdateCpt.swift */; };
 		44338EED1EDE9EC40058E446 /* UpdateDx.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44338EEC1EDE9EC40058E446 /* UpdateDx.swift */; };
@@ -122,7 +132,17 @@
 		44257F3A1F434136001419A6 /* Encounter+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Encounter+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		442C0ED11EB2133400558095 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
 		442C0ED21EB2290D00558095 /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
+		442CDDC61FBC9579005F9FD9 /* Support.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Support.storyboard; sourceTree = "<group>"; };
+		442CDDC81FBC95C2005F9FD9 /* Support.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
 		442D847B1EFA6D1400D5ADC2 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		442F1AC51FBDDA4C00E13838 /* WalkthroughScreens.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = WalkthroughScreens.storyboard; sourceTree = "<group>"; };
+		442F1AC71FBDDB3C00E13838 /* WalkthroughPageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WalkthroughPageView.swift; sourceTree = "<group>"; };
+		442F1AC91FBDDD3F00E13838 /* ScreenOne.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenOne.swift; sourceTree = "<group>"; };
+		442F1ACB1FBDDD5300E13838 /* ScreenTwo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenTwo.swift; sourceTree = "<group>"; };
+		442F1ACD1FBDDD6900E13838 /* ScreenThree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenThree.swift; sourceTree = "<group>"; };
+		442F1ACF1FBDDD7C00E13838 /* ScreenFour.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenFour.swift; sourceTree = "<group>"; };
+		442F1AD11FBDDD8C00E13838 /* ScreenSix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenSix.swift; sourceTree = "<group>"; };
+		442F1AD31FBDDD9C00E13838 /* ScreenFive.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenFive.swift; sourceTree = "<group>"; };
 		44338EE81EDE9E9B0058E446 /* UpdateCodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCodes.swift; sourceTree = "<group>"; };
 		44338EEA1EDE9EB50058E446 /* UpdateCpt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateCpt.swift; sourceTree = "<group>"; };
 		44338EEC1EDE9EC40058E446 /* UpdateDx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateDx.swift; sourceTree = "<group>"; };
@@ -309,6 +329,8 @@
 			isa = PBXGroup;
 			children = (
 				4455A6221F68202F0030997C /* Main.storyboard */,
+				442CDDC61FBC9579005F9FD9 /* Support.storyboard */,
+				442F1AC51FBDDA4C00E13838 /* WalkthroughScreens.storyboard */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -368,6 +390,14 @@
 				44659E431F44A63300DC86C5 /* CustomSearchBar.swift */,
 				44659E441F44A63300DC86C5 /* CustomSearchController.swift */,
 				4454918A1F45EE41005BE254 /* FilterSearchAppointments.swift */,
+				442CDDC81FBC95C2005F9FD9 /* Support.swift */,
+				442F1AC71FBDDB3C00E13838 /* WalkthroughPageView.swift */,
+				442F1AC91FBDDD3F00E13838 /* ScreenOne.swift */,
+				442F1ACB1FBDDD5300E13838 /* ScreenTwo.swift */,
+				442F1ACD1FBDDD6900E13838 /* ScreenThree.swift */,
+				442F1ACF1FBDDD7C00E13838 /* ScreenFour.swift */,
+				442F1AD31FBDDD9C00E13838 /* ScreenFive.swift */,
+				442F1AD11FBDDD8C00E13838 /* ScreenSix.swift */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -521,7 +551,9 @@
 				4448E5221E76AAAC0071B2C1 /* LaunchScreen.storyboard in Resources */,
 				4455A6231F68202F0030997C /* Main.storyboard in Resources */,
 				446F39551F4C8C7200819F05 /* countries.json in Resources */,
+				442CDDC71FBC9579005F9FD9 /* Support.storyboard in Resources */,
 				4448E5201E76AAAC0071B2C1 /* Assets.xcassets in Resources */,
+				442F1AC61FBDDA4C00E13838 /* WalkthroughScreens.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -646,10 +678,12 @@
 				4448E55B1E76AB5C0071B2C1 /* ChangePassword.swift in Sources */,
 				4499255B1F3477A600FA0CC2 /* QATranscriptionCell.swift in Sources */,
 				448C9C561ECEF97A00FF9B0E /* RXCell.swift in Sources */,
+				442F1ACE1FBDDD6900E13838 /* ScreenThree.swift in Sources */,
 				44B5F8991F348C8500A7C276 /* Card+CoreDataProperties.swift in Sources */,
 				443666A61E81160F007AD22C /* ForgetPassword.swift in Sources */,
 				4435FF831E794C6B00E006D4 /* PlanDictation.swift in Sources */,
 				4448E5481E76AB5C0071B2C1 /* Dashboard.swift in Sources */,
+				442F1AC81FBDDB3C00E13838 /* WalkthroughPageView.swift in Sources */,
 				446CF4301F31F3C300142F2F /* Sounds+CoreDataClass.swift in Sources */,
 				4435FB591E8E6B2900413102 /* Connection.swift in Sources */,
 				4448E5521E76AB5C0071B2C1 /* HXDIctation.swift in Sources */,
@@ -658,6 +692,7 @@
 				443C2E5F1ED6DCAF00F919F0 /* DxCell.swift in Sources */,
 				44C5330E1ED8603800469055 /* RxList+CoreDataProperties.swift in Sources */,
 				445272061F349A4300DDD6C5 /* Users+CoreDataClass.swift in Sources */,
+				442F1AD21FBDDD8C00E13838 /* ScreenSix.swift in Sources */,
 				4435FF851E794F0C00E006D4 /* Network.swift in Sources */,
 				445272071F349A4300DDD6C5 /* Users+CoreDataProperties.swift in Sources */,
 				4448E8F11E9B7FE700AC5675 /* HXPlayBack.swift in Sources */,
@@ -680,17 +715,21 @@
 				4448E54A1E76AB5C0071B2C1 /* ScheduledAppointments.swift in Sources */,
 				44D92B391F3CA33E00561E51 /* FetchDxCell.swift in Sources */,
 				4448E5461E76AB5C0071B2C1 /* Login.swift in Sources */,
+				442F1AD01FBDDD7C00E13838 /* ScreenFour.swift in Sources */,
 				44D92B3B1F3CA36F00561E51 /* FetchCptList.swift in Sources */,
 				444F12C51F0F881F005C0D05 /* AddPatient.swift in Sources */,
 				442D847C1EFA6D1400D5ADC2 /* Settings.swift in Sources */,
 				4448E5501E76AB5C0071B2C1 /* CCDictation.swift in Sources */,
 				448C9C5E1ECF3CF100FF9B0E /* Cpt.swift in Sources */,
+				442F1ACA1FBDDD3F00E13838 /* ScreenOne.swift in Sources */,
 				4448E54E1E76AB5C0071B2C1 /* RecordingPlayback.swift in Sources */,
 				44390EB41ECB2AE7001ED088 /* PhotoDictation.swift in Sources */,
 				4403F8921F3A074200CF3B2C /* FetchRxCell.swift in Sources */,
 				448C9C541ECEF25C00FF9B0E /* AddRX.swift in Sources */,
 				4448E5071E76A9F00071B2C1 /* AppDelegate.swift in Sources */,
 				443C2E5D1ED6DC9E00F919F0 /* CptCell.swift in Sources */,
+				442F1ACC1FBDDD5300E13838 /* ScreenTwo.swift in Sources */,
+				442CDDC91FBC95C2005F9FD9 /* Support.swift in Sources */,
 				4448E5471E76AB5C0071B2C1 /* Register.swift in Sources */,
 				44D92B371F3CA32500561E51 /* FetchCptCell.swift in Sources */,
 				44338EE91EDE9E9B0058E446 /* UpdateCodes.swift in Sources */,
@@ -710,6 +749,7 @@
 				448C9C5C1ECF3CC800FF9B0E /* Codes.swift in Sources */,
 				44C5330D1ED8603800469055 /* RxList+CoreDataClass.swift in Sources */,
 				448C9C601ECF3CFD00FF9B0E /* Dx.swift in Sources */,
+				442F1AD41FBDDD9C00E13838 /* ScreenFive.swift in Sources */,
 				444F12D11F0FA78F005C0D05 /* Patients+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
