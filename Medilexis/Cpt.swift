@@ -12,33 +12,61 @@ import XLActionController
 import CoreData
 
 
-class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
     
     @IBOutlet weak var cptTableView: UITableView!
-    @IBOutlet var saveExitBUtton: UIButton!
-    @IBOutlet var saveExitLabel: UILabel!
-    @IBOutlet var exitLine: UIView!
+    @IBOutlet var saveNextButton: UIButton!
+    @IBOutlet var saveExitButton: UIButton!
     @IBOutlet var saveButton: UIButton!
-    @IBOutlet var saveLabel: UILabel!
-    @IBOutlet var saveLine: UIView!
-    @IBOutlet var nextButton: UIButton!
-    @IBOutlet var nextLabel: UILabel!
-    @IBOutlet var nextLine: UIView!
     @IBOutlet var skipButton: UIButton!
+    @IBOutlet var saveNextLabel: UILabel!
+    @IBOutlet var saveExitLabel: UILabel!
+    @IBOutlet var saveLabel: UILabel!
     @IBOutlet var skipLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    @IBOutlet var nextLine: UIView!
+    @IBOutlet var exitLine: UIView!
     @IBOutlet var skipLine: UIView!
+    @IBOutlet var seperatorLine: UIView!
+    @IBOutlet var noCptLabel: UILabel!
+    @IBOutlet var cptNavigationItem: UINavigationItem!
     
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let defaults = UserDefaults.standard
     var codes = [DiagnosticList]()
+    var searchResults:[DiagnosticList] = []
     var cptName = ["Evaluation and Management", "Anesthesia", "Surgery", "Radiology", "Pathology and Laboratory", "Medicine", "Composite measures", "Patient management", " Patient history", "Physical examination"]
     var cptCode = ["99201 – 99499", "99100 – 9914", "10021 – 69990", "70010 – 79999", "80047 – 89398", "90281 – 99199", "0001F-0015F", "0500F-0575F", "1000F-1220F", "2000F-2050F"]
+    var searchController: UISearchController!
     var cptIsSelected = Array(repeating: false, count: 1000)
     var fileCptStored = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let label: UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: 450, height: 50))
+        label.numberOfLines = 2
+        label.textAlignment = .center
+        label.textColor = UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0)
+        label.font = UIFont(name: "Lato-Regular", size: 20.0)
+        label.text = "CURRENT PROCEDURAL\nTERMINOLOGY"
+        self.cptNavigationItem.titleView = label
+        
+        seperatorLine.frame.origin = CGPoint(x: 0, y: 550)
+        cptTableView.frame = CGRect(x: 0, y: 68, width: self.view.frame.size.width, height: 470)
+        
+        // Add a search bar
+        searchController = UISearchController(searchResultsController: nil)
+        cptTableView.tableHeaderView = searchController.searchBar
+        searchController.searchResultsUpdater = self
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search CPT"
+        searchController.searchBar.backgroundImage = UIImage()
+        searchController.searchBar.isTranslucent = false
+        searchController.searchBar.barTintColor = UIColor(red: 236.0/255.0, green: 236.0/255.0, blue: 236.0/255.0, alpha: 1.0)
+        UISearchBar.appearance().tintColor = UIColor.black
+        definesPresentationContext = true
         
         let codesGenerated = "codesGenerated"
         let codesValue = defaults.bool(forKey: codesGenerated)
@@ -74,14 +102,14 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
         }
         
         saveButton.isHidden = true
+        saveNextButton.isHidden = true
+        saveButton.isHidden = true
+        saveNextLabel.isHidden = true
         saveLabel.isHidden = true
         saveLine.isHidden = true
-        nextButton.isHidden = true
-        nextLabel.isHidden = true
         nextLine.isHidden = true
-        saveExitBUtton.isHidden = true
-        saveExitLabel.isHidden = true
         exitLine.isHidden = true
+
         
     }
 
@@ -92,18 +120,23 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return codes.count
+        
+        if searchController.isActive {
+            return searchResults.count
+        } else {
+            return codes.count
+        }
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CPT") as! CptCell
-        
-        let cpt = codes[indexPath.row]
+        let cpt = (searchController.isActive) ? searchResults[indexPath.row] : codes[indexPath.row]
         cell.descriptionFIeld.text = cpt.name
         cell.code.text = cpt.code
         cell.accessoryType = cptIsSelected[indexPath.row] ? .checkmark : .none
         return cell
+        
         
     }
     
@@ -113,23 +146,24 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let cell = cptTableView.cellForRow(at: indexPath)
         fileCptStored = "false"
         
+        seperatorLine.frame.origin = CGPoint(x: 0, y: 475)
+        cptTableView.frame = CGRect(x: 0, y: 68, width: self.view.frame.size.width, height: 391)
+        
         if self.cptIsSelected[indexPath.row] == false {
-    
-            saveExitBUtton.isEnabled = true
-            saveExitLabel.isEnabled = true
             
+            saveNextButton.isHidden = false
+            saveExitButton.isHidden = false
             saveButton.isHidden = false
-            saveLabel.isHidden = false
-            saveLine.isHidden = false
-            nextButton.isHidden = false
-            nextLabel.isHidden = false
-            nextLine.isHidden = true
-            saveExitBUtton.isHidden = false
-            saveExitLabel.isHidden = false
-            exitLine.isHidden = true
             skipButton.isHidden = true
+            saveNextLabel.isHidden = false
+            saveExitLabel.isHidden = false
+            saveLabel.isHidden = false
             skipLabel.isHidden = true
+            saveLine.isHidden = false
+            nextLine.isHidden = true
+            exitLine.isHidden = true
             skipLine.isHidden = true
+
             
             // Toggle check-in and undo-check-in
             self.cptIsSelected[indexPath.row] = self.cptIsSelected[indexPath.row] ? false : true
@@ -193,6 +227,26 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     }
     
+    // MARK: - Search Controller
+    
+    func filterContent(for searchText: String) {
+        searchResults = codes.filter({ (code) -> Bool in
+            if let name = code.name, let id = code.code{
+                let isMatch = name.localizedCaseInsensitiveContains(searchText) || id.localizedCaseInsensitiveContains(searchText)
+                return isMatch
+            }
+            
+            return false
+        })
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        if let searchText = searchController.searchBar.text {
+            filterContent(for: searchText)
+            cptTableView.reloadData()
+        }
+    }
+    
     func getCodes(){
         
         codes.removeAll()
@@ -244,38 +298,6 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
     }
     
-    @IBAction func nextButton(_ sender: UIButton) {
-        
-        if self.fileCptStored == "false" {
-            
-            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
-            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesExit)
-            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
-            alert.addAction(action)
-            alert.addAction(cancel)
-            
-            
-            self.present(alert, animated: true, completion: nil);
-            
-        } else {
-            
-            
-            saveButton.isHidden = true
-            saveLabel.isHidden = true
-            saveLine.isHidden = true
-            nextButton.isHidden = true
-            nextLabel.isHidden = true
-            nextLine.isHidden = true
-            saveExitBUtton.isHidden = true
-            saveExitLabel.isHidden = true
-            exitLine.isHidden = true
-            skipButton.isHidden = false
-            skipLabel.isHidden = false
-            skipLine.isHidden = false
-            
-        }
-    }
-    
     func yesExit(alert: UIAlertAction){
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
@@ -292,7 +314,50 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
         exitLine.isHidden = true
     }
     
-    @IBAction func skipBtton(_ sender: UIButton) {
+    @IBAction func saveNextPressed(_ sender: UIButton) {
+        
+        
+        if self.fileCptStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesExit)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "cptCodes") as! Cpt
+            self.present(nextViewController, animated:true, completion:nil)
+            
+            
+            saveNextButton.isHidden = true
+            saveExitButton.isHidden = true
+            saveButton.isHidden = true
+            skipLine.isHidden = false
+            saveNextLabel.isHidden = true
+            saveExitLabel.isHidden = true
+            saveLabel.isHidden = true
+            skipLabel.isHidden = false
+            saveLine.isHidden = true
+            nextLine.isHidden = true
+            exitLine.isHidden = true
+            skipLine.isHidden = false
+            
+        }
+    }
+  
+    
+    @IBAction func skipPressed(_ sender: UIButton) {
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "cptCodes") as! Cpt
+        self.present(nextViewController, animated:true, completion:nil)
     }
     
     @IBAction func saveExit(_ sender: UIButton) {
@@ -315,30 +380,6 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
             self.present(nextViewController, animated:true, completion:nil)
             
         }
-        
-        if defaults.value(forKey: "qaTranscription") != nil{
-            let switchON: Bool = defaults.value(forKey: "qaTranscription")  as! Bool
-            print(switchON)
-            
-            if switchON == true{
-                
-                let alert = UIAlertController(title: "Completed", message: "Encounter completed.Do you want this encounter to be Transcribed?", preferredStyle: UIAlertControllerStyle.alert)
-                let yes = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: done)
-                let no = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: noTranscribe)
-                alert.addAction(yes)
-                alert.addAction(no)
-                self.present(alert, animated: true, completion: nil);
-                
-            }
-            else if switchON == false{
-                
-                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-                self.present(nextViewController, animated:true, completion:nil)
-                
-            }
-        }
-        
     }
     
     func noTranscribe(alert: UIAlertAction){
@@ -429,14 +470,28 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate {
             
             if count == 0 {
                 
-                self.saveExitBUtton.isEnabled = false
-                self.saveExitLabel.isEnabled = false
-            }
+                seperatorLine.frame.origin = CGPoint(x: 0, y: 550)
+                cptTableView.frame = CGRect(x: 0, y: 68, width: self.view.frame.size.width, height: 470)
+                
+                saveNextButton.isHidden = true
+                saveButton.isHidden = true
+                skipButton.isHidden = false
+                skipLabel.isHidden = false
+                saveNextLabel.isHidden = true
+                saveLabel.isHidden = true
+                saveLine.isHidden = true
+                nextLine.isHidden = true
+                exitLine.isHidden = true
+                skipLine.isHidden = false            }
             
         }catch {
             print(error.localizedDescription)
         }
         
     }
-
+    
+    @IBAction func backPressed(_ sender: UIBarButtonItem) {
+        
+        dismiss(animated: true, completion: nil)
+    }
 }

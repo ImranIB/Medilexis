@@ -111,8 +111,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         toolBar.backgroundColor = UIColor.black
         
-        
-       // let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.doneDoseStrengthBtnPressed))
+        let doneButton = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.doneDoseStrengthBtnPressed))
         
         let flexSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -130,7 +129,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn = UIBarButtonItem(customView: doseWeight)
         
-        toolBar.setItems([flexSpace,textBtn,flexSpace], animated: true)
+        toolBar.setItems([flexSpace,textBtn,flexSpace, doneButton], animated: true)
         
         weight.inputAccessoryView = toolBar
       
@@ -147,6 +146,8 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         toolBar1.tintColor = UIColor.white
         
         toolBar1.backgroundColor = UIColor.black
+        
+        let doneButton1 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.doneTimesLength))
     
         let flexSpace1 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -164,7 +165,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn1 = UIBarButtonItem(customView: doseWeight1)
         
-        toolBar1.setItems([flexSpace1,textBtn1,flexSpace1], animated: true)
+        toolBar1.setItems([flexSpace1,textBtn1,flexSpace1, doneButton1], animated: true)
         
         timesLength.inputAccessoryView = toolBar1
         
@@ -182,6 +183,8 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         toolBar2.backgroundColor = UIColor.black
         
+        let doneButton2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.doneDispense))
+        
         let flexSpace2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
         let doseWeight2 = UILabel(frame: CGRect(x: 0, y: 10, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
@@ -198,7 +201,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn2 = UIBarButtonItem(customView: doseWeight2)
         
-        toolBar2.setItems([flexSpace2,textBtn2,flexSpace2], animated: true)
+        toolBar2.setItems([flexSpace2,textBtn2,flexSpace2, doneButton2], animated: true)
         
         quantity.inputAccessoryView = toolBar2
         
@@ -216,6 +219,8 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         toolBar3.backgroundColor = UIColor.black
         
+        let doneButton3 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.doneRoute))
+        
         let flexSpace3 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
         let doseWeight3 = UILabel(frame: CGRect(x: 0, y: 10, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
@@ -232,7 +237,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn3 = UIBarButtonItem(customView: doseWeight3)
         
-        toolBar3.setItems([flexSpace3,textBtn3, flexSpace3], animated: true)
+        toolBar3.setItems([flexSpace3,textBtn3, flexSpace3, doneButton3], animated: true)
         
         route.inputAccessoryView = toolBar3
         
@@ -248,6 +253,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         toolBar4.backgroundColor = UIColor.black
         
+        let doneButton4 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.selectDoneStartButton))
         
         let defaultButton4 = UIBarButtonItem(title: "Today", style: UIBarButtonItemStyle.plain, target: self, action: #selector(RXDetail.startDefaultBtn))
         
@@ -267,7 +273,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn4 = UIBarButtonItem(customView: label4)
         
-        toolBar4.setItems([defaultButton4,flexSpace4,textBtn4,flexSpace4], animated: true)
+        toolBar4.setItems([defaultButton4,flexSpace4,textBtn4,flexSpace4, doneButton4], animated: true)
         
         startDate.inputAccessoryView = toolBar4
         
@@ -283,9 +289,9 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         toolBar5.backgroundColor = UIColor.black
         
+        let doneButton5 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(RXDetail.selectDoneEndButton))
         
         let defaultButton5 = UIBarButtonItem(title: "Today", style: UIBarButtonItemStyle.plain, target: self, action: #selector(RXDetail.endDefaultBtn))
-        
         
         let flexSpace5 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -303,7 +309,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         let textBtn5 = UIBarButtonItem(customView: label5)
         
-        toolBar5.setItems([defaultButton5,flexSpace5,textBtn5,flexSpace5], animated: true)
+        toolBar5.setItems([defaultButton5,flexSpace5,textBtn5,flexSpace5, doneButton5], animated: true)
         
         endDate.inputAccessoryView = toolBar5
 

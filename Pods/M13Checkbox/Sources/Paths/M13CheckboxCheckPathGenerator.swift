@@ -10,6 +10,7 @@
 //  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 //
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 import UIKit
 
 internal class M13CheckboxCheckPathGenerator: M13CheckboxPathGenerator {
@@ -22,7 +23,7 @@ internal class M13CheckboxCheckPathGenerator: M13CheckboxPathGenerator {
     struct CheckmarkProperties {
         
         /// The angle between the x-axis, and the line created between the origin, and the location where the extended long arm of the checkmark meets the box. (Diagram: Θ)
-        var longArmBoxIntersectionAngle: CGFloat = 45.0 * CGFloat(Double.pi / 180.0)
+        var longArmBoxIntersectionAngle: CGFloat = 45.0 * CGFloat(M_PI / 180.0)
         
         /// The distance from the center the long arm of the checkmark draws to, as a percentage of size. (Diagram: S)
         var longArmRadius: (circle: CGFloat, box: CGFloat) = (circle: 0.22, box: 0.33)
@@ -46,7 +47,7 @@ internal class M13CheckboxCheckPathGenerator: M13CheckboxPathGenerator {
     
     /// The parameters that define the checkmark.
     var checkmarkProperties: CheckmarkProperties = CheckmarkProperties()
-    
+
     //----------------------------
     // MARK: - Points of Intrest
     //----------------------------
@@ -182,7 +183,7 @@ internal class M13CheckboxCheckPathGenerator: M13CheckboxPathGenerator {
         return UIBezierPath(arcCenter: CGPoint(x: size / 2.0, y: size / 2.0),
                             radius: radius,
                             startAngle: -checkmarkProperties.longArmBoxIntersectionAngle,
-                            endAngle: CGFloat(2 * Double.pi) - checkmarkProperties.longArmBoxIntersectionAngle,
+                            endAngle: CGFloat(2 * M_PI) - checkmarkProperties.longArmBoxIntersectionAngle,
                             clockwise: true)
     }
     
@@ -215,7 +216,7 @@ internal class M13CheckboxCheckPathGenerator: M13CheckboxPathGenerator {
         if cornerRadius != 0 {
             path.addArc(withCenter: tr,
                         radius: cornerRadius,
-                        startAngle: -(CGFloat.pi / 4),
+                        startAngle: CGFloat(-M_PI_4),
                         endAngle: 0.0,
                         clockwise: true)
         }
@@ -228,7 +229,7 @@ internal class M13CheckboxCheckPathGenerator: M13CheckboxPathGenerator {
             path.addArc(withCenter: br,
                         radius: cornerRadius,
                         startAngle: 0.0,
-                        endAngle: CGFloat.pi / 2,
+                        endAngle: CGFloat(M_PI_2),
                         clockwise: true)
         }
         // Bottom side.
@@ -238,8 +239,8 @@ internal class M13CheckboxCheckPathGenerator: M13CheckboxPathGenerator {
         if cornerRadius != 0 {
             path.addArc(withCenter: bl,
                         radius: cornerRadius,
-                        startAngle: CGFloat.pi / 2,
-                        endAngle: CGFloat.pi,
+                        startAngle: CGFloat(M_PI_2),
+                        endAngle: CGFloat(M_PI),
                         clockwise: true)
         }
         // Left side.
@@ -249,8 +250,8 @@ internal class M13CheckboxCheckPathGenerator: M13CheckboxPathGenerator {
         if cornerRadius != 0 {
             path.addArc(withCenter: tl,
                         radius: cornerRadius,
-                        startAngle: CGFloat.pi,
-                        endAngle: CGFloat(CGFloat.pi + (CGFloat.pi / 2)),
+                        startAngle: CGFloat(M_PI),
+                        endAngle: CGFloat(M_PI + M_PI_2),
                         clockwise: true)
         }
         // Top side.
@@ -260,8 +261,8 @@ internal class M13CheckboxCheckPathGenerator: M13CheckboxPathGenerator {
         if cornerRadius != 0 {
             path.addArc(withCenter: tr,
                         radius: cornerRadius,
-                        startAngle: CGFloat(CGFloat.pi + (CGFloat.pi / 2)),
-                        endAngle: CGFloat(CGFloat.pi + (CGFloat.pi / 2) + (CGFloat.pi / 4)),
+                        startAngle: CGFloat(M_PI + M_PI_2),
+                        endAngle: CGFloat(M_PI + M_PI_2 + M_PI_4),
                         clockwise: true)
         }
         path.close()
@@ -311,11 +312,11 @@ internal class M13CheckboxCheckPathGenerator: M13CheckboxPathGenerator {
         
         return path
     }
-    
+
     override func pathForUnselectedMark() -> UIBezierPath? {
         return nil
     }
-    
+
     override func pathForLongUnselectedMark() -> UIBezierPath? {
         return nil
     }

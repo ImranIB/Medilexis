@@ -28,6 +28,7 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
     @IBOutlet var nextLine: UIView!
     @IBOutlet var exitLine: UIView!
     @IBOutlet var skipLine: UIView!
+    @IBOutlet var seperatorLine: UIView!
     
     
     var RxName = ["Acetaminophen", "Adderall", "Alprazolam" , "Amitriptyline", "Amoxicillin", "Ciprofloxacin" , "Codeine", "Doxycycline", "Gabapentin", "Hydrochlorothiazide", "Ibuprofen", "Lexapro", "Losartan", "Meloxicam", "Naproxen", "Oxycodone", "Prednisone", "Tramadol", "Wellbutrin", "Xanax", "Zoloft"]
@@ -43,6 +44,9 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        seperatorLine.frame.origin = CGPoint(x: 0, y: 550)
+        medicineTableView.frame = CGRect(x: 0, y: 68, width: self.view.frame.size.width, height: 470)
+        
         // Add a search bar
         searchController = UISearchController(searchResultsController: nil)
         medicineTableView.tableHeaderView = searchController.searchBar
@@ -88,10 +92,10 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
         }
         
         saveNextButton.isHidden = true
-        saveExitButton.isHidden = true
+        //saveExitButton.isHidden = true
         saveButton.isHidden = true
         saveNextLabel.isHidden = true
-        saveExitLabel.isHidden = true
+       // saveExitLabel.isHidden = true
         saveLabel.isHidden = true
         saveLine.isHidden = true
         nextLine.isHidden = true
@@ -127,6 +131,8 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
+        seperatorLine.frame.origin = CGPoint(x: 0, y: 475)
+        medicineTableView.frame = CGRect(x: 0, y: 68, width: self.view.frame.size.width, height: 391)
         
         let selectMedicine = medicines[indexPath.row]
         let cell = medicineTableView.cellForRow(at: indexPath)
@@ -418,8 +424,9 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
             
             
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "codes") as! Codes
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "cptCodes") as! Cpt
             self.present(nextViewController, animated:true, completion:nil)
+
             
             saveNextButton.isHidden = true
             saveExitButton.isHidden = true
@@ -471,7 +478,7 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
     @IBAction func skipPressed(_ sender: UIButton) {
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "codes") as! Codes
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "cptCodes") as! Cpt
         self.present(nextViewController, animated:true, completion:nil)
     }
     
@@ -496,10 +503,20 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
             
             if count == 0 {
                 
-                self.saveNextButton.isEnabled = false
-                self.saveExitButton.isEnabled = false
-                self.saveNextLabel.isEnabled = false
-                self.saveExitLabel.isEnabled = false
+                seperatorLine.frame.origin = CGPoint(x: 0, y: 550)
+                medicineTableView.frame = CGRect(x: 0, y: 68, width: self.view.frame.size.width, height: 470)
+                
+                saveNextButton.isHidden = true
+                saveButton.isHidden = true
+                skipButton.isHidden = false
+                skipLabel.isHidden = false
+                saveNextLabel.isHidden = true
+                saveLabel.isHidden = true
+                saveLine.isHidden = true
+                nextLine.isHidden = true
+                exitLine.isHidden = true
+                skipLine.isHidden = false
+                
             }
             
         }catch {

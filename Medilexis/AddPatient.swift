@@ -9,7 +9,6 @@
 import UIKit
 import CoreData
 import SkyFloatingLabelTextField
-import SearchTextField
 import SwiftSpinner
 
 class AddPatient: UIViewController {
@@ -418,7 +417,13 @@ class AddPatient: UIViewController {
                     try context.save()
                     
                     let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "patientsList") as! PatientsList
+                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "WalkInPatients") as! NewAppointment
+                    nextViewController.firstname = firstName.text
+                    nextViewController.lastname = lastName.text
+                    nextViewController.phone = phone.text
+                    nextViewController.dob = dob.text
+                    nextViewController.email = email.text
+                    nextViewController.address = address.text
                     self.present(nextViewController, animated:true, completion:nil)
                     
                     
@@ -433,6 +438,126 @@ class AddPatient: UIViewController {
         }
         
     }
+    
+    @IBAction func saveAddNewPressed(_ sender: UIButton) {
+        
+        let isEmailAddressValid = isValidEmailAddress(emailAddressString: email.text!)
+        
+        if firstName.text == "" {
+            
+            let alert = UIAlertController(title: "Notice", message: "Enter first name", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else  if lastName.text == "" {
+            
+            let alert = UIAlertController(title: "Notice", message: "Enter last name", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else  if phone.text == "" {
+            
+            let alert = UIAlertController(title: "Notice", message: "Enter phone number", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else  if dob.text == "" {
+            
+            let alert = UIAlertController(title: "Notice", message: "Enter birth date", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else if email.text != "" && !isEmailAddressValid {
+            
+            let alert = UIAlertController(title: "Notice", message: "Please enter valid email address", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else if (phone.text?.characters.count)! > 15 {
+            
+            let alert = UIAlertController(title: "Notice", message: "Phone Number should not be more then 15 numbers", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            let uid = userDefaults.value(forKey: "UserID")
+            let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
+            let predicate = NSPredicate(format: "(userID = %@) AND (firstName = %@) AND (lastName = %@) AND (phone = %@) AND (dateBirth = %@)", uid as! CVarArg, firstName.text!, lastName.text!, phone.text!, dob.text!)
+            fetchRequest.predicate = predicate
+            
+            do {
+                let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+                
+                if count > 0 {
+                    
+                    let alert = UIAlertController(title: "Notice", message: "Patient already exists", preferredStyle: UIAlertControllerStyle.alert)
+                    let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                    alert.addAction(action)
+                    
+                    self.present(alert, animated: true, completion: nil);
+                    
+                } else {
+                    
+                    let userID = userDefaults.value(forKey: "UserID") as! Int32
+                    let patientid = NSUUID().uuidString.lowercased() as String
+                    
+                    
+                    let context = getContext()
+                    
+                    let entity = NSEntityDescription.entity(forEntityName: "Patients", in: context)
+                    
+                    let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+                    
+                    managedObj.setValue(firstName.text, forKey: "firstName")
+                    managedObj.setValue(lastName.text, forKey: "lastName")
+                    managedObj.setValue(phone.text, forKey: "phone")
+                    managedObj.setValue(dob.text, forKey: "dateBirth")
+                    managedObj.setValue(email.text, forKey: "email")
+                    managedObj.setValue(address.text, forKey: "address")
+                    managedObj.setValue(patientid, forKey: "id")
+                    managedObj.setValue(userID, forKey: "userID")
+                    
+                    do {
+                        try context.save()
+                        
+                        self.firstName.text = ""
+                        self.lastName.text = ""
+                        self.phone.text = ""
+                        self.address.text = ""
+                        self.dob.text = ""
+                        self.email.text = ""
+                        
+                        let alert = UIAlertController(title: "Success", message: "Patient added successfully", preferredStyle: UIAlertControllerStyle.alert)
+                        let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                        alert.addAction(action)
+                        self.present(alert, animated: true, completion: nil);
+                   
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                    
+                    
+                }
+            }catch {
+                print(error.localizedDescription)
+            }
+            
+        }
+    }
+    
     
     func dateWithOutTime( datDate: NSDate) -> NSDate {
         let calendar = NSCalendar(identifier: NSCalendar.Identifier.gregorian)!

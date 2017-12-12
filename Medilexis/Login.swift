@@ -91,10 +91,6 @@ class Login: UIViewController{
                         
                         //print(json)
                         
-                     
-                        //let details = status?[0] as! [String:Any]
-                        //print(details["address"]!)
-                        
                        let status = json["status"] as? String
                         
                         if (status == "success"){

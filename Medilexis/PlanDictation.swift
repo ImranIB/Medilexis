@@ -57,10 +57,10 @@ class PlanDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDel
         stop.isEnabled = false
         play.isEnabled = false
         transcribe.isHidden = true
-        saveExit.isHidden = true
+        //saveExit.isHidden = true
         saveNext.isHidden = true
         transcribeLabel.isHidden = true
-        saveExitLabel.isHidden = true
+        //saveExitLabel.isHidden = true
         saveNextLabel.isHidden = true
         saveButton.isHidden = true
         saveLabel.isHidden = true

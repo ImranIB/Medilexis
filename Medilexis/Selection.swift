@@ -18,7 +18,7 @@ class Selection: UIViewController {
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        print("Memory Issue on Selection")
+   
 
     }
     

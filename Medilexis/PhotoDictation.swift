@@ -216,6 +216,14 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
             
             let actionController = YoutubeActionController()
             
+            actionController.addAction(Action(ActionData(title: "Exit", image: UIImage(named: "exit")!), style: .default, handler: { action in
+                
+                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+                self.present(nextViewController, animated:true, completion:nil)
+                
+            }))
+            
             actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
                 
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)

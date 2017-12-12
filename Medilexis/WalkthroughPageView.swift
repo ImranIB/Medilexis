@@ -21,8 +21,7 @@ class WalkthroughPageView: UIPageViewController, UIPageViewControllerDelegate, U
                 self.newVc(viewController: "screenThree"),
                 self.newVc(viewController: "screenFour"),
                 self.newVc(viewController: "screenFive"),
-                self.newVc(viewController: "screenSix"),
-                self.newVc(viewController: "selection")]
+                self.newVc(viewController: "screenSix")]
     }()
     
     override func viewDidLoad() {
@@ -79,9 +78,9 @@ class WalkthroughPageView: UIPageViewController, UIPageViewControllerDelegate, U
         // User is on the first view controller and swiped left to loop to
         // the last view controller.
         guard previousIndex >= 0 else {
-            return orderedViewControllers.last
+            //return orderedViewControllers.last
             // Uncommment the line below, remove the line above if you don't want the page control to loop.
-            // return nil
+            return nil
         }
         
         guard orderedViewControllers.count > previousIndex else {
@@ -98,7 +97,6 @@ class WalkthroughPageView: UIPageViewController, UIPageViewControllerDelegate, U
         
         let nextIndex = viewControllerIndex + 1
         let orderedViewControllersCount = orderedViewControllers.count
-        
         
         // User is on the last view controller and swiped right to loop to
         // the first view controller.

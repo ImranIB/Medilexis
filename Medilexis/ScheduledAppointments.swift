@@ -470,7 +470,7 @@ class ScheduledAppointments: UIViewController, UITableViewDataSource, UITableVie
         tasks.removeAll()
         
         let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: "dateSchedule", ascending: true)
+        let sortDescriptor = NSSortDescriptor(key: "dateSchedule", ascending: false)
         fetchRequest.sortDescriptors = [sortDescriptor]
         let predicate = NSPredicate(format: "(userID = %@) AND (dateSchedule >= %@ AND dateSchedule <= %@) AND (isRecording == false)", uid as! CVarArg, fromDate, todayDate)
         fetchRequest.predicate = predicate
@@ -529,7 +529,7 @@ class ScheduledAppointments: UIViewController, UITableViewDataSource, UITableVie
             let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
             let sortDescriptor = NSSortDescriptor(key: "dateSchedule", ascending: true)
             fetchRequest.sortDescriptors = [sortDescriptor]
-            let predicate = NSPredicate(format: "(userID = %@) AND (dateSchedule >= %@ AND dateSchedule <= %@ AND firstName = %@ || lastName == %@ || dateBirth == %@)", uid as! CVarArg, fromDate, toDate, firstNameTextField.text!, lastNameTextField.text!, dobTextField.text!)
+            let predicate = NSPredicate(format: "(userID = %@) AND (dateSchedule >= %@ AND dateSchedule <= %@) AND (isRecording == false) OR (firstName = %@ || lastName == %@ || dateBirth == %@)", uid as! CVarArg, fromDate, toDate, firstNameTextField.text!, lastNameTextField.text!, dobTextField.text!)
             fetchRequest.predicate = predicate
             
             do {

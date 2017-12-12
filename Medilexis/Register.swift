@@ -400,8 +400,7 @@ class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
                                 
                                 let response = json["error"] as! NSDictionary
                                 let data = response["message"]! as! String
-                                //print(data)
-                                
+                               
                                 SwiftSpinner.hide()
                                 
                                 let alert = UIAlertController(title: "Notice", message: data, preferredStyle: UIAlertControllerStyle.alert)

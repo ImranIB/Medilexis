@@ -23,12 +23,16 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     @IBOutlet var addressTextFIeld: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet var appointmentTimeTextField: SkyFloatingLabelTextFieldWithIcon!
     
-    
-    
     var pickOption = ["New Patient", "Follow-up"]
     let defaults = UserDefaults.standard
     var scheduledPickDate: NSDate!
     var outputTitle = String()
+    var firstname: String!
+    var lastname: String!
+    var phone: String!
+    var dob: String!
+    var email: String!
+    var address: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -129,7 +133,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         
         let flexSpace2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
-        let label2 = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
+        let label2 = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 2, height: self.view.frame.size.height))
         
         label2.font = UIFont(name: "FontAwesome", size: 16)
         
@@ -653,12 +657,82 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             } catch {
                 print(error.localizedDescription)
             }
-            
-            
         }
-        
-        
     }
+    
+    @IBAction func saveExitPressed(_ sender: UIButton) {
+        
+        let userID = defaults.value(forKey: "UserID") as! Int32
+        //let patientid = defaults.value(forKey: "PKEY")
+        let generatedID = NSUUID().uuidString.lowercased() as String
+        let isEmailAddressValid = isValidEmailAddress(emailAddressString: emailTextField.text!)
+        
+        if pickerTextField.text == "" || patientNameTextField.text == "" || dateTextField.text == "" || scheduledDateWalkinPatient.text == "" || lastNameTextField.text == "" || phoneTextField.text == ""  {
+            
+            let alert = UIAlertController(title: "Notice", message: "Please fill mandatory fields", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+            return
+            
+        }  else if emailTextField.text != "" && !isEmailAddressValid {
+            
+            let alert = UIAlertController(title: "Notice", message: "Please enter valid email address", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else if (phoneTextField.text?.characters.count)! > 15 {
+            
+            let alert = UIAlertController(title: "Notice", message: "Phone Number should not be more then 15 numbers", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        }  else {
+            
+            //print(scheduledPickDate)
+            
+            let context = getContext()
+            
+            let entity = NSEntityDescription.entity(forEntityName: "Appointments", in: context)
+            
+            let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+            
+            
+            managedObj.setValue(pickerTextField.text, forKey: "visitType")
+            managedObj.setValue(patientNameTextField.text, forKey: "firstName")
+            managedObj.setValue(lastNameTextField.text, forKey: "lastName")
+            managedObj.setValue(phoneTextField.text, forKey: "phone")
+            managedObj.setValue(emailTextField.text, forKey: "email")
+            managedObj.setValue(addressTextFIeld.text, forKey: "address")
+            managedObj.setValue(dateTextField.text, forKey: "dateBirth")
+            managedObj.setValue(scheduledPickDate, forKey: "dateSchedule")
+            managedObj.setValue(appointmentTimeTextField.text, forKey: "appointmentTime")
+            managedObj.setValue(userID, forKey: "userID")
+            managedObj.setValue(generatedID, forKey: "appointmentID")
+            managedObj.setValue(false, forKey: "isRecording")
+            managedObj.setValue("false", forKey: "recordingStatus")
+            
+            do {
+                try context.save()
+                
+                savePatientRecord()
+                
+                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+                self.present(nextViewController, animated:true, completion:nil)
+                
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
     
     @IBAction func dismissNewPatient(_ sender: UIBarButtonItem) {
         
@@ -689,46 +763,17 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     
     override func viewWillAppear(_ animated: Bool) {
         
-        let firstname = defaults.value(forKey: "FN")
-        let lastname = defaults.value(forKey: "LN")
-        let phone = defaults.value(forKey: "PH")
-        let dob = defaults.value(forKey: "DB")
-        let email = defaults.value(forKey: "EM")
-        let address = defaults.value(forKey: "AD")
-        
-        if firstname != nil {
-            patientNameTextField.text = firstname as! String?
-        }
-        
-        if lastname != nil {
-            lastNameTextField.text = lastname as! String?
-        }
-        
-        if phone != nil {
-            phoneTextField.text = phone as! String?
-        }
-        
-        if dob != nil {
-            dateTextField.text = dob as! String?
-        }
-        
-        if email != nil {
-            emailTextField.text = email as! String?
-        }
-        
-        if address != nil {
-            addressTextFIeld.text = address as! String?
-        }
+        self.patientNameTextField.text = firstname
+        self.lastNameTextField.text = lastname
+        self.phoneTextField.text = phone
+        self.dateTextField.text = dob
+        self.emailTextField.text = email
+        self.addressTextFIeld.text = address
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        defaults.set("", forKey: "FN")
-        defaults.set("", forKey: "LN")
-        defaults.set("", forKey: "DB")
-        defaults.set("", forKey: "PH")
-        defaults.set("", forKey: "EM")
-        defaults.set("", forKey: "AD")
-        defaults.set("", forKey: "PKEY")
+
+        
     }
     
     func savePatientRecord(){

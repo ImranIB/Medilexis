@@ -16,6 +16,11 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet weak var dxTableView: UITableView!
     @IBOutlet var saveExitButton: UIButton!
     @IBOutlet var saveExitLabel: UILabel!
+    @IBOutlet var saveExitLine: UIView!
+    @IBOutlet var saveButton: UIButton!
+    @IBOutlet var saveLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    
 
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -24,6 +29,7 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
     var dxDescription = ["Infectious and parasitic diseases", "Neoplasms", "Mental disorders", "Diseases of the nervous system", "Diseases of the sense organs", "Diseases of the circulatory system", "Diseases of the respiratory system" , "Congenital anomalies", "Symptoms, signs, and ill-defined conditions",  "Injury and poisoning"]
     var dxCode = ["001-139", "140-239", "290-319", "320-359", "360-389", "390-459", "460-519","740-759", "780-799", "800-999"]
     var dxIsSelected = Array(repeating: false, count: 1000)
+    var fileDxStored = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,8 +67,12 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
             }
         }
         
-        saveExitButton.isEnabled = false
-        saveExitLabel.isEnabled = false
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
+        saveLine.isHidden = true
+        saveExitButton.isHidden = false
+        saveExitLabel.isHidden = false
+        saveExitLine.isHidden = false
     }
 
     override func didReceiveMemoryWarning() {
@@ -91,13 +101,16 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
         let detail = DXCodes[indexPath.row]
         let cell = dxTableView.cellForRow(at: indexPath)
-        
+        fileDxStored = "false"
         
         if self.dxIsSelected[indexPath.row] == false {
 
-            saveExitButton.isEnabled = true
-            saveExitLabel.isEnabled = true
-            
+            saveButton.isHidden = false
+            saveLabel.isHidden = false
+            saveLine.isHidden = false
+            saveExitButton.isHidden = true
+            saveExitLabel.isHidden = true
+            saveExitLine.isHidden = true
             // Toggle check-in and undo-check-in
             self.dxIsSelected[indexPath.row] = self.dxIsSelected[indexPath.row] ? false : true
             cell?.accessoryType = self.dxIsSelected[indexPath.row] ? .checkmark : .none
@@ -193,9 +206,7 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         dxTableView.reloadData()
         getDXCodes()
-        
-        saveExitButton.isEnabled = false
-        saveExitButton.isEnabled = false
+      
     }
 
     func getContext () -> NSManagedObjectContext {
@@ -272,13 +283,26 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
         self.present(alertController, animated: true, completion: nil)
     }
     
+    @IBAction func savePressed(_ sender: UIButton) {
+        
+        fileDxStored = "true"
+        saveLine.isHidden = true
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
+        saveExitLine.isHidden = false
+        saveExitButton.isHidden = false
+        saveExitLabel.isHidden = false
+    }
+    
+    
     @IBAction func saveExit(_ sender: UIButton) {
         
         if defaults.value(forKey: "qaTranscription") != nil{
             let switchON: Bool = defaults.value(forKey: "qaTranscription")  as! Bool
-           
+            print(switchON)
+            
             if switchON == true{
-               
+                
                 let alert = UIAlertController(title: "Completed", message: "Encounter completed.Do you want this encounter to be Transcribed?", preferredStyle: UIAlertControllerStyle.alert)
                 let yes = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: done)
                 let no = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: noTranscribe)
@@ -288,7 +312,7 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
                 
             }
             else if switchON == false{
-              
+                
                 let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
                 let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
                 self.present(nextViewController, animated:true, completion:nil)
@@ -327,8 +351,12 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
             
             if count == 0 {
            
-                self.saveExitButton.isEnabled = false
-                self.saveExitLabel.isEnabled = false
+                self.saveButton.isHidden = true
+                self.saveLabel.isHidden = true
+                self.saveLine.isHidden = true
+                self.saveExitButton.isHidden = false
+                self.saveExitLabel.isHidden = false
+                self.saveExitLine.isHidden = false
             }
             
         }catch {

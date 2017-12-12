@@ -22,11 +22,10 @@ class PatientsList: UIViewController, UITableViewDataSource, UITableViewDelegate
     var searchTasks = [Patients]()
     var searchController: UISearchController!
     var searchResults:[Patients] = []
-    var patientsArray = [PatientModel]()
     
     var shouldShowSearchResults = false
     var customSearchController: CustomSearchController!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -37,7 +36,7 @@ class PatientsList: UIViewController, UITableViewDataSource, UITableViewDelegate
         configureCustomSearchController()
         
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -65,7 +64,7 @@ class PatientsList: UIViewController, UITableViewDataSource, UITableViewDelegate
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "PatientsLists", for: indexPath) as! PatientsListCell
-
+        
         
         if shouldShowSearchResults {
             let task = searchResults[indexPath.row]
@@ -80,13 +79,12 @@ class PatientsList: UIViewController, UITableViewDataSource, UITableViewDelegate
             cell.nameLabel.text = fullName
             cell.dobLabel.text = task.dateBirth
             cell.phoneLabel.text = task.phone
-        
         }
         
         return cell
         
     }
-
+    
     func getContext () -> NSManagedObjectContext {
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
@@ -96,60 +94,7 @@ class PatientsList: UIViewController, UITableViewDataSource, UITableViewDelegate
     func FetchPatientsList() {
         
         let uid = defaults.value(forKey: "UserID")
-        
-       /* let url = URL(string: "http://muapp.com/medilixis_server/public/getselectedapppatient")!
-        let jsonDict = ["id": uid, "token": "eRVmcwbtMqQfRZprBqn7N1vZNuvXrrxB"] as [String : Any]
-        let jsonData = try! JSONSerialization.data(withJSONObject: jsonDict, options: [])
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "post"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = jsonData
-        
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print("error:", error)
-            }
-            
-            do {
-                guard let data = data else { return }
-                guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] else { return }
-                //print("json:", json)
-                
-                let responses = json["data"] as? [[String: Any]]
-               
-                if (responses?.count)! > 0 {
-                    
-                    for response in responses! {
-                        
-                        let patientID = response["id"] as? Int
-                        let firstname = response["first_name"] as? String
-                        let lastname = response["last_name"] as? String
-                        let dob = response["date_of_birth"] as? String
-                        let phone = response["phone"] as? String
-                        
-                        let data = PatientModel(id: patientID!, firstname: firstname!, lastname: lastname!, dob: dob!, phone: phone!)
-                        self.patientsArray.append(data)
-                        
-                        DispatchQueue.main.async {
-                            self.patientsList.reloadData()
-                            self.checkPatients()
-                        }
-                    }
-                    
-                    
-                }
-                
-                
-            } catch {
-                print("error:", error)
-                
-            }
-            
-        }
-        
-        task.resume()*/
-       searchTasks.removeAll()
+        searchTasks.removeAll()
         
         let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
         let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
@@ -167,32 +112,34 @@ class PatientsList: UIViewController, UITableViewDataSource, UITableViewDelegate
                     searchTasks.append(item)
                     patientsList.reloadData()
                     checkPatients()
-          
+                    
                 }
             } else {
                 searchTasks.removeAll()
                 patientsList.reloadData()
                 checkPatients()
-        
+                
             }
             
         }catch {
             print(error.localizedDescription)
         }
         
-   }
+    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-   
-        let patientData = searchTasks[indexPath.row]
         
-        defaults.set(patientData.firstName!, forKey: "FN")
-        defaults.set(patientData.lastName!, forKey: "LN")
-        defaults.set(patientData.dateBirth!, forKey: "DB")
-        defaults.set(patientData.phone!, forKey: "PH")
-        defaults.set(patientData.email!, forKey: "EM")
-        defaults.set(patientData.address!, forKey: "AD")
-        defaults.set(patientData.id!, forKey: "PKEY")
+        let patientData = searchTasks[indexPath.row]
+
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "WalkInPatients") as! NewAppointment
+        nextViewController.firstname = patientData.firstName
+        nextViewController.lastname = patientData.lastName
+        nextViewController.phone = patientData.phone
+        nextViewController.dob = patientData.dateBirth
+        nextViewController.email = patientData.email
+        nextViewController.address = patientData.address
+        self.present(nextViewController, animated:true, completion:nil)
         
     }
     
@@ -243,7 +190,7 @@ class PatientsList: UIViewController, UITableViewDataSource, UITableViewDelegate
         
         customSearchController.customSearchBar.placeholder = "Search Patients"
         patientsList.tableHeaderView = customSearchController.customSearchBar
-     
+        
         customSearchController.customDelegate = self
     }
     
@@ -256,7 +203,7 @@ class PatientsList: UIViewController, UITableViewDataSource, UITableViewDelegate
     
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-      
+        
         shouldShowSearchResults = false
         patientsList.reloadData()
         
@@ -285,8 +232,8 @@ class PatientsList: UIViewController, UITableViewDataSource, UITableViewDelegate
             
             if let firstname = task.firstName, let lastname = task.lastName , let number = task.phone, let dob = task.dateBirth  {
                 let isMatch = firstname.localizedCaseInsensitiveContains(searchText) || lastname.localizedCaseInsensitiveContains(searchText) || number.localizedCaseInsensitiveContains(searchText) || dob.localizedCaseInsensitiveContains(searchText)
-
-
+                
+                
                 return isMatch
             }
             

@@ -15,6 +15,7 @@ class CptCell: UITableViewCell {
     @IBOutlet weak var code: UILabel!
     @IBOutlet weak var cardView: UIView!
     
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code

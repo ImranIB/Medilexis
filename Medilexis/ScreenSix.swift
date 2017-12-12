@@ -9,6 +9,8 @@
 import UIKit
 
 class ScreenSix: UIViewController {
+    
+    let userDefaults = Foundation.UserDefaults.standard
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,5 +22,15 @@ class ScreenSix: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    @IBAction func nextPressed(_ sender: UIButton) {
+        
+        self.userDefaults.set("true", forKey: "hasViewedWalkthrough")
+
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "selection") as! Selection
+        self.present(nextViewController, animated:true, completion:nil)
+    }
+    
 
 }

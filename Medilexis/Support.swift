@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftSpinner
 
 class Support: UIViewController {
     
@@ -25,10 +26,14 @@ class Support: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-            
-        let url = URL (string: "http://medilexis.com/")
+        
+        SwiftSpinner.show("Loading Support view")
+        
+        let url = URL (string: "http://medilexis.com/#contactus")
         let requestObj = URLRequest(url: url!)
         supportWebView.loadRequest(requestObj)
+        
+        SwiftSpinner.hide()
     }
     
     @IBAction func stop(_ sender: UIBarButtonItem) {

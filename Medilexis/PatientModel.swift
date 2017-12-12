@@ -16,5 +16,7 @@ struct PatientModel {
     var lastname: String
     var dob: String
     var phone: String
+    var email: String
+    var address: String
 
 }

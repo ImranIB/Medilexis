@@ -4,32 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>AWSAutoScaling.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>AWSCloudWatch.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>AWSCognito.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>AWSCognitoIdentityProvider.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
 		<key>AWSCore.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-		</dict>
-		<key>AWSDynamoDB.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -54,7 +29,7 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>SearchTextField.xcscheme</key>
+		<key>SVProgressHUD.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -92,57 +67,42 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>11DFC6F885BFA9BCE8EB6EA0458ABFF8</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>162CAD95CC0F402AED98F345659DC633</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>20A9DD9ABBF08BC57372A26C35327BF1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4CA1EBC183297E6008B85E5E4CF332C9</key>
+		<key>479D1F54FEA982EA6AA142DD3C10E3EB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4DCA82DC6741ED19562ACCF65E3554AB</key>
+		<key>4AEBBE0A50BC04AD7629FD482206B6AB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>53C6112213829CB147F47E473C93F271</key>
+		<key>5401E0B424F1F8B76A6C8927CD953A28</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>55807A0C859215250B0C9DD206116E63</key>
+		<key>5ACFCBB5C36270A9DF9A2D2D11708867</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>567A58272C63E96877C320B73F956506</key>
+		<key>5F6E2321456BA65F55C1FCE04F8CCF9C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>5DE5D7A893746EB4FEDA5DB4B0898483</key>
+		<key>64D37250B1BAD9EDC81255C23C05B751</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>764BF5F8A7793010994AF3D12E8FB7BF</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>81BFBA9C0A4BA9E63760C23D70562BD2</key>
+		<key>935D7A0FEC75AC340FB32907F1FD9588</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -152,27 +112,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9FC549016533CEAB044C636D1C5E09D2</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>B2FC547E10634A45F069AB7DD1BFDEA4</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>C235F77E101E742652CCF98FFDFA5182</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E39F0537171AA4B4B458BFCF0B8B266A</key>
+		<key>D796F57EB2671F7BDCD8EC62445D3A86</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>F61C52EC7EE039AF143BB620EF1646BC</key>
+		<key>E7287732EFD5C80194D9D09BDB8BEFCF</key>
 		<dict>
 			<key>primary</key>
 			<true/>

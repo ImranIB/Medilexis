@@ -24,11 +24,10 @@ internal class M13CheckboxAddRemovePathGenerator: M13CheckboxPathGenerator {
         // Create a circle that starts in the middle left.
         return UIBezierPath(arcCenter: CGPoint(x: size / 2.0, y: size / 2.0),
                             radius: radius,
-                            startAngle: -CGFloat.pi,
-                            endAngle: CGFloat((2 * Double.pi) - Double.pi),
+                            startAngle: CGFloat(-M_PI),
+                            endAngle: CGFloat((2 * M_PI) - M_PI),
                             clockwise: true)
     }
-
     
     override func pathForRoundedRect() -> UIBezierPath? {
         let path = UIBezierPath()
@@ -59,11 +58,11 @@ internal class M13CheckboxAddRemovePathGenerator: M13CheckboxPathGenerator {
         if cornerRadius != 0 {
             path.addArc(withCenter: tl,
                         radius: cornerRadius,
-                        startAngle: CGFloat.pi,
-                        endAngle: CGFloat(Double.pi + (Double.pi / 2)),
+                        startAngle: CGFloat(M_PI),
+                        endAngle: CGFloat(M_PI + M_PI_2),
                         clockwise: true)
         }
-
+        
         // Top side.
         let trYCr: CGFloat = tr.y - cornerRadius
         path.addLine(to: CGPoint(x: tr.x, y: trYCr))
@@ -71,7 +70,7 @@ internal class M13CheckboxAddRemovePathGenerator: M13CheckboxPathGenerator {
         if cornerRadius != 0 {
             path.addArc(withCenter: tr,
                         radius: cornerRadius,
-                        startAngle: -(CGFloat.pi / 2),
+                        startAngle: CGFloat(-M_PI_2),
                         endAngle: 0.0,
                         clockwise: true)
         }
@@ -84,7 +83,7 @@ internal class M13CheckboxAddRemovePathGenerator: M13CheckboxPathGenerator {
             path.addArc(withCenter: br,
                         radius: cornerRadius,
                         startAngle: 0.0,
-                        endAngle: CGFloat.pi / 2,
+                        endAngle: CGFloat(M_PI_2),
                         clockwise: true)
         }
         // Bottom side.
@@ -94,8 +93,8 @@ internal class M13CheckboxAddRemovePathGenerator: M13CheckboxPathGenerator {
         if cornerRadius != 0 {
             path.addArc(withCenter: bl,
                         radius: cornerRadius,
-                        startAngle: CGFloat.pi / 2,
-                        endAngle: CGFloat.pi,
+                        startAngle: CGFloat(M_PI_2),
+                        endAngle: CGFloat(M_PI),
                         clockwise: true)
         }
         

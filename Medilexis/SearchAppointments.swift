@@ -349,6 +349,11 @@ class SearchAppointments: UIViewController, UITableViewDataSource, UITableViewDe
         // Determine if we get the restaurant from search result or the original array
         let task = (searchController.isActive) ? searchResults[indexPath.row] : searchTasks[indexPath.row]
         
+        cell.uploadStatus.text = ""
+        cell.recordingIcon.image = nil
+        cell.transcriptionIcon.image = nil
+        cell.upload.setBackgroundImage(nil, for: .normal)
+        
         let fullName = task.firstName! + " " + task.lastName!
         cell.patientName?.text = fullName
         
@@ -390,6 +395,9 @@ class SearchAppointments: UIViewController, UITableViewDataSource, UITableViewDe
         if task.isUploading == true {
             cell.uploadStatus.text = "Completed"
             cell.upload.isEnabled = false
+        } else {
+            
+            cell.upload.isEnabled = true
         }
         
         return cell
@@ -501,7 +509,7 @@ class SearchAppointments: UIViewController, UITableViewDataSource, UITableViewDe
         searchTasks.removeAll()
         
         let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: "dateSchedule", ascending: true)
+        let sortDescriptor = NSSortDescriptor(key: "dateSchedule", ascending: false)
         fetchRequest.sortDescriptors = [sortDescriptor]
         let predicate = NSPredicate(format: "(userID = %@) AND (dateSchedule >= %@ AND dateSchedule <= %@)", uid as! CVarArg, fromDate, todayDate)
         fetchRequest.predicate = predicate
@@ -598,13 +606,14 @@ class SearchAppointments: UIViewController, UITableViewDataSource, UITableViewDe
             let toDate = defaults.value(forKey: "SearchToDate") as! NSDate
             
             searchTasks.removeAll()
+            
             let _ =  fromTextField.resignFirstResponder()
             let _ =  toTextField.resignFirstResponder()
             
             let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
-            let sortDescriptor = NSSortDescriptor(key: "dateSchedule", ascending: true)
+            let sortDescriptor = NSSortDescriptor(key: "dateSchedule", ascending: false)
             fetchRequest.sortDescriptors = [sortDescriptor]
-            let predicate = NSPredicate(format: "(userID = %@) AND (dateSchedule >= %@ AND dateSchedule <= %@ AND firstName = %@ || lastName == %@ || dateBirth == %@)", uid as! CVarArg, fromDate, toDate, firstNameTextField.text!, lastNameTextField.text!, dobTextField.text!)
+            let predicate = NSPredicate(format: "(userID = %@) AND (dateSchedule >= %@ AND dateSchedule <= %@) OR (firstName = %@ || lastName == %@ || dateBirth == %@)", uid as! CVarArg, fromDate, toDate, firstNameTextField.text!, lastNameTextField.text!, dobTextField.text!)
             fetchRequest.predicate = predicate
             
             do {
@@ -618,9 +627,14 @@ class SearchAppointments: UIViewController, UITableViewDataSource, UITableViewDe
                     for item in fetchResult {
                         
                         searchTasks.append(item)
-                        searchTableView.reloadData()
-                        checkSearchPatients()
                     }
+                    
+                    DispatchQueue.main.async {
+
+                        self.searchTableView.reloadData()
+                        self.checkSearchPatients()
+                    }
+                    
                 } else {
                     searchTasks.removeAll()
                     searchTableView.reloadData()
@@ -880,7 +894,13 @@ class SearchAppointments: UIViewController, UITableViewDataSource, UITableViewDe
                                                             
                                                         }
                                                         
-                                                        self?.uploadImages()
+                                                        DispatchQueue.main.async {
+                                                            
+                                                            SwiftSpinner.hide()
+                                                            self?.searchTableView.reloadData()
+                                                            //self?.FetchObject()
+                                                          
+                                                        }
                                                         
                                                     }catch {
                                                         print(error.localizedDescription)
@@ -913,6 +933,10 @@ class SearchAppointments: UIViewController, UITableViewDataSource, UITableViewDe
                         
                     }
                 }
+                
+                   self.uploadImages()
+                
+                
             }catch {
                 print(error.localizedDescription)
             }
@@ -1042,12 +1066,6 @@ class SearchAppointments: UIViewController, UITableViewDataSource, UITableViewDe
                                     
                                 }
                                 
-                                DispatchQueue.main.async {
-                                    
-                                    self?.anotherImage()
-                                    return
-                                }
-                                
                             }catch {
                                 print(error.localizedDescription)
                             }
@@ -1068,6 +1086,9 @@ class SearchAppointments: UIViewController, UITableViewDataSource, UITableViewDe
                 
                 
             }
+            
+             self.anotherImage()
+            
         }catch {
             print(error.localizedDescription)
         }
@@ -1138,14 +1159,6 @@ class SearchAppointments: UIViewController, UITableViewDataSource, UITableViewDe
                             let image2URL = url?.appendingPathComponent(uploadRequest.bucket!).appendingPathComponent(uploadRequest.key!)
                             //print("Uploaded to:\(publicURL)")
                             
-                            
-                            DispatchQueue.main.async {
-                                
-                                SwiftSpinner.hide()
-                                self?.searchTableView.reloadData()
-                                self?.FetchObject()
-                                return
-                            }
                             
                             // Update Image Url in Encounter
                             

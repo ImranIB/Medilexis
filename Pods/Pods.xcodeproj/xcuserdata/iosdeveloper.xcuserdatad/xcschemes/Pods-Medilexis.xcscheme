@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4CA1EBC183297E6008B85E5E4CF332C9"
+               BlueprintIdentifier = "935D7A0FEC75AC340FB32907F1FD9588"
                BuildableName = "Pods_Medilexis.framework"
                BlueprintName = "Pods-Medilexis"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4CA1EBC183297E6008B85E5E4CF332C9"
+            BlueprintIdentifier = "935D7A0FEC75AC340FB32907F1FD9588"
             BuildableName = "Pods_Medilexis.framework"
             BlueprintName = "Pods-Medilexis"
             ReferencedContainer = "container:Pods.xcodeproj">
