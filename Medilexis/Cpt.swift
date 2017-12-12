@@ -332,7 +332,7 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearc
             
             
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "cptCodes") as! Cpt
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "dxCodes") as! Dx
             self.present(nextViewController, animated:true, completion:nil)
             
             
@@ -356,7 +356,7 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearc
     @IBAction func skipPressed(_ sender: UIButton) {
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "cptCodes") as! Cpt
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "dxCodes") as! Dx
         self.present(nextViewController, animated:true, completion:nil)
     }
     
@@ -482,7 +482,8 @@ class Cpt: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearc
                 saveLine.isHidden = true
                 nextLine.isHidden = true
                 exitLine.isHidden = true
-                skipLine.isHidden = false            }
+                skipLine.isHidden = false
+            }
             
         }catch {
             print(error.localizedDescription)

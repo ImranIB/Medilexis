@@ -11,28 +11,52 @@ import CoreData
 import XLActionController
 import SkyFloatingLabelTextField
 
-class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
     
     @IBOutlet weak var dxTableView: UITableView!
+    @IBOutlet var saveNextButton: UIButton!
     @IBOutlet var saveExitButton: UIButton!
-    @IBOutlet var saveExitLabel: UILabel!
-    @IBOutlet var saveExitLine: UIView!
     @IBOutlet var saveButton: UIButton!
+    @IBOutlet var skipButton: UIButton!
+    @IBOutlet var saveNextLabel: UILabel!
+    @IBOutlet var saveExitLabel: UILabel!
     @IBOutlet var saveLabel: UILabel!
+    @IBOutlet var skipLabel: UILabel!
     @IBOutlet var saveLine: UIView!
+    @IBOutlet var nextLine: UIView!
+    @IBOutlet var exitLine: UIView!
+    @IBOutlet var skipLine: UIView!
+    @IBOutlet var seperatorLine: UIView!
+    @IBOutlet var noCptLabel: UILabel!
     
-
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let defaults = UserDefaults.standard
     var DXCodes = [DiagnosticList]()
+    var searchResults:[DiagnosticList] = []
     var dxDescription = ["Infectious and parasitic diseases", "Neoplasms", "Mental disorders", "Diseases of the nervous system", "Diseases of the sense organs", "Diseases of the circulatory system", "Diseases of the respiratory system" , "Congenital anomalies", "Symptoms, signs, and ill-defined conditions",  "Injury and poisoning"]
     var dxCode = ["001-139", "140-239", "290-319", "320-359", "360-389", "390-459", "460-519","740-759", "780-799", "800-999"]
     var dxIsSelected = Array(repeating: false, count: 1000)
+    var searchController: UISearchController!
     var fileDxStored = ""
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        seperatorLine.frame.origin = CGPoint(x: 0, y: 550)
+        dxTableView.frame = CGRect(x: 0, y: 68, width: self.view.frame.size.width, height: 470)
+        
+        // Add a search bar
+        searchController = UISearchController(searchResultsController: nil)
+        dxTableView.tableHeaderView = searchController.searchBar
+        searchController.searchResultsUpdater = self
+        searchController.dimsBackgroundDuringPresentation = false
+        searchController.searchBar.placeholder = "Search DX"
+        searchController.searchBar.backgroundImage = UIImage()
+        searchController.searchBar.isTranslucent = false
+        searchController.searchBar.barTintColor = UIColor(red: 236.0/255.0, green: 236.0/255.0, blue: 236.0/255.0, alpha: 1.0)
+        UISearchBar.appearance().tintColor = UIColor.black
+        definesPresentationContext = true
         
         let DxCodesGenerated = "DxCodesGenerated"
         let codesValue = defaults.bool(forKey: DxCodesGenerated)
@@ -68,11 +92,13 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
         }
         
         saveButton.isHidden = true
+        saveNextButton.isHidden = true
+        saveButton.isHidden = true
+        saveNextLabel.isHidden = true
         saveLabel.isHidden = true
         saveLine.isHidden = true
-        saveExitButton.isHidden = false
-        saveExitLabel.isHidden = false
-        saveExitLine.isHidden = false
+        nextLine.isHidden = true
+        exitLine.isHidden = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -82,16 +108,21 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return DXCodes.count
+        
+        if searchController.isActive {
+            return searchResults.count
+        } else {
+            return DXCodes.count
+        }
+        
         
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "DX") as! DxCell
-        
-        let detail = DXCodes[indexPath.row]
-        cell.descriptionTextField?.text = detail.name
-        cell.codeTextFIeld.text = detail.code
+        let dx = (searchController.isActive) ? searchResults[indexPath.row] : DXCodes[indexPath.row]
+        cell.descriptionTextField.text = dx.name
+        cell.codeTextFIeld.text = dx.code
         cell.accessoryType = dxIsSelected[indexPath.row] ? .checkmark : .none
         return cell
         
@@ -103,14 +134,24 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let cell = dxTableView.cellForRow(at: indexPath)
         fileDxStored = "false"
         
+        seperatorLine.frame.origin = CGPoint(x: 0, y: 475)
+        dxTableView.frame = CGRect(x: 0, y: 68, width: self.view.frame.size.width, height: 391)
+        
         if self.dxIsSelected[indexPath.row] == false {
 
+            saveNextButton.isHidden = false
+            saveExitButton.isHidden = false
             saveButton.isHidden = false
+            skipButton.isHidden = true
+            saveNextLabel.isHidden = false
+            saveExitLabel.isHidden = false
             saveLabel.isHidden = false
+            skipLabel.isHidden = true
             saveLine.isHidden = false
-            saveExitButton.isHidden = true
-            saveExitLabel.isHidden = true
-            saveExitLine.isHidden = true
+            nextLine.isHidden = true
+            exitLine.isHidden = true
+            skipLine.isHidden = true
+
             // Toggle check-in and undo-check-in
             self.dxIsSelected[indexPath.row] = self.dxIsSelected[indexPath.row] ? false : true
             cell?.accessoryType = self.dxIsSelected[indexPath.row] ? .checkmark : .none
@@ -287,13 +328,24 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
         fileDxStored = "true"
         saveLine.isHidden = true
-        saveButton.isHidden = true
-        saveLabel.isHidden = true
-        saveExitLine.isHidden = false
-        saveExitButton.isHidden = false
-        saveExitLabel.isHidden = false
+        nextLine.isHidden = false
+        exitLine.isHidden = true
     }
     
+    @IBAction func nextPressed(_ sender: UIButton) {
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+    }
+    
+    
+    @IBAction func skipPressed(_ sender: UIButton) {
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+        self.present(nextViewController, animated:true, completion:nil)
+    }
     
     @IBAction func saveExit(_ sender: UIButton) {
         
@@ -351,12 +403,19 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
             
             if count == 0 {
            
-                self.saveButton.isHidden = true
-                self.saveLabel.isHidden = true
-                self.saveLine.isHidden = true
-                self.saveExitButton.isHidden = false
-                self.saveExitLabel.isHidden = false
-                self.saveExitLine.isHidden = false
+                seperatorLine.frame.origin = CGPoint(x: 0, y: 550)
+                dxTableView.frame = CGRect(x: 0, y: 68, width: self.view.frame.size.width, height: 470)
+                
+                saveNextButton.isHidden = true
+                saveButton.isHidden = true
+                skipButton.isHidden = false
+                skipLabel.isHidden = false
+                saveNextLabel.isHidden = true
+                saveLabel.isHidden = true
+                saveLine.isHidden = true
+                nextLine.isHidden = true
+                exitLine.isHidden = true
+                skipLine.isHidden = false
             }
             
         }catch {
@@ -365,6 +424,30 @@ class Dx: UIViewController, UITableViewDataSource, UITableViewDelegate {
         
     }
     
+    @IBAction func backPressed(_ sender: UIBarButtonItem) {
+        
+        dismiss(animated: true, completion: nil)
+    }
     
+    
+    // MARK: - Search Controller
+    
+    func filterContent(for searchText: String) {
+        searchResults = DXCodes.filter({ (dx) -> Bool in
+            if let name = dx.name, let id = dx.code{
+                let isMatch = name.localizedCaseInsensitiveContains(searchText) || id.localizedCaseInsensitiveContains(searchText)
+                return isMatch
+            }
+            
+            return false
+        })
+    }
+    
+    func updateSearchResults(for searchController: UISearchController) {
+        if let searchText = searchController.searchBar.text {
+            filterContent(for: searchText)
+            dxTableView.reloadData()
+        }
+    }
     
 }
