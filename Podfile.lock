@@ -1,0 +1,53 @@
+PODS:
+  - AWSCore (2.4.16)
+  - AWSS3 (2.4.16):
+    - AWSCore (= 2.4.16)
+  - CardIO (5.4.1)
+  - IQKeyboardManagerSwift (4.0.10)
+  - M13Checkbox (3.1.3)
+  - SimplePDFSwift (0.2.1)
+  - SkyFloatingLabelTextField (2.0.1)
+  - Stripe (9.2.0)
+  - SVProgressHUD (2.2.2)
+  - SwiftSpinner (1.1.0)
+  - XLActionController/Core (3.0.1)
+  - XLActionController/Youtube (3.0.1):
+    - XLActionController/Core
+
+DEPENDENCIES:
+  - AWSS3
+  - CardIO
+  - IQKeyboardManagerSwift (= 4.0.10)
+  - M13Checkbox
+  - SimplePDFSwift
+  - SkyFloatingLabelTextField (~> 2.0.0)
+  - Stripe
+  - SVProgressHUD (from `https://github.com/SVProgressHUD/SVProgressHUD.git`)
+  - SwiftSpinner
+  - XLActionController/Youtube
+
+EXTERNAL SOURCES:
+  SVProgressHUD:
+    :git: https://github.com/SVProgressHUD/SVProgressHUD.git
+
+CHECKOUT OPTIONS:
+  SVProgressHUD:
+    :commit: bb4e4e460d4f8e2ecf20af99797f781e7cc09d8f
+    :git: https://github.com/SVProgressHUD/SVProgressHUD.git
+
+SPEC CHECKSUMS:
+  AWSCore: 7c3c129991e6387bcbad7132bc3661e7135754db
+  AWSS3: fef6aa8f8f625df8f67f1b6574fe761f3a4ddc99
+  CardIO: 56983b39b62f495fc6dae9ad7cf875143df06443
+  IQKeyboardManagerSwift: 75ba21a23794a1e6b6fe6d9a267ea17f80e06771
+  M13Checkbox: c132a7e0eb964731855eff67b883a0b21b7c0977
+  SimplePDFSwift: 98969bb38b924b473731c9c85cd78b467d15c633
+  SkyFloatingLabelTextField: 070e749632ffd608d6fd9db3fa488a822524997c
+  Stripe: a47770e82db059d0e7e160f9aabc2997055ee911
+  SVProgressHUD: 59b2d3dabacbd051576d21d32293ca7228dc18b0
+  SwiftSpinner: c03815614599b91eea46594bd52ba742849d0414
+  XLActionController: 57fe0ce1642e2eed971b188b490762345fdbf963
+
+PODFILE CHECKSUM: 62fcc71e434b9c361ff21efeb4fa2aaa0f7e600c
+
+COCOAPODS: 1.3.1

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16A323" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Appointments" representedClassName=".Appointments" syncable="YES">
+        <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="anotherImage" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
+        <attribute name="appointmentID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="appointmentTime" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dateBirth" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dateSchedule" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="image" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
+        <attribute name="isRecording" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isTranscribed" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="isUploading" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingStatus" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="visitType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Card" representedClassName=".Card" syncable="YES">
+        <attribute name="cardNumber" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cvv" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="month" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="year" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="DiagnosticList" representedClassName=".DiagnosticList" syncable="YES">
+        <attribute name="code" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="codeID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Diagnostics" representedClassName=".Diagnostics" syncable="YES">
+        <attribute name="appointmentID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="code" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="diagnosticID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="discription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+    </entity>
+    <entity name="Encounter" representedClassName=".Encounter" syncable="YES">
+        <attribute name="appointmentID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ccRecordingName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ccRecordingURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ccServerURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="ccTranscription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cptCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="cptDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dispense" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dose" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dxCode" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dxDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="endDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hpiRecordingName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hpiRecordingURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hpiServerURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hpiTranscription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hxRecordingName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hxRecordingURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hxServerURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hxTranscription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="image1" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="image2" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="length" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="letterRecordingName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="letterRecordingURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="letterServerURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="letterTranscription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="medicineName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="planRecordingName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="planRecordingURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="planServerURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="planTranscription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingType1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingType2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingType3" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingType4" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingType5" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingTypeLetter" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rosRecordingName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rosRecordingURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rosServerURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rosTranscription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="route" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="serverImage1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="serverImage2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="times" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="total" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type1" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type2" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unit" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="weight" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="FilterAppointments" representedClassName=".FilterAppointments" syncable="YES">
+        <attribute name="endDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="firstname" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+    </entity>
+    <entity name="Medicines" representedClassName=".Medicines" syncable="YES">
+        <attribute name="appointmentID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dispense" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dose" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="endDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="length" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="medicineID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="medicineName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="notes" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="route" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startDate" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="times" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="total" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="unit" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="weight" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Patients" representedClassName=".Patients" syncable="YES">
+        <attribute name="address" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dateBirth" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="firstName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+    </entity>
+    <entity name="RxList" representedClassName=".RxList" syncable="YES">
+        <attribute name="medicineID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="medicineName" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Sounds" representedClassName=".Sounds" syncable="YES">
+        <attribute name="appointmentID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="recordingURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="transcription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="SubscriptionsList" representedClassName=".SubscriptionsList" syncable="YES">
+        <attribute name="amount" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="completed" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="noOfEncounters" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="section" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="subscriptionID" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="Users" representedClassName=".Users" syncable="YES">
+        <attribute name="encounters" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="footer" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="heading" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="logo" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
+        <attribute name="subHeading" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Appointments" positionX="-54" positionY="-9" width="128" height="315"/>
+        <element name="Card" positionX="72" positionY="72" width="128" height="120"/>
+        <element name="DiagnosticList" positionX="72" positionY="72" width="128" height="105"/>
+        <element name="Diagnostics" positionX="72" positionY="72" width="128" height="135"/>
+        <element name="Encounter" positionX="72" positionY="72" width="128" height="840"/>
+        <element name="FilterAppointments" positionX="72" positionY="72" width="128" height="120"/>
+        <element name="Medicines" positionX="72" positionY="45" width="128" height="270"/>
+        <element name="Patients" positionX="72" positionY="72" width="128" height="165"/>
+        <element name="RxList" positionX="72" positionY="72" width="128" height="75"/>
+        <element name="Sounds" positionX="189" positionY="-81" width="128" height="120"/>
+        <element name="SubscriptionsList" positionX="72" positionY="72" width="128" height="120"/>
+        <element name="Users" positionX="72" positionY="72" width="128" height="135"/>
+    </elements>
+</model>
