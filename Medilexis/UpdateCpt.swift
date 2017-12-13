@@ -153,12 +153,37 @@ class UpdateCpt: UIViewController, UITableViewDataSource, UITableViewDelegate, U
     }
     
     @IBAction func savePressed(_ sender: UIButton) {
+        
+        saveLine.isHidden = true
+        nextLine.isHidden = false
+        exitLine.isHidden = true
     }
     
     @IBAction func nextPressed(_ sender: UIButton) {
+        
+        saveButton.isHidden = true
+        nextButton.isHidden = true
+        exitButton.isHidden = true
+        skipButton.isHidden = false
+        saveLabel.isHidden = true
+        nextLabel.isHidden = true
+        exitLabel.isHidden = true
+        skipLabel.isHidden = false
+        saveLine.isHidden = true
+        nextLine.isHidden = true
+        exitLine.isHidden = true
+        skipLine.isHidden = false
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateDX") as! UpdateDx
+        self.present(nextViewController, animated:true, completion:nil)
     }
     
     @IBAction func skipPressed(_ sender: UIButton) {
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateDX") as! UpdateDx
+        self.present(nextViewController, animated:true, completion:nil)
     }
     
     @IBAction func saveExit(_ sender: UIButton) {
@@ -181,75 +206,80 @@ class UpdateCpt: UIViewController, UITableViewDataSource, UITableViewDelegate, U
             
         }))
         
-        let alertController = UIAlertController(title: "Add New CPT", message: "", preferredStyle: .alert)
         
-        let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
-            alert -> Void in
+        actionController.addAction(Action(ActionData(title: "Add New CPT", image: UIImage(named: "add")!), style: .default, handler: { action in
             
-            let descriptionTextField = alertController.textFields![0] as UITextField
-            let codeTextField = alertController.textFields![1] as UITextField
+            let alertController = UIAlertController(title: "Enter CPT", message: "", preferredStyle: .alert)
             
-            if descriptionTextField.text == "" || codeTextField.text == "" {
+            let saveAction = UIAlertAction(title: "Save", style: .default, handler: {
+                alert -> Void in
                 
-                let alert = UIAlertController(title: "Notice", message: "Please fill all the fields", preferredStyle: UIAlertControllerStyle.alert)
-                let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-                alert.addAction(action)
+                let descriptionTextField = alertController.textFields![0] as UITextField
+                let codeTextField = alertController.textFields![1] as UITextField
                 
-                self.present(alert, animated: true, completion: nil);
-                
-            } else {
-                
-                let codesId = NSUUID().uuidString.lowercased() as String
-                let userID = self.defaults.value(forKey: "UserID") as! Int32
-                let AppointmentID = self.defaults.value(forKey: "AppointmentID") as! String
-                let description = descriptionTextField.text?.capitalized
-                
-                let context = self.getContext()
-                
-                let entity = NSEntityDescription.entity(forEntityName: "Diagnostics", in: context)
-                
-                let managedObj = NSManagedObject(entity: entity!, insertInto: context)
-                
-                managedObj.setValue(description, forKey: "discription")
-                managedObj.setValue(codeTextField.text, forKey: "code")
-                managedObj.setValue(codesId, forKey: "diagnosticID")
-                managedObj.setValue("CPT", forKey: "type")
-                managedObj.setValue(userID, forKey: "userID")
-                managedObj.setValue(AppointmentID, forKey: "appointmentID")
-                
-                do {
-                    try context.save()
+                if descriptionTextField.text == "" || codeTextField.text == "" {
                     
-                    descriptionTextField.text = ""
-                    codeTextField.text = ""
-                    self.fetchList()
-                    self.checkCPT()
-                    self.cptTableView.reloadData()
+                    let alert = UIAlertController(title: "Notice", message: "Please fill all the fields", preferredStyle: UIAlertControllerStyle.alert)
+                    let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+                    alert.addAction(action)
                     
-                } catch {
-                    print(error.localizedDescription)
+                    self.present(alert, animated: true, completion: nil);
+                    
+                } else {
+                    
+                    let codesId = NSUUID().uuidString.lowercased() as String
+                    let userID = self.defaults.value(forKey: "UserID") as! Int32
+                    let AppointmentID = self.defaults.value(forKey: "AppointmentID") as! String
+                    let description = descriptionTextField.text?.capitalized
+                    
+                    let context = self.getContext()
+                    
+                    let entity = NSEntityDescription.entity(forEntityName: "Diagnostics", in: context)
+                    
+                    let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+                    
+                    managedObj.setValue(description, forKey: "discription")
+                    managedObj.setValue(codeTextField.text, forKey: "code")
+                    managedObj.setValue(codesId, forKey: "diagnosticID")
+                    managedObj.setValue("CPT", forKey: "type")
+                    managedObj.setValue(userID, forKey: "userID")
+                    managedObj.setValue(AppointmentID, forKey: "appointmentID")
+                    
+                    do {
+                        try context.save()
+                        
+                        descriptionTextField.text = ""
+                        codeTextField.text = ""
+                        self.fetchList()
+                        self.checkCPT()
+                        self.cptTableView.reloadData()
+                        
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                    
                 }
-                
-            }
-        })
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: {
-            (action : UIAlertAction!) -> Void in
+            })
             
-        })
-        
-        alertController.addTextField { (textField : UITextField!) -> Void in
-            textField.placeholder = "Description"
-        }
-        
-        alertController.addTextField { (textField : UITextField!) -> Void in
-            textField.placeholder = "Code"
-        }
-        
-        alertController.addAction(saveAction)
-        alertController.addAction(cancelAction)
-        
-        self.present(alertController, animated: true, completion: nil)
+            let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: {
+                (action : UIAlertAction!) -> Void in
+                
+            })
+            
+            alertController.addTextField { (textField : UITextField!) -> Void in
+                textField.placeholder = "Description"
+            }
+            
+            alertController.addTextField { (textField : UITextField!) -> Void in
+                textField.placeholder = "Code"
+            }
+            
+            alertController.addAction(saveAction)
+            alertController.addAction(cancelAction)
+            
+            self.present(alertController, animated: true, completion: nil)
+            
+        }))
         
         actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
         }))

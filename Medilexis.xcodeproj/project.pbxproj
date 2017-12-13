@@ -517,7 +517,7 @@
 				TargetAttributes = {
 					4448E5021E76A9F00071B2C1 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = FQGCY3TCH9;
+						DevelopmentTeam = 6858PJW8RX;
 						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
@@ -852,9 +852,9 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=*]" = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = FQGCY3TCH9;
+				DEVELOPMENT_TEAM = 6858PJW8RX;
 				INFOPLIST_FILE = Medilexis/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nx3Corp.Medilexis;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -873,9 +873,9 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				DEVELOPMENT_TEAM = FQGCY3TCH9;
+				DEVELOPMENT_TEAM = 6858PJW8RX;
 				INFOPLIST_FILE = Medilexis/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.nx3Corp.Medilexis;
 				PRODUCT_NAME = "$(TARGET_NAME)";
