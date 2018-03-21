@@ -97,7 +97,6 @@ class UpdateCodes: UIViewController {
             
             
             let type = self.defaults.value(forKey: "DiagnosticType") as! String
-            print(type)
             
             if type == "CPT" {
                 

@@ -10,8 +10,9 @@ import UIKit
 import XLActionController
 import CoreData
 import SwiftSpinner
+import SimplePDFSwift
 
-class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class PhotoDictationold: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIDocumentInteractionControllerDelegate {
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var capturePhoto: UIButton!
@@ -45,7 +46,7 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
         self.view.addSubview(tool)
         
         //create tap gesture recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(PhotoDictation.imageTapped(gesture:)))
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(PhotoDictationold.imageTapped(gesture:)))
         
         //add it to the image view;
         capturePhoto.addGestureRecognizer(tapGesture)
@@ -125,11 +126,163 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
         return appDelegate.persistentContainer.viewContext
     }
     
+    // MARK: - UIDocumentInteractionControllerDelegate
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+        return self
+    }
+    
     @IBAction func navigateToHome(_ sender: UIBarButtonItem) {
         
-        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-        self.present(nextViewController, animated:true, completion:nil)
+        let pdf = SimplePDF(pdfTitle: "PRINT TEMPLATE", authorName: "Muhammad Imran")
+        
+        self.addDocumentCover(pdf)
+        self.addDocumentContent(pdf)
+        self.addHeadersFooters(pdf)
+        
+        // here we may want to save the pdf somewhere or show it to the user
+        let tmpPDFPath = pdf.writePDFWithoutTableOfContents()
+        
+        // open the generated PDF
+        DispatchQueue.main.async(execute: { () -> Void in
+            let pdfURL = URL(fileURLWithPath: tmpPDFPath)
+            let interactionController = UIDocumentInteractionController(url: pdfURL)
+            interactionController.delegate = self
+            interactionController.presentPreview(animated: true)
+            SwiftSpinner.hide()
+        })
+    }
+    
+    fileprivate func addDocumentCover(_ pdf: SimplePDF) {
+        
+        SwiftSpinner.show("Loading print preview")
+        pdf.startNewPage()
+    }
+    
+    fileprivate func addDocumentContent(_ pdf: SimplePDF) {
+        
+        let dos = defaults.value(forKey: "DOS") as! NSDate
+        let pname = defaults.value(forKey: "PatientName") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = DateFormatter.Style.long
+        let dateString = dateFormatter.string(from: dos as Date)
+        
+        let text1 = ""
+        pdf.addBodyText(text1)
+        
+        let text2 = ""
+        pdf.addBodyText(text2)
+        
+        
+        let name = "Patient Name: \(pname)"
+        pdf.addBodyText(name)
+        
+        let date = "Scheduled Date: \(dateString)"
+        pdf.addBodyText(date)
+        
+        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
+        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let fetchResult = try getContext().fetch(fetchRequest)
+            
+            for item in fetchResult {
+                
+                if item.type == "CC"{
+                    
+                    pdf.addH6("CHIEF COMPLAINT")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "HPI"{
+                    
+                    pdf.addH6("HISTORY OF PRESENT ILLNESS")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "HX"{
+                    
+                    pdf.addH6("HISTORY")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "ROS"{
+                    
+                    pdf.addH6("REVIEW OF SYSTEMS")
+                    pdf.addBodyText(item.transcription!)
+                    
+                }else if item.type == "PLAN"{
+                    
+                    pdf.addH6("PLAN")
+                    pdf.addBodyText(item.transcription!)
+                }
+                
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
+    fileprivate func addHeadersFooters(_ pdf: SimplePDF) {
+        
+        let uid = defaults.value(forKey: "UserID")
+        let fetchRequest:NSFetchRequest<Users> = Users.fetchRequest()
+        let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count > 0 {
+                
+                let fetchResult = try context.fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    let regularFont = UIFont.systemFont(ofSize: 18)
+                    let boldFont = UIFont.boldSystemFont(ofSize: 20)
+                    let leftAlignment = NSMutableParagraphStyle()
+                    leftAlignment.alignment = NSTextAlignment.left
+                    
+                    
+                    if item.logo != nil {
+                        
+                        let retrievedImg = UIImage(data: item.logo! as Data)!
+                        
+                        let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
+                                                                    image:retrievedImg, imageHeight: 55, alignment: .right)
+                        pdf.headerFooterImages.append(rightLogo)
+                    }
+                    
+                    if item.heading != nil && item.subHeading != nil {
+                        
+                        // add some document information to the header, on left
+                        let leftHeaderString = "\(item.heading!)\n\(item.subHeading!)"
+                        let leftHeaderAttrString = NSMutableAttributedString(string: leftHeaderString)
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
+                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, Int.max), attributedString: leftHeaderAttrString)
+                        pdf.headerFooterTexts.append(header)
+                        
+                    }
+                    
+                    if item.footer != nil {
+                        
+                        // add a link to your app may be
+                        
+                        let link = NSMutableAttributedString(string: item.footer!)
+                        link.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, link.length))
+                        link.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, link.length))
+                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, Int.max), attributedString: link)
+                        pdf.headerFooterTexts.append(appLinkFooter)
+                    }
+                }
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
         
     }
     
@@ -139,7 +292,7 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     
-    func imageTapped(gesture: UIGestureRecognizer) {
+    @objc func imageTapped(gesture: UIGestureRecognizer) {
       
         let actionController = YoutubeActionController()
         
@@ -198,8 +351,9 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
                                didFinishPickingMediaWithInfo info: [String : Any])
     {
         selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage
-            imageView.image = selectedImage
-            captureLabel.isHidden = true
+        
+        imageView.image = selectedImage
+        captureLabel.isHidden = true
         filePhotoStored = "false"
         dismiss(animated: true, completion: nil)//5
     }
@@ -260,9 +414,9 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
                         try self.context.save()
                         self.filePhotoStored = "true"
                         
-                        if let image = self.imageView.image {
+                     /*   if let image = self.imageView.image {
                             UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-                        }
+                        }*/
                         
                     }
                 }catch {
@@ -317,14 +471,6 @@ class PhotoDictation: UIViewController, UIImagePickerControllerDelegate, UINavig
                     self.present(nextViewController, animated:true, completion:nil)
                     
                 }
-                
-            }))
-            
-            actionController.addAction(Action(ActionData(title: "Skip", image: UIImage(named: "skip")!), style: .default, handler: { action in
-                
-                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "captureAnotherPhoto") as! AnotherPhotoDictation
-                self.present(nextViewController, animated:true, completion:nil)
                 
             }))
             

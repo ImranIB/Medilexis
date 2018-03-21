@@ -11,7 +11,7 @@ import SkyFloatingLabelTextField
 import SwiftSpinner
 import SystemConfiguration
 
-class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate {
     
     
     @IBOutlet weak var firstNameTextField: SkyFloatingLabelTextFieldWithIcon!
@@ -228,13 +228,13 @@ class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
 
     }
     
-    func donePressed(_ sender: UIBarButtonItem) {
+    @objc func donePressed(_ sender: UIBarButtonItem) {
         
         let _ = countriesTextField.resignFirstResponder()
         
     }
     
-    func tappedToolBarBtn(_ sender: UIBarButtonItem) {
+    @objc func tappedToolBarBtn(_ sender: UIBarButtonItem) {
         
         countriesTextField.text = "United States"
         
@@ -487,6 +487,11 @@ class Register: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "selection") as! Selection
         self.present(nextViewController, animated:true, completion:nil)
         return
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
+        textField.resignFirstResponder()
+        return true
     }
     
 }

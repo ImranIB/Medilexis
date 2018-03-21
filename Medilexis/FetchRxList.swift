@@ -16,14 +16,17 @@ class FetchRxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
     @IBOutlet var saveLabel: UILabel!
     @IBOutlet var cancelButton: UIButton!
     @IBOutlet var cancelLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    @IBOutlet var cancelLine: UIView!
     
-    
+
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var medicines = [RxList]()
     var searchController: UISearchController!
     var searchResults:[RxList] = []
     let defaults = UserDefaults.standard
     var rxSelected = Array(repeating: false, count: 1000)
+    var RxSelected: Bool!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,15 +41,17 @@ class FetchRxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
         searchController.dimsBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search Medications"
         searchController.searchBar.backgroundImage = UIImage()
-        searchController.searchBar.tintColor = UIColor.white
         searchController.searchBar.barTintColor = UIColor(red: 236.0/255.0, green: 236.0/255.0, blue: 236.0/255.0, alpha: 1.0)
+        UISearchBar.appearance().tintColor = UIColor.black
+        definesPresentationContext = true
         
         self.rxList.reloadData()
         
         fetchMedicines()
         
-        saveButton.isEnabled = false
-        saveLabel.isEnabled = false
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
+        saveLine.isHidden = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -100,8 +105,12 @@ class FetchRxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
           
                 } else {
                     
-                    saveButton.isEnabled = true
-                    saveLabel.isEnabled = true
+                    saveButton.isHidden = false
+                    saveLabel.isHidden = false
+                    saveLine.isHidden = false
+                    cancelButton.isHidden = true
+                    cancelLabel.isHidden = true
+                    cancelLine.isHidden = true
                     
                     self.rxSelected[indexPath.row] = self.rxSelected[indexPath.row] ? false : true
                     cell?.accessoryType = self.rxSelected[indexPath.row] ? .checkmark : .none
@@ -120,6 +129,8 @@ class FetchRxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
                     managedObj.setValue(userID, forKey: "userID")
                     managedObj.setValue(AppointmentID, forKey: "AppointmentID")
                     managedObj.setValue(selectMedicine.medicineName!, forKey: "medicineName")
+                    
+                    RxSelected = true
                     
                     do {
                         try context.save()
@@ -237,7 +248,8 @@ class FetchRxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateRX") as! UpdateRX
-         self.present(nextViewController, animated:true, completion:nil)
+        nextViewController.selection = RxSelected
+        self.present(nextViewController, animated:true, completion:nil)
     }
     
     @IBAction func cancel(_ sender: UIButton) {

@@ -8,20 +8,58 @@
 
 import UIKit
 
+protocol ImagePressedDelegate{
+    func imageTapped(at index:IndexPath, value: String)
+}
+
+protocol IDCardPressedDelegate{
+    func idTapped(at index:IndexPath, value: String)
+}
+
 class PatientsListCell: UITableViewCell {
     
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var dobLabel: UILabel!
     @IBOutlet var phoneLabel: UILabel!
     @IBOutlet var cardView: UIView!
-    @IBOutlet var plus: UIButton!
+    @IBOutlet weak var profileImage: UIImageView!
+    @IBOutlet weak var profileIDImage: UIImageView!
+    @IBOutlet var medicalNoLabel: UILabel!
+    
+    var imageDelegate:ImagePressedDelegate!
+    var idcardDelegate:IDCardPressedDelegate!
+    var indexPath:IndexPath!
     
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
         
         self.updateUI()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(PatientsListCell.imageTapped(gesture:)))
+        profileImage.addGestureRecognizer(tapGesture)
+        profileImage.isUserInteractionEnabled = true
+        
+        let idTapGesture = UITapGestureRecognizer(target: self, action: #selector(PatientsListCell.idImageTapped(gesture:)))
+        profileIDImage.addGestureRecognizer(idTapGesture)
+        profileIDImage.isUserInteractionEnabled = true
      
+    }
+    
+    @objc func imageTapped(gesture: UIGestureRecognizer) {
+        
+        let image = "Profile"
+    
+       self.imageDelegate?.imageTapped(at: indexPath, value: image)
+        
+    }
+    
+    @objc func idImageTapped(gesture: UIGestureRecognizer) {
+        
+        let image = "IDCard"
+        
+        self.idcardDelegate?.idTapped(at: indexPath, value: image)
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -40,6 +78,8 @@ class PatientsListCell: UITableViewCell {
         cardView.layer.shadowOffset = CGSize(width: 0, height: 0)
         cardView.layer.shadowOpacity = 0.8
     }
+    
+    
     
 
 }

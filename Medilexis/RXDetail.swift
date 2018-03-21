@@ -9,8 +9,10 @@
 import UIKit
 import SkyFloatingLabelTextField
 import CoreData
+import SwiftSpinner
+import SimplePDFSwift
 
-class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate, UIDocumentInteractionControllerDelegate, UITextFieldDelegate {
     
     @IBOutlet weak var rxDetail: UINavigationItem!
     @IBOutlet weak var dose: SkyFloatingLabelTextField!
@@ -364,16 +366,16 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         
         if weight.isEditing{
            weight.text = doseStrength[row]
-           let _ = weight.resignFirstResponder()
+           //let _ = weight.resignFirstResponder()
         } else if timesLength.isEditing{
             timesLength.text = timeDuration[row]
-            let _ = timesLength.resignFirstResponder()
+           // let _ = timesLength.resignFirstResponder()
         } else if quantity.isEditing{
             quantity.text = dispense[row]
-          let _ = quantity.resignFirstResponder()
+          //let _ = quantity.resignFirstResponder()
         }else if route.isEditing{
             route.text = routes[row]
-           let _ = route.resignFirstResponder()
+           //let _ = route.resignFirstResponder()
         }
     }
     
@@ -382,12 +384,166 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         self.view.endEditing(true)
     }
     
+    // MARK: - UIDocumentInteractionControllerDelegate
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+        return self
+    }
    
     @IBAction func navigateToHome(_ sender: UIBarButtonItem) {
         
-        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-        self.present(nextViewController, animated:true, completion:nil)
+        let pdf = SimplePDF(pdfTitle: "PRINT TEMPLATE", authorName: "Muhammad Imran")
+        
+        self.addDocumentCover(pdf)
+        self.addDocumentContent(pdf)
+        self.addHeadersFooters(pdf)
+        
+        // here we may want to save the pdf somewhere or show it to the user
+        let tmpPDFPath = pdf.writePDFWithoutTableOfContents()
+        
+        // open the generated PDF
+        DispatchQueue.main.async(execute: { () -> Void in
+            let pdfURL = URL(fileURLWithPath: tmpPDFPath)
+            let interactionController = UIDocumentInteractionController(url: pdfURL)
+            interactionController.delegate = self
+            interactionController.presentPreview(animated: true)
+            SwiftSpinner.hide()
+        })
+    }
+    
+    fileprivate func addDocumentCover(_ pdf: SimplePDF) {
+        
+        SwiftSpinner.show("Loading print preview")
+        pdf.startNewPage()
+    }
+    
+    fileprivate func addDocumentContent(_ pdf: SimplePDF) {
+        
+        let dos = defaults.value(forKey: "DOS") as! NSDate
+        let pname = defaults.value(forKey: "PatientName") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = DateFormatter.Style.long
+        let dateString = dateFormatter.string(from: dos as Date)
+        
+        let text1 = ""
+        pdf.addBodyText(text1)
+        
+        let text2 = ""
+        pdf.addBodyText(text2)
+        
+        
+        let name = "Patient Name: \(pname)"
+        pdf.addBodyText(name)
+        
+        let date = "Scheduled Date: \(dateString)"
+        pdf.addBodyText(date)
+        
+        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
+        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let fetchResult = try getContext().fetch(fetchRequest)
+            
+            for item in fetchResult {
+                
+                if item.type == "CC"{
+                    
+                    pdf.addH6("CHIEF COMPLAINT")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "HPI"{
+                    
+                    pdf.addH6("HISTORY OF PRESENT ILLNESS")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "HX"{
+                    
+                    pdf.addH6("HISTORY")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "ROS"{
+                    
+                    pdf.addH6("REVIEW OF SYSTEMS")
+                    pdf.addBodyText(item.transcription!)
+                    
+                }else if item.type == "PLAN"{
+                    
+                    pdf.addH6("PLAN")
+                    pdf.addBodyText(item.transcription!)
+                }
+                
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
+    fileprivate func addHeadersFooters(_ pdf: SimplePDF) {
+        
+        let uid = defaults.value(forKey: "UserID")
+        let fetchRequest:NSFetchRequest<Users> = Users.fetchRequest()
+        let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count > 0 {
+                
+                let fetchResult = try context.fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    let regularFont = UIFont.systemFont(ofSize: 18)
+                    let boldFont = UIFont.boldSystemFont(ofSize: 20)
+                    let leftAlignment = NSMutableParagraphStyle()
+                    leftAlignment.alignment = NSTextAlignment.left
+                    
+                    
+                    if item.logo != nil {
+                        
+                        let retrievedImg = UIImage(data: item.logo! as Data)!
+                        
+                        let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
+                                                                    image:retrievedImg, imageHeight: 55, alignment: .right)
+                        pdf.headerFooterImages.append(rightLogo)
+                    }
+                    
+                    if item.heading != nil && item.subHeading != nil {
+                        
+                        // add some document information to the header, on left
+                        let leftHeaderString = "\(item.heading!)\n\(item.subHeading!)"
+                        let leftHeaderAttrString = NSMutableAttributedString(string: leftHeaderString)
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
+                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, Int.max), attributedString: leftHeaderAttrString)
+                        pdf.headerFooterTexts.append(header)
+                        
+                    }
+                    
+                    if item.footer != nil {
+                        
+                        // add a link to your app may be
+                        
+                        let link = NSMutableAttributedString(string: item.footer!)
+                        link.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, link.length))
+                        link.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, link.length))
+                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, Int.max), attributedString: link)
+                        pdf.headerFooterTexts.append(appLinkFooter)
+                    }
+                    
+                }
+                
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
+        
     }
     
     @IBAction func dismissRXDetail(_ sender: UIBarButtonItem) {
@@ -434,36 +590,36 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
 
     }
 
-    func doneDoseStrengthBtnPressed(_ sender: UIBarButtonItem) {
+    @objc func doneDoseStrengthBtnPressed(_ sender: UIBarButtonItem) {
         
         let _ = weight.resignFirstResponder()
         
     }
     
-    func doneTimesLength(_ sender: UIBarButtonItem) {
+    @objc func doneTimesLength(_ sender: UIBarButtonItem) {
         
         let _ = timesLength.resignFirstResponder()
         
     }
     
-    func doneDispense(_ sender: UIBarButtonItem) {
+    @objc func doneDispense(_ sender: UIBarButtonItem) {
         
         let _ = quantity.resignFirstResponder()
         
     }
     
-    func doneRoute (_ sender: UIBarButtonItem) {
+    @objc func doneRoute (_ sender: UIBarButtonItem) {
      
         let _ = route.resignFirstResponder()
     }
     
-    func selectDoneStartButton(_ sender: UIBarButtonItem) {
+    @objc func selectDoneStartButton(_ sender: UIBarButtonItem) {
         
         let _ = startDate.resignFirstResponder()
         
     }
     
-    func startDefaultBtn(_ sender: UIBarButtonItem) {
+    @objc func startDefaultBtn(_ sender: UIBarButtonItem) {
         
         let dateFormate = DateFormatter()
         dateFormate.dateFormat = "dd MMMM yyyy"
@@ -474,13 +630,13 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         let _ = startDate.resignFirstResponder()
     }
     
-    func selectDoneEndButton(_ sender: UIBarButtonItem) {
+    @objc func selectDoneEndButton(_ sender: UIBarButtonItem) {
         
         let _ = endDate.resignFirstResponder()
         
     }
     
-    func endDefaultBtn(_ sender: UIBarButtonItem) {
+    @objc func endDefaultBtn(_ sender: UIBarButtonItem) {
         
         let dateFormate = DateFormatter()
         dateFormate.dateFormat = "dd MMMM yyyy"
@@ -509,7 +665,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         datePickerView.addTarget(self, action: #selector(RXDetail.StartDateValueChanged), for: UIControlEvents.valueChanged)
     }
     
-    func StartDateValueChanged(sender:UIDatePicker){
+    @objc func StartDateValueChanged(sender:UIDatePicker){
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
@@ -560,7 +716,7 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         datePickerView.addTarget(self, action: #selector(RXDetail.EndDateValueChanged), for: UIControlEvents.valueChanged)
     }
     
-    func EndDateValueChanged(sender:UIDatePicker){
+    @objc func EndDateValueChanged(sender:UIDatePicker){
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
@@ -603,6 +759,11 @@ class RXDetail: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
         let calendar = NSCalendar(identifier: NSCalendar.Identifier.gregorian)!
         calendar.timeZone = NSTimeZone(forSecondsFromGMT: 0) as TimeZone
         return calendar.startOfDay(for: datDate as Date) as (Date) as NSDate
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
+        textField.resignFirstResponder()
+        return true
     }
     
     @IBAction func checkDuration(_ sender: UITextField) {

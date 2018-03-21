@@ -11,7 +11,7 @@ import SkyFloatingLabelTextField
 import XLActionController
 import CoreData
 
-class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate, UITextFieldDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     @IBOutlet weak var pickerTextField: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet weak var patientNameTextField: SkyFloatingLabelTextFieldWithIcon!
@@ -22,6 +22,10 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     @IBOutlet var emailTextField: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet var addressTextFIeld: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet var appointmentTimeTextField: SkyFloatingLabelTextFieldWithIcon!
+    @IBOutlet weak var profileImage: UIImageView!
+    @IBOutlet weak var idcardImage: UIImageView!
+    @IBOutlet var medicalNo: SkyFloatingLabelTextFieldWithIcon!
+    
     
     var pickOption = ["New Patient", "Follow-up"]
     let defaults = UserDefaults.standard
@@ -33,16 +37,52 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     var dob: String!
     var email: String!
     var address: String!
+    var medicalno: String!
+    var profile: String!
+    var idCard: String!
+    var selectedImage:UIImage!
+    var selectedIDImage:UIImage!
+    var imagePicked: String!
+    var selectedImageBool = false
+    var selectedIDImageBool = false
+    var profileImageName: String!
+    var idImageName: String!
+    var appointmentID: String!
+    let picker = UIImagePickerController()
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.appointmentID = "N/A"
+        
+        createProfileImagesFolder()
+        createIDImagesFolder()
+        
         let pickerView = UIPickerView()
         
         pickerView.delegate = self
+        picker.delegate = self
         
         pickerTextField.inputView = pickerView
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(NewAppointment.imageTapped(gesture:)))
+        profileImage.addGestureRecognizer(tapGesture)
+        profileImage.isUserInteractionEnabled = true
+        
+        let tapGestureID = UITapGestureRecognizer(target: self, action: #selector(NewAppointment.imageTappedID(gesture:)))
+        idcardImage.addGestureRecognizer(tapGestureID)
+        idcardImage.isUserInteractionEnabled = true
+        
+        
+        self.profileImage.layer.cornerRadius = self.profileImage!.frame.height/2
+        self.profileImage.layer.masksToBounds = false
+        self.profileImage.clipsToBounds = true
+        profileImage.contentMode = UIViewContentMode.scaleAspectFill
+        self.idcardImage.layer.cornerRadius = self.idcardImage!.frame.height/2
+        self.idcardImage.layer.masksToBounds = false
+        self.idcardImage.clipsToBounds = true
+        idcardImage.contentMode = UIViewContentMode.scaleAspectFill
         
         let toolBar = UIToolbar(frame: CGRect(x: 0, y: self.view.frame.size.height/6, width: self.view.frame.size.width, height: 40.0))
         
@@ -185,6 +225,15 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         
         appointmentTimeTextField.inputAccessoryView = toolBar3
         
+        medicalNo.iconFont = UIFont(name: "FontAwesome", size: 12)
+        medicalNo.iconText = "\u{f292}"
+        medicalNo.iconColor = UIColor.lightGray
+        medicalNo.title = "MR#"
+        medicalNo.titleFormatter = { $0 }
+        medicalNo.titleLabel.font = UIFont(name: "FontAwesome", size:11)
+        medicalNo.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
+        medicalNo.iconMarginLeft = 2.0
+        
         patientNameTextField.iconFont = UIFont(name: "FontAwesome", size: 12)
         patientNameTextField.iconText = "\u{f2c0}"
         patientNameTextField.iconColor = UIColor.lightGray
@@ -193,7 +242,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         patientNameTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         patientNameTextField.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         patientNameTextField.iconMarginLeft = 2.0
-        self.view.addSubview(patientNameTextField)
+       // self.view.addSubview(patientNameTextField)
         
         lastNameTextField.iconFont = UIFont(name: "FontAwesome", size: 12)
         lastNameTextField.iconText = "\u{f2c0}"
@@ -203,7 +252,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         lastNameTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         lastNameTextField.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         lastNameTextField.iconMarginLeft = 2.0
-        self.view.addSubview(lastNameTextField)
+       // self.view.addSubview(lastNameTextField)
         
         phoneTextField.iconFont = UIFont(name: "FontAwesome", size: 12)
         phoneTextField.iconText = "\u{f095}"
@@ -213,7 +262,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         phoneTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         phoneTextField.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         phoneTextField.iconMarginLeft = 2.0
-        self.view.addSubview(phoneTextField)
+        //self.view.addSubview(phoneTextField)
         
         pickerTextField.iconFont = UIFont(name: "FontAwesome", size: 12)
         pickerTextField.iconText = "\u{f0f6}"
@@ -223,7 +272,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         pickerTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         pickerTextField.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         pickerTextField.iconMarginLeft = 2.0
-        self.view.addSubview(pickerTextField)
+       // self.view.addSubview(pickerTextField)
         
         dateTextField.iconFont = UIFont(name: "FontAwesome", size: 12)
         dateTextField.iconText = "\u{f274}"
@@ -232,7 +281,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         dateTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         dateTextField.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         dateTextField.iconMarginLeft = 2.0
-        self.view.addSubview(dateTextField)
+        //self.view.addSubview(dateTextField)
         
         emailTextField.iconFont = UIFont(name: "FontAwesome", size: 12)
         emailTextField.iconText = "\u{f003}"
@@ -242,7 +291,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         emailTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         emailTextField.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         emailTextField.iconMarginLeft = 2.0
-        self.view.addSubview(emailTextField)
+       // self.view.addSubview(emailTextField)
         
         addressTextFIeld.iconFont = UIFont(name: "FontAwesome", size: 12)
         addressTextFIeld.iconText = "\u{f041}"
@@ -252,7 +301,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         addressTextFIeld.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         addressTextFIeld.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         addressTextFIeld.iconMarginLeft = 2.0
-        self.view.addSubview(addressTextFIeld)
+        //self.view.addSubview(addressTextFIeld)
         
         scheduledDateWalkinPatient.iconFont = UIFont(name: "FontAwesome", size: 12)
         scheduledDateWalkinPatient.iconText = "\u{f274}"
@@ -262,7 +311,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         scheduledDateWalkinPatient.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         scheduledDateWalkinPatient.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         scheduledDateWalkinPatient.iconMarginLeft = 2.0
-        self.view.addSubview(scheduledDateWalkinPatient)
+        //self.view.addSubview(scheduledDateWalkinPatient)
         
         appointmentTimeTextField.iconFont = UIFont(name: "FontAwesome", size: 12)
         appointmentTimeTextField.iconText = "\u{f017}"
@@ -272,31 +321,159 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         appointmentTimeTextField.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
         appointmentTimeTextField.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         appointmentTimeTextField.iconMarginLeft = 2.0
-        self.view.addSubview(appointmentTimeTextField)
+        //self.view.addSubview(appointmentTimeTextField)
         
+        //Add done button to numeric pad keyboard
+        let toolbarDone = UIToolbar.init()
+        toolbarDone.sizeToFit()
+        let flexibleSpaceDone = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+        let barBtnDone = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.done,
+                                              target: self, action: #selector(NewAppointment.doneButton_Clicked(_:)))
+        toolbarDone.items = [flexibleSpaceDone, barBtnDone] // You can even add cancel button too
+        phoneTextField.inputAccessoryView = toolbarDone
+    
+    }
+    
+    @objc func doneButton_Clicked(_ sender: UIBarButtonItem) {
+        
+        let _ = phoneTextField.resignFirstResponder()
         
     }
     
-    func doneVisitBtnPressed(_ sender: UIBarButtonItem) {
+    @objc func imageTappedID(gesture: UIGestureRecognizer) {
+        
+        imagePicked = "ID"
+        
+        let actionController = YoutubeActionController()
+        
+        actionController.addAction(Action(ActionData(title: "Camera", image: UIImage(named: "camera")!), style: .default, handler: { action in
+            
+            self.CaptureCamera()
+            
+        }))
+        actionController.addAction(Action(ActionData(title: "Photo Library", image: UIImage(named: "photolibrary")!), style: .default, handler: { action in
+            
+            self.CaptureLibrary()
+        }))
+        
+        actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
+        }))
+        
+        present(actionController, animated: true, completion: nil)
+        
+    }
+    
+    func CaptureCamera(){
+        
+        if UIImagePickerController.availableCaptureModes(for: .rear) != nil {
+            self.picker.allowsEditing = false
+            self.picker.sourceType = UIImagePickerControllerSourceType.camera
+            self.picker.cameraCaptureMode = .photo
+            present(self.picker, animated: true, completion: nil)
+        } else {
+            self.noCamera()
+        }
+    }
+    
+    func noCamera(){
+        let alertVC = UIAlertController(
+            title: "No Camera",
+            message: "Sorry, this device has no camera",
+            preferredStyle: .alert)
+        let okAction = UIAlertAction(
+            title: "OK",
+            style:.default,
+            handler: nil)
+        alertVC.addAction(okAction)
+        present(alertVC,
+                animated: true,
+                completion: nil)
+    }
+    
+    func CaptureLibrary(){
+        
+        picker.allowsEditing = false
+        picker.sourceType = .photoLibrary
+        picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [String : Any])
+    {
+        
+        if imagePicked == "Profile" {
+            
+            selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage
+            profileImage.image = selectedImage
+            selectedImageBool = true
+            self.profileImage.layer.cornerRadius = self.profileImage!.frame.height/2
+            self.profileImage.layer.masksToBounds = false
+            self.profileImage.clipsToBounds = true
+            profileImage.contentMode = UIViewContentMode.scaleAspectFill
+            dismiss(animated: true, completion: nil)//5
+            
+        } else {
+            
+            selectedIDImage = info[UIImagePickerControllerOriginalImage] as? UIImage
+            idcardImage.image = selectedIDImage
+            selectedIDImageBool = true
+            self.idcardImage.layer.cornerRadius = self.idcardImage!.frame.height/2
+            self.idcardImage.layer.masksToBounds = false
+            self.idcardImage.clipsToBounds = true
+            idcardImage.contentMode = UIViewContentMode.scaleAspectFill
+            dismiss(animated: true, completion: nil)//5
+        }
+        
+    }
+    
+    @objc func imageTapped(gesture: UIGestureRecognizer) {
+        
+        imagePicked = "Profile"
+        
+        let actionController = YoutubeActionController()
+        
+        actionController.addAction(Action(ActionData(title: "Camera", image: UIImage(named: "camera")!), style: .default, handler: { action in
+            
+            self.CaptureCamera()
+            
+        }))
+        actionController.addAction(Action(ActionData(title: "Photo Library", image: UIImage(named: "photolibrary")!), style: .default, handler: { action in
+            
+            self.CaptureLibrary()
+        }))
+        
+        actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
+        }))
+        
+        present(actionController, animated: true, completion: nil)
+        
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    @objc func doneVisitBtnPressed(_ sender: UIBarButtonItem) {
         
         let _ = pickerTextField.resignFirstResponder()
         
     }
     
-    func tappedToolBarVisitBtn(_ sender: UIBarButtonItem) {
+    @objc func tappedToolBarVisitBtn(_ sender: UIBarButtonItem) {
         
         pickerTextField.text = "New Patient"
         
         let _ = pickerTextField.resignFirstResponder()
     }
     
-    func selectDoneDateButton(_ sender: UIBarButtonItem) {
+    @objc func selectDoneDateButton(_ sender: UIBarButtonItem) {
         
         let _ = dateTextField.resignFirstResponder()
         
     }
     
-    func selectDefaultBtn(_ sender: UIBarButtonItem) {
+    @objc func selectDefaultBtn(_ sender: UIBarButtonItem) {
         
         let dateFormate = DateFormatter()
         dateFormate.dateFormat = "dd MMMM yyyy"
@@ -307,19 +484,19 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         let _ = dateTextField.resignFirstResponder()
     }
     
-    func DoneScheduleButton(_ sender: UIBarButtonItem) {
+    @objc func DoneScheduleButton(_ sender: UIBarButtonItem) {
         
         let _ = scheduledDateWalkinPatient.resignFirstResponder()
         
     }
     
-    func DoneTimeButton(_ sender: UIBarButtonItem) {
+    @objc func DoneTimeButton(_ sender: UIBarButtonItem) {
         
         let _ = appointmentTimeTextField.resignFirstResponder()
         
     }
     
-    func selectDefaultScheduleBtn(_ sender: UIBarButtonItem) {
+    @objc func selectDefaultScheduleBtn(_ sender: UIBarButtonItem) {
         
         let dateFormate = DateFormatter()
         dateFormate.dateFormat = "dd MMMM yyyy"
@@ -362,7 +539,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     }
     
     
-    func datePickerDateValueChanged(sender:UIDatePicker) {
+    @objc func datePickerDateValueChanged(sender:UIDatePicker) {
         
         let date = NSDate()
         let dateFormatter = DateFormatter()
@@ -395,7 +572,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         
     }
     
-    func ScheduledDateChanged(sender:UIDatePicker){
+    @objc func ScheduledDateChanged(sender:UIDatePicker){
         
         let date = NSDate()
         let todayDate = dateWithOutTime(datDate: date)
@@ -507,60 +684,91 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             
         } else {
             
-            let userID = defaults.value(forKey: "UserID") as! Int32
-           // let patientid = defaults.value(forKey: "PKEY")
-            let generatedID = NSUUID().uuidString.lowercased() as String
+            defaults.set("FromAppointments", forKey: "View")
+
+            let view = self.defaults.value(forKey: "View") as? String
             
-            let context = getContext()
-            
-            let entity = NSEntityDescription.entity(forEntityName: "Appointments", in: context)
-            
-            let managedObj = NSManagedObject(entity: entity!, insertInto: context)
-            
-            managedObj.setValue(pickerTextField.text, forKey: "visitType")
-            managedObj.setValue(patientNameTextField.text, forKey: "firstName")
-            managedObj.setValue(lastNameTextField.text, forKey: "lastName")
-            managedObj.setValue(phoneTextField.text, forKey: "phone")
-            managedObj.setValue(emailTextField.text, forKey: "email")
-            managedObj.setValue(addressTextFIeld.text, forKey: "address")
-            managedObj.setValue(dateTextField.text, forKey: "dateBirth")
-            managedObj.setValue(scheduledPickDate, forKey: "dateSchedule")
-            managedObj.setValue(appointmentTimeTextField.text, forKey: "appointmentTime")
-            managedObj.setValue(userID, forKey: "userID")
-            managedObj.setValue(generatedID, forKey: "appointmentID")
-            managedObj.setValue(false, forKey: "isRecording")
-            managedObj.setValue("false", forKey: "recordingStatus")
-            
-            do {
-                try context.save()
+            if view == "FromAppointments" {
+                
+                print(appointmentID)
+                let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
+                let predicate = NSPredicate(format: "(appointmentID = %@)", appointmentID)
+                fetchRequest.predicate = predicate
+                
+                do {
+                    let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+                    
+                    if count > 0 {
+                      
+                        let fetchResult = try context.fetch(fetchRequest)
+                        
+                        for item in fetchResult {
                             
-                savePatientRecord()
-                
-                defaults.set(patientNameTextField.text, forKey: "PName")
-                defaults.set(generatedID, forKey: "AppointmentID")
-                defaults.set("", forKey: "PKEY")
-                
-                pickerTextField.text = ""
-                patientNameTextField.text = ""
-                lastNameTextField.text = ""
-                phoneTextField.text = ""
-                emailTextField.text = ""
-                addressTextFIeld.text = ""
-                dateTextField.text = ""
-                appointmentTimeTextField.text = ""
-                scheduledDateWalkinPatient.text = ""
-                
-                let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Dictation") as! selectDictation
-                self.present(nextViewController, animated:true, completion:nil)
-                
-                return
-                
-                
-            } catch {
-                print(error.localizedDescription)
+                           item.visitType = pickerTextField.text
+                           item.dateSchedule = scheduledPickDate
+                           item.appointmentTime = appointmentTimeTextField.text
+                            
+                            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Dictation") as! selectDictation
+                            self.present(nextViewController, animated:true, completion:nil)
+                        }
+                        
+                    } else {
+                        
+                        let userID = defaults.value(forKey: "UserID") as! Int32
+                        // let patientid = defaults.value(forKey: "PKEY")
+                        let generatedID = NSUUID().uuidString.lowercased() as String
+                        
+                        let context = getContext()
+                        
+                        let entity = NSEntityDescription.entity(forEntityName: "Appointments", in: context)
+                        
+                        let managedObj = NSManagedObject(entity: entity!, insertInto: context)
+                        
+                        managedObj.setValue(pickerTextField.text, forKey: "visitType")
+                        managedObj.setValue(patientNameTextField.text, forKey: "firstName")
+                        managedObj.setValue(lastNameTextField.text, forKey: "lastName")
+                        managedObj.setValue(phoneTextField.text, forKey: "phone")
+                        managedObj.setValue(emailTextField.text, forKey: "email")
+                        managedObj.setValue(addressTextFIeld.text, forKey: "address")
+                        managedObj.setValue(dateTextField.text, forKey: "dateBirth")
+                        managedObj.setValue(scheduledPickDate, forKey: "dateSchedule")
+                        managedObj.setValue(appointmentTimeTextField.text, forKey: "appointmentTime")
+                        managedObj.setValue(userID, forKey: "userID")
+                        managedObj.setValue(generatedID, forKey: "appointmentID")
+                        managedObj.setValue(false, forKey: "isRecording")
+                        managedObj.setValue("false", forKey: "recordingStatus")
+                        
+                        do {
+                            try context.save()
+                            
+                            savePatientRecord()
+                            
+                            defaults.set(patientNameTextField.text, forKey: "PName")
+                            defaults.set("", forKey: "PKEY")
+                            
+                            defaults.set(scheduledPickDate, forKey: "DOS")
+                            defaults.set(patientNameTextField.text, forKey: "PatientName")
+                            defaults.set(generatedID, forKey: "AppointmentID")
+                            self.appointmentID = generatedID
+                            
+                            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Dictation") as! selectDictation
+                            self.present(nextViewController, animated:true, completion:nil)
+                            
+                            return
+                            
+                            
+                        } catch {
+                            print(error.localizedDescription)
+                        }
+                        
+
+                    }
+                }catch {
+                    print(error.localizedDescription)
+                }
             }
-            
             
         }
         
@@ -635,6 +843,9 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
                 
                 savePatientRecord()
                 
+                defaults.set(scheduledPickDate, forKey: "DOS")
+                defaults.set(patientNameTextField.text, forKey: "PatientName")
+                defaults.set(generatedID, forKey: "AppointmentID")
                 defaults.set("", forKey: "PKEY")
                 pickerTextField.text = ""
                 patientNameTextField.text = ""
@@ -645,6 +856,21 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
                 dateTextField.text = ""
                 appointmentTimeTextField.text = ""
                 scheduledDateWalkinPatient.text = ""
+                medicalNo.text = ""
+                self.selectedImageBool = false
+                self.selectedIDImageBool = false
+                self.profileImage.image = UIImage(named: "thumb_image_not_available")
+                self.idcardImage.image = UIImage(named: "thumb_image_not_available")
+                
+                self.patientNameTextField.isEnabled = true
+                self.lastNameTextField.isEnabled = true
+                self.phoneTextField.isEnabled = true
+                self.dateTextField.isEnabled = true
+                self.emailTextField.isEnabled = true
+                self.addressTextFIeld.isEnabled = true
+                self.medicalNo.isEnabled = true
+                self.profileImage.isUserInteractionEnabled = true
+                self.idcardImage.isUserInteractionEnabled = true
                 
                 let alert = UIAlertController(title: "Success", message: "Appointment added successfully", preferredStyle: UIAlertControllerStyle.alert)
                 let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
@@ -761,18 +987,133 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
 
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    func fetchDetails(){
         
-        self.patientNameTextField.text = firstname
-        self.lastNameTextField.text = lastname
-        self.phoneTextField.text = phone
-        self.dateTextField.text = dob
-        self.emailTextField.text = email
-        self.addressTextFIeld.text = address
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
+        let view = self.defaults.value(forKey: "View") as? String
 
+        if view == "PatientsList" {
+            
+            self.patientNameTextField.isEnabled = false
+            self.lastNameTextField.isEnabled = false
+            self.phoneTextField.isEnabled = false
+            self.dateTextField.isEnabled = false
+            self.emailTextField.isEnabled = false
+            self.addressTextFIeld.isEnabled = false
+            self.medicalNo.isEnabled = false
+            self.profileImage.isUserInteractionEnabled = false
+            self.idcardImage.isUserInteractionEnabled = false
+            
+            
+            if self.profile != "N/A" {
+                
+                let fileManager = FileManager.default
+                let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
+                let documentsDirectoryURL: URL = urls.first!
+                let imageFileURL = documentsDirectoryURL.appendingPathComponent("ProfileImages/" + self.profile)
+               // let imageData = UIImage(contentsOfFile: (imageFileURL.path))
+               // self.profileImage.image = imageData
+                self.profileImage.af_setImage(withURL: imageFileURL as URL, placeholderImage: UIImage(named: "placeHolder"), filter: nil, imageTransition: .crossDissolve(0.2))
+                
+            } else {
+                
+                self.profileImage.image = UIImage(named: "thumb_image_not_available")
+            }
+            
+            if self.idCard != "N/A" {
+                
+                let fileManager = FileManager.default
+                let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
+                let documentsDirectoryURL: URL = urls.first!
+                let imageFileURL = documentsDirectoryURL.appendingPathComponent("IDCardImages/" + self.idCard)
+                self.idcardImage.af_setImage(withURL: imageFileURL as URL, placeholderImage: UIImage(named: "placeHolder"), filter: nil, imageTransition: .crossDissolve(0.2))
+                
+            } else {
+                
+                self.idcardImage.image = UIImage(named: "thumb_image_not_available")
+            }
+            
+            self.patientNameTextField.text = self.firstname
+            self.lastNameTextField.text = self.lastname
+            self.phoneTextField.text = self.phone
+            self.dateTextField.text = self.dob
+            self.emailTextField.text = self.email
+            self.addressTextFIeld.text = self.address
+            self.medicalNo.text = self.medicalno
+            
+        } else if view == "" {
+            
+            self.patientNameTextField.isEnabled = true
+            self.lastNameTextField.isEnabled = true
+            self.phoneTextField.isEnabled = true
+            self.dateTextField.isEnabled = true
+            self.emailTextField.isEnabled = true
+            self.addressTextFIeld.isEnabled = true
+            self.medicalNo.isEnabled = true
+            self.profileImage.isUserInteractionEnabled = true
+            self.idcardImage.isUserInteractionEnabled = true
+            
+           // self.profileImage.image = UIImage(named: "thumb_image_not_available")
+            //self.idcardImage.image = UIImage(named: "thumb_image_not_available")
+        
+        } else if view == "Add Patients" {
+            
+            if self.profile != "N/A" {
+                
+                let fileManager = FileManager.default
+                let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
+                let documentsDirectoryURL: URL = urls.first!
+                let imageFileURL = documentsDirectoryURL.appendingPathComponent("ProfileImages/" + self.profile)
+                self.profileImage.af_setImage(withURL: imageFileURL as URL, placeholderImage: UIImage(named: "placeHolder"), filter: nil, imageTransition: .crossDissolve(0.2))
+                
+            } else {
+                
+                self.profileImage.image = UIImage(named: "thumb_image_not_available")
+            }
+            
+            if self.idCard != "N/A" {
+                
+                let fileManager = FileManager.default
+                let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
+                let documentsDirectoryURL: URL = urls.first!
+                let imageFileURL = documentsDirectoryURL.appendingPathComponent("IDCardImages/" + self.idCard)
+                self.idcardImage.af_setImage(withURL: imageFileURL as URL, placeholderImage: UIImage(named: "placeHolder"), filter: nil, imageTransition: .crossDissolve(0.2))
+                
+            } else {
+                
+                self.idcardImage.image = UIImage(named: "thumb_image_not_available")
+            }
+            
+            self.patientNameTextField.text = self.firstname
+            self.lastNameTextField.text = self.lastname
+            self.phoneTextField.text = self.phone
+            self.dateTextField.text = self.dob
+            self.emailTextField.text = self.email
+            self.addressTextFIeld.text = self.address
+            self.medicalNo.text = self.medicalno
+            
+            self.patientNameTextField.isEnabled = false
+            self.lastNameTextField.isEnabled = false
+            self.phoneTextField.isEnabled = false
+            self.dateTextField.isEnabled = false
+            self.emailTextField.isEnabled = false
+            self.addressTextFIeld.isEnabled = false
+            self.medicalNo.isEnabled = false
+            self.profileImage.isUserInteractionEnabled = false
+            self.idcardImage.isUserInteractionEnabled = false
+            
+        } else if view == "FromAppointments" {
+            
+            self.patientNameTextField.isEnabled = false
+            self.lastNameTextField.isEnabled = false
+            self.phoneTextField.isEnabled = false
+            self.dateTextField.isEnabled = false
+            self.emailTextField.isEnabled = false
+            self.addressTextFIeld.isEnabled = false
+            self.medicalNo.isEnabled = false
+            self.profileImage.isUserInteractionEnabled = false
+            self.idcardImage.isUserInteractionEnabled = false
+            
+        }
         
     }
     
@@ -791,6 +1132,34 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
                 let userID = defaults.value(forKey: "UserID") as! Int32
                 let patientid = NSUUID().uuidString.lowercased() as String
                 
+                if selectedImageBool == true {
+                    
+                    let currentDateTime = NSDate()
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "dd-MM-yyyy-HH:mm:ss"
+                    let file = formatter.string(from: currentDateTime as Date)
+                    profileImageName = file + ".png"
+                    saveImageToDocuments(image: resizeImage(image: selectedImage, newWidth: 200), fileNameWithExtension: profileImageName)
+                    
+                } else {
+                    
+                    profileImageName = "N/A"
+                }
+                
+                if selectedIDImageBool == true {
+                    
+                    let currentDateTime = NSDate()
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "dd-MM-yyyy-HH:mm:ss"
+                    let file = formatter.string(from: currentDateTime as Date)
+                    idImageName = file + ".png"
+                    saveIDImageToDocuments(image: resizeImage(image: selectedIDImage, newWidth: 200), fileNameWithExtension: idImageName)
+                    
+                } else {
+                    
+                    idImageName = "N/A"
+                }
+                
                 let context = getContext()
                 
                 let entity = NSEntityDescription.entity(forEntityName: "Patients", in: context)
@@ -805,10 +1174,18 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
                 managedObj.setValue(addressTextFIeld.text, forKey: "address")
                 managedObj.setValue(patientid, forKey: "id")
                 managedObj.setValue(userID, forKey: "userID")
+                managedObj.setValue(profileImageName, forKey: "profileImage")
+                managedObj.setValue(idImageName, forKey: "idCardImage")
+                managedObj.setValue(medicalNo.text, forKey: "medicalNo")
                 
                 do {
                     try context.save()
                     print("saved!")
+                    
+                    self.selectedImageBool = false
+                    self.selectedIDImageBool = false
+                    self.profileImage.image = UIImage(named: "thumb_image_not_available")
+                    self.idcardImage.image = UIImage(named: "thumb_image_not_available")
                     
                     
                 } catch {
@@ -820,6 +1197,44 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         }catch {
             print(error.localizedDescription)
         }
+    }
+    
+    func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage {
+        
+        let scale = newWidth / image.size.width
+        let newHeight = image.size.height * scale
+        UIGraphicsBeginImageContext(CGSize(width:newWidth, height:newHeight))
+        image.draw(in: CGRect(x:0, y:0, width:newWidth, height:newHeight))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage!
+    }
+    
+    func saveImageToDocuments(image: UIImage, fileNameWithExtension: String){
+        
+        let fileManager = FileManager.default
+        //get the image path
+        let imagePath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("ProfileImages/" + fileNameWithExtension)
+        //get the image we took with camera
+        //get the PNG data for this image
+        let data = UIImagePNGRepresentation(image)
+        //store it in the document directory
+        fileManager.createFile(atPath: imagePath as String, contents: data, attributes: nil)
+        
+    }
+    
+    func saveIDImageToDocuments(image: UIImage, fileNameWithExtension: String){
+        
+        let fileManager = FileManager.default
+        //get the image path
+        let imagePath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("IDCardImages/" + fileNameWithExtension)
+        //get the image we took with camera
+        //get the PNG data for this image
+        let data = UIImagePNGRepresentation(image)
+        //store it in the document directory
+        fileManager.createFile(atPath: imagePath as String, contents: data, attributes: nil)
+        
     }
     
     func isValidEmailAddress(emailAddressString: String) -> Bool {
@@ -870,7 +1285,7 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         datePickerView.addTarget(self, action: #selector(NewAppointment.timeValueChanged), for: UIControlEvents.valueChanged)
     }
     
-    func timeValueChanged(sender:UIDatePicker) {
+    @objc func timeValueChanged(sender:UIDatePicker) {
         
         let formatter = DateFormatter()
         formatter.timeStyle = .short
@@ -898,9 +1313,54 @@ class NewAppointment: UIViewController, UIPickerViewDataSource, UIPickerViewDele
             
             print("Time valid")
         }
-
+    }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func createProfileImagesFolder() {
+        // path to documents directory
+        let documentDirectoryPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+        if let documentDirectoryPath = documentDirectoryPath {
+            // create the custom folder path
+            let imagesDirectoryPath = documentDirectoryPath.appending("/ProfileImages")
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: imagesDirectoryPath) {
+                do {
+                    try fileManager.createDirectory(atPath: imagesDirectoryPath,
+                                                    withIntermediateDirectories: false,
+                                                    attributes: nil)
+                } catch {
+                    print("Error creating images folder in documents dir: \(error)")
+                }
+            }
+        }
+    }
+    
+    func createIDImagesFolder() {
+        // path to documents directory
+        let documentDirectoryPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+        if let documentDirectoryPath = documentDirectoryPath {
+            // create the custom folder path
+            let imagesDirectoryPath = documentDirectoryPath.appending("/IDCardImages")
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: imagesDirectoryPath) {
+                do {
+                    try fileManager.createDirectory(atPath: imagesDirectoryPath,
+                                                    withIntermediateDirectories: false,
+                                                    attributes: nil)
+                } catch {
+                    print("Error creating images folder in documents dir: \(error)")
+                }
+            }
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
         
+        fetchDetails()
     }
     
 }

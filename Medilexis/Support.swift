@@ -9,32 +9,52 @@
 import UIKit
 import SwiftSpinner
 
-class Support: UIViewController {
+class Support: UIViewController, UIWebViewDelegate {
     
     @IBOutlet var supportWebView: UIWebView!
     
+    
+    var timerRun = false
+    var timer:Timer!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        
+        let url = URL (string: "http://medilexis.com")
+        let requestObj = URLRequest(url: url!)
+        supportWebView.delegate = self
+        supportWebView.loadRequest(requestObj)
+      
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillAppear(_ animated: Bool) {
+    
+    func webViewDidStartLoad(_ webView: UIWebView)
+    {
         
         SwiftSpinner.show("Loading Support view")
-        
-        let url = URL (string: "http://medilexis.com/#contactus")
-        let requestObj = URLRequest(url: url!)
-        supportWebView.loadRequest(requestObj)
-        
-        SwiftSpinner.hide()
+
     }
+    
+    func webViewDidFinishLoad(_ webView: UIWebView)
+    {
+        // load url complete
+        print("loading done call")
+        
+        if !webView.isLoading{
+            
+            let url = URL (string: "http://medilexis.com/#contactus")
+            let requestObj = URLRequest(url: url!)
+            supportWebView.loadRequest(requestObj)
+            SwiftSpinner.hide()
+        }
+    
+    }
+    
     
     @IBAction func stop(_ sender: UIBarButtonItem) {
         

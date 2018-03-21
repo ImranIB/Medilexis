@@ -9,10 +9,11 @@
 import UIKit
 import SkyFloatingLabelTextField
 import XLActionController
-import SwiftSpinner
 import CoreData
+import SwiftSpinner
+import SimplePDFSwift
 
-class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating {
+class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchResultsUpdating, UIDocumentInteractionControllerDelegate {
     
     @IBOutlet weak var medicineTableView: UITableView!
     @IBOutlet weak var noMedicineLabel: UILabel!
@@ -40,6 +41,11 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
     var searchResults:[RxList] = []
     var restaurantIsVisited = Array(repeating: false, count: 1000)
     var fileRxStored = ""
+    var leftConstraint: NSLayoutConstraint?
+    var trailingConstraint: NSLayoutConstraint?
+    var topConstraint: NSLayoutConstraint?
+    var bottomConstraint: NSLayoutConstraint?
+    var heightConstraint: NSLayoutConstraint?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -298,6 +304,11 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
         }
     }
     
+    // MARK: - UIDocumentInteractionControllerDelegate
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+        return self
+    }
+    
     @IBAction func navigateToHome(_ sender: UIBarButtonItem) {
         
         let actionController = YoutubeActionController()
@@ -363,11 +374,169 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
             
         }))
         
+        actionController.addAction(Action(ActionData(title: "Preview", image: UIImage(named: "preview")!), style: .default, handler: { action in
+            
+            let pdf = SimplePDF(pdfTitle: "PRINT TEMPLATE", authorName: "Muhammad Imran")
+            
+            self.addDocumentCover(pdf)
+            self.addDocumentContent(pdf)
+            self.addHeadersFooters(pdf)
+            
+            // here we may want to save the pdf somewhere or show it to the user
+            let tmpPDFPath = pdf.writePDFWithoutTableOfContents()
+            
+            // open the generated PDF
+            DispatchQueue.main.async(execute: { () -> Void in
+                let pdfURL = URL(fileURLWithPath: tmpPDFPath)
+                let interactionController = UIDocumentInteractionController(url: pdfURL)
+                interactionController.delegate = self
+                interactionController.presentPreview(animated: true)
+                SwiftSpinner.hide()
+            })
+            
+        }))
+        
         actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
         }))
         
         present(actionController, animated: true, completion: nil)
        
+    }
+    
+    fileprivate func addDocumentCover(_ pdf: SimplePDF) {
+        
+        SwiftSpinner.show("Loading print preview")
+        pdf.startNewPage()
+    }
+    
+    fileprivate func addDocumentContent(_ pdf: SimplePDF) {
+        
+        let dos = defaults.value(forKey: "DOS") as! NSDate
+        let pname = defaults.value(forKey: "PatientName") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = DateFormatter.Style.long
+        let dateString = dateFormatter.string(from: dos as Date)
+        
+        let text1 = ""
+        pdf.addBodyText(text1)
+        
+        let text2 = ""
+        pdf.addBodyText(text2)
+        
+        
+        let name = "Patient Name: \(pname)"
+        pdf.addBodyText(name)
+        
+        let date = "Scheduled Date: \(dateString)"
+        pdf.addBodyText(date)
+        
+        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
+        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let fetchResult = try getContext().fetch(fetchRequest)
+            
+            for item in fetchResult {
+                
+                if item.type == "CC"{
+                    
+                    pdf.addH6("CHIEF COMPLAINT")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "HPI"{
+                    
+                    pdf.addH6("HISTORY OF PRESENT ILLNESS")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "HX"{
+                    
+                    pdf.addH6("HISTORY")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "ROS"{
+                    
+                    pdf.addH6("REVIEW OF SYSTEMS")
+                    pdf.addBodyText(item.transcription!)
+                    
+                }else if item.type == "PLAN"{
+                    
+                    pdf.addH6("PLAN")
+                    pdf.addBodyText(item.transcription!)
+                }
+                
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
+    fileprivate func addHeadersFooters(_ pdf: SimplePDF) {
+        
+        let uid = defaults.value(forKey: "UserID")
+        let fetchRequest:NSFetchRequest<Users> = Users.fetchRequest()
+        let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count > 0 {
+                
+                let fetchResult = try context.fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    let regularFont = UIFont.systemFont(ofSize: 18)
+                    let boldFont = UIFont.boldSystemFont(ofSize: 20)
+                    let leftAlignment = NSMutableParagraphStyle()
+                    leftAlignment.alignment = NSTextAlignment.left
+                    
+                    
+                    if item.logo != nil {
+                        
+                        let retrievedImg = UIImage(data: item.logo! as Data)!
+                        
+                        let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
+                                                                    image:retrievedImg, imageHeight: 55, alignment: .right)
+                        pdf.headerFooterImages.append(rightLogo)
+                    }
+                    
+                    if item.heading != nil && item.subHeading != nil {
+                        
+                        // add some document information to the header, on left
+                        let leftHeaderString = "\(item.heading!)\n\(item.subHeading!)"
+                        let leftHeaderAttrString = NSMutableAttributedString(string: leftHeaderString)
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
+                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, Int.max), attributedString: leftHeaderAttrString)
+                        pdf.headerFooterTexts.append(header)
+                        
+                    }
+                    
+                    if item.footer != nil {
+                        
+                        // add a link to your app may be
+                        
+                        let link = NSMutableAttributedString(string: item.footer!)
+                        link.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, link.length))
+                        link.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, link.length))
+                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, Int.max), attributedString: link)
+                        pdf.headerFooterTexts.append(appLinkFooter)
+                    }
+                    
+                }
+                
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
+        
     }
     
     @IBAction func dismissRX(_ sender: UIBarButtonItem) {
@@ -406,7 +575,7 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
         if self.fileRxStored == "false" {
             
             let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
-            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesExit)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yes)
             let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
             alert.addAction(action)
             alert.addAction(cancel)
@@ -415,7 +584,6 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
             self.present(alert, animated: true, completion: nil);
             
         } else {
-            
             
             let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
             let nextViewController = storyBoard.instantiateViewController(withIdentifier: "cptCodes") as! Cpt
@@ -434,8 +602,17 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
             nextLine.isHidden = true
             exitLine.isHidden = true
             skipLine.isHidden = false
+            skipButton.isHidden = false
          
         }
+        
+    }
+    
+    func yes(alert: UIAlertAction){
+        
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "cptCodes") as! Cpt
+        self.present(nextViewController, animated:true, completion:nil)
         
     }
     
@@ -537,5 +714,6 @@ class AddRX: UIViewController, UITableViewDataSource, UITableViewDelegate, UISea
             }
         }
     }
+    
 
 }

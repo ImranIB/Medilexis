@@ -10,25 +10,71 @@ import UIKit
 import CoreData
 import SkyFloatingLabelTextField
 import SwiftSpinner
+import AlamofireImage
+import SVProgressHUD
+import XLActionController
 
-class AddPatient: UIViewController {
+class AddPatient: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate  {
     
-   
     @IBOutlet var firstName: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet var lastName: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet var phone: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet var dob: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet var email: SkyFloatingLabelTextFieldWithIcon!
     @IBOutlet var address: SkyFloatingLabelTextFieldWithIcon!
+    @IBOutlet weak var patientProfileImage: UIImageView!
+    @IBOutlet weak var patientIDImage: UIImageView!
+    @IBOutlet var medicalNo: SkyFloatingLabelTextFieldWithIcon!
     
     let userDefaults = Foundation.UserDefaults.standard
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var filterFirstName = [String]()
+    let picker = UIImagePickerController()
+    var selectedImage:UIImage!
+    var selectedIDImage:UIImage!
+    var imagePicked: String!
+    var profileImageName: String!
+    var idImageName: String!
+    var selectedImageBool = false
+    var selectedIDImageBool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        createProfileImagesFolder()
+        createIDImagesFolder()
+        
+        selectedImage = UIImage(named: "thumb_image_not_available")
+        selectedIDImage =  UIImage(named: "thumb_image_not_available")
+        
+        picker.delegate = self
+        
+        self.patientProfileImage.layer.cornerRadius = self.patientProfileImage!.frame.height/2
+        self.patientProfileImage.clipsToBounds = true
+        patientProfileImage.contentMode = UIViewContentMode.scaleAspectFill
+        self.patientIDImage.layer.cornerRadius = self.patientIDImage!.frame.height/2
+        self.patientIDImage.clipsToBounds = true
+        patientIDImage.contentMode = UIViewContentMode.scaleAspectFill
 
-       firstName.iconFont = UIFont(name: "FontAwesome", size: 12)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(AddPatient.imageTapped(gesture:)))
+        patientProfileImage.addGestureRecognizer(tapGesture)
+        patientProfileImage.isUserInteractionEnabled = true
+        
+        let tapGestureID = UITapGestureRecognizer(target: self, action: #selector(AddPatient.imageTappedID(gesture:)))
+        patientIDImage.addGestureRecognizer(tapGestureID)
+        patientIDImage.isUserInteractionEnabled = true
+
+        medicalNo.iconFont = UIFont(name: "FontAwesome", size: 12)
+        medicalNo.iconText = "\u{f292}"
+        medicalNo.iconColor = UIColor.lightGray
+        medicalNo.title = "MR#"
+        medicalNo.titleFormatter = { $0 }
+        medicalNo.titleLabel.font = UIFont(name: "FontAwesome", size:11)
+        medicalNo.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
+        medicalNo.iconMarginLeft = 2.0
+        
+        firstName.iconFont = UIFont(name: "FontAwesome", size: 12)
         firstName.iconText = "\u{f2c0}"
         firstName.iconColor = UIColor.lightGray
         firstName.title = "First Name"
@@ -36,7 +82,7 @@ class AddPatient: UIViewController {
         firstName.titleLabel.font = UIFont(name: "FontAwesome", size:11)
         firstName.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         firstName.iconMarginLeft = 2.0
-        self.view.addSubview(firstName)
+        //self.view.addSubview(firstName)
         
         lastName.iconFont = UIFont(name: "FontAwesome", size: 12)
         lastName.iconText = "\u{f2c0}"
@@ -46,7 +92,7 @@ class AddPatient: UIViewController {
         lastName.titleLabel.font = UIFont(name: "FontAwesome", size:11)
         lastName.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         lastName.iconMarginLeft = 2.0
-        self.view.addSubview(lastName)
+       // self.view.addSubview(lastName)
         
         phone.iconFont = UIFont(name: "FontAwesome", size: 12)
         phone.iconText = "\u{f095}"
@@ -56,7 +102,7 @@ class AddPatient: UIViewController {
         phone.titleLabel.font = UIFont(name: "FontAwesome", size:11)
         phone.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         phone.iconMarginLeft = 2.0
-        self.view.addSubview(lastName)
+       // self.view.addSubview(lastName)
         
         dob.iconFont = UIFont(name: "FontAwesome", size: 12)
         dob.iconText = "\u{f274}"
@@ -66,7 +112,7 @@ class AddPatient: UIViewController {
         dob.titleLabel.font = UIFont(name: "FontAwesome", size:11)
         dob.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         dob.iconMarginLeft = 2.0
-        self.view.addSubview(dob)
+        //self.view.addSubview(dob)
         
         email.iconFont = UIFont(name: "FontAwesome", size: 12)
         email.iconText = "\u{f003}"
@@ -76,7 +122,7 @@ class AddPatient: UIViewController {
         email.titleLabel.font = UIFont(name: "FontAwesome", size:11)
         email.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         email.iconMarginLeft = 2.0
-        self.view.addSubview(email)
+       // self.view.addSubview(email)
         
         address.iconFont = UIFont(name: "FontAwesome", size: 12)
         address.iconText = "\u{f041}"
@@ -86,7 +132,7 @@ class AddPatient: UIViewController {
         address.titleLabel.font = UIFont(name: "FontAwesome", size:11)
         address.iconMarginBottom = 1.0 // more precise icon positioning. Usually needed to tweak on a per font basis.
         address.iconMarginLeft = 2.0
-        self.view.addSubview(address)
+       // self.view.addSubview(address)
         
         let toolBar1 = UIToolbar(frame: CGRect(x: 0, y: self.view.frame.size.height/6, width: self.view.frame.size.width, height: 40.0))
         
@@ -122,20 +168,157 @@ class AddPatient: UIViewController {
         
         dob.inputAccessoryView = toolBar1
         
+        //Add done button to numeric pad keyboard
+        let toolbarDone = UIToolbar.init()
+        toolbarDone.sizeToFit()
+        let flexibleSpaceDone = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: nil, action: nil)
+        let barBtnDone = UIBarButtonItem.init(barButtonSystemItem: UIBarButtonSystemItem.done,
+                                              target: self, action: #selector(AddPatient.doneButton_Clicked(_:)))
+        toolbarDone.items = [flexibleSpaceDone, barBtnDone] // You can even add cancel button too
+        phone.inputAccessoryView = toolbarDone
+        
+    }
+    
+    @objc func doneButton_Clicked(_ sender: UIBarButtonItem) {
+        
+        let _ = phone.resignFirstResponder()
+        
+    }
+    
+    @objc func imageTappedID(gesture: UIGestureRecognizer) {
+        
+        imagePicked = "ID"
+        
+        let actionController = YoutubeActionController()
+        
+        actionController.addAction(Action(ActionData(title: "Camera", image: UIImage(named: "camera")!), style: .default, handler: { action in
+            
+            self.CaptureCamera()
+            
+        }))
+        actionController.addAction(Action(ActionData(title: "Photo Library", image: UIImage(named: "photolibrary")!), style: .default, handler: { action in
+            
+            self.CaptureLibrary()
+        }))
+        
+        actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
+        }))
+        
+        present(actionController, animated: true, completion: nil)
+        
+    }
+    
+    func CaptureCamera(){
+        
+        if UIImagePickerController.availableCaptureModes(for: .rear) != nil {
+            self.picker.allowsEditing = false
+            self.picker.sourceType = UIImagePickerControllerSourceType.camera
+            self.picker.cameraCaptureMode = .photo
+            present(self.picker, animated: true, completion: nil)
+        } else {
+            self.noCamera()
+        }
+    }
+    
+    func noCamera(){
+        let alertVC = UIAlertController(
+            title: "No Camera",
+            message: "Sorry, this device has no camera",
+            preferredStyle: .alert)
+        let okAction = UIAlertAction(
+            title: "OK",
+            style:.default,
+            handler: nil)
+        alertVC.addAction(okAction)
+        present(alertVC,
+                animated: true,
+                completion: nil)
+    }
+    
+    func CaptureLibrary(){
+        
+        picker.allowsEditing = false
+        picker.sourceType = .photoLibrary
+        picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .photoLibrary)!
+        present(picker, animated: true, completion: nil)
+    }
+    
+    func resizeImage(image: UIImage, newWidth: CGFloat) -> UIImage {
+        
+        let scale = newWidth / image.size.width
+        let newHeight = image.size.height * scale
+        UIGraphicsBeginImageContext(CGSize(width:newWidth, height:newHeight))
+        image.draw(in: CGRect(x:0, y:0, width:newWidth, height:newHeight))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage!
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [String : Any])
+    {
+ 
+        if imagePicked == "Profile" {
+            
+            selectedImage = info[UIImagePickerControllerOriginalImage] as? UIImage
+            patientProfileImage.image = resizeImage(image: selectedImage, newWidth: 200)
+            selectedImageBool = true
+            dismiss(animated: true, completion: nil)//5
+            
+            
+        } else {
+            
+            selectedIDImage = info[UIImagePickerControllerOriginalImage] as? UIImage
+            patientIDImage.image = resizeImage(image: selectedIDImage, newWidth: 200)
+            selectedIDImageBool = true
+            dismiss(animated: true, completion: nil)//5
+        }
+   
+    }
+    
+    @objc func imageTapped(gesture: UIGestureRecognizer) {
+        
+        imagePicked = "Profile"
+        
+        let actionController = YoutubeActionController()
+        
+        actionController.addAction(Action(ActionData(title: "Camera", image: UIImage(named: "camera")!), style: .default, handler: { action in
+            
+            self.CaptureCamera()
+            
+        }))
+        actionController.addAction(Action(ActionData(title: "Photo Library", image: UIImage(named: "photolibrary")!), style: .default, handler: { action in
+            
+            self.CaptureLibrary()
+        }))
+        
+        actionController.addAction(Action(ActionData(title: "Cancel", image: UIImage(named: "cancel")!), style: .default, handler: { action in
+        }))
+        
+        present(actionController, animated: true, completion: nil)
+        
+    }
+ 
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+        
+        print("Memory issue on Add patient")
     }
     
-    func selectDoneDateButton(_ sender: UIBarButtonItem) {
+    @objc func selectDoneDateButton(_ sender: UIBarButtonItem) {
         
         let _ = dob.resignFirstResponder()
         
     }
     
-    func selectTodayBtn(_ sender: UIBarButtonItem) {
+    @objc func selectTodayBtn(_ sender: UIBarButtonItem) {
         
         let dateFormate = DateFormatter()
         dateFormate.dateFormat = "dd MMMM yyyy"
@@ -164,7 +347,7 @@ class AddPatient: UIViewController {
         datePickerView.addTarget(self, action: #selector(AddPatient.datePickerDateValueChanged), for: UIControlEvents.valueChanged)
     }
     
-    func datePickerDateValueChanged(sender:UIDatePicker) {
+    @objc func datePickerDateValueChanged(sender:UIDatePicker) {
         
         let date = NSDate()
         let dateFormatter = DateFormatter()
@@ -198,6 +381,7 @@ class AddPatient: UIViewController {
     }
     
     @IBAction func saveNext(_ sender: UIButton) {
+
         
         let isEmailAddressValid = isValidEmailAddress(emailAddressString: email.text!)
          
@@ -251,6 +435,7 @@ class AddPatient: UIViewController {
          
          } else {
          
+            SVProgressHUD.show()
             checkPatientExists()
          }
             
@@ -312,6 +497,7 @@ class AddPatient: UIViewController {
         } else {
             
             let uid = userDefaults.value(forKey: "UserID")
+        
             let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
             let predicate = NSPredicate(format: "(userID = %@) AND (firstName = %@) AND (lastName = %@) AND (phone = %@) AND (dateBirth = %@)", uid as! CVarArg, firstName.text!, lastName.text!, phone.text!, dob.text!)
             fetchRequest.predicate = predicate
@@ -332,6 +518,31 @@ class AddPatient: UIViewController {
                     let userID = userDefaults.value(forKey: "UserID") as! Int32
                     let patientid = NSUUID().uuidString.lowercased() as String
                     
+                    if selectedImageBool == true {
+                        
+                        let currentDateTime = NSDate()
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "dd-MM-yyyy-HH:mm:ss"
+                        let file = formatter.string(from: currentDateTime as Date)
+                        profileImageName = file + ".png"
+                        saveImageToDocuments(image: resizeImage(image: selectedImage, newWidth: 200), fileNameWithExtension: profileImageName)
+                        
+                    } else {
+                        profileImageName = "N/A"
+                    }
+                    
+                    if selectedIDImageBool == true {
+                        
+                        let currentDateTime = NSDate()
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "dd-MM-yyyy-HH:mm:ss"
+                        let file = formatter.string(from: currentDateTime as Date)
+                        idImageName = file + ".png"
+                        saveIDImageToDocuments(image: resizeImage(image: selectedIDImage, newWidth: 200), fileNameWithExtension: idImageName)
+                        
+                    } else {
+                        idImageName = "N/A"
+                    }
                     
                     let context = getContext()
                     
@@ -347,6 +558,9 @@ class AddPatient: UIViewController {
                     managedObj.setValue(address.text, forKey: "address")
                     managedObj.setValue(patientid, forKey: "id")
                     managedObj.setValue(userID, forKey: "userID")
+                    managedObj.setValue(profileImageName, forKey: "profileImage")
+                    managedObj.setValue(idImageName, forKey: "idCardImage")
+                    managedObj.setValue(medicalNo.text, forKey: "medicalNo")
                     
                     do {
                         try context.save()
@@ -396,7 +610,32 @@ class AddPatient: UIViewController {
                 
                 let userID = userDefaults.value(forKey: "UserID") as! Int32
                 let patientid = NSUUID().uuidString.lowercased() as String
-       
+                
+                if selectedImageBool == true {
+                    
+                    let currentDateTime = NSDate()
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "dd-MM-yyyy-HH:mm:ss"
+                    let file = formatter.string(from: currentDateTime as Date)
+                    profileImageName = file + ".png"
+                    saveImageToDocuments(image: resizeImage(image: selectedImage, newWidth: 200), fileNameWithExtension: profileImageName)
+                    
+                } else {
+                  profileImageName = "N/A"
+                }
+                
+                if selectedIDImageBool == true {
+                    
+                    let currentDateTime = NSDate()
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "dd-MM-yyyy-HH:mm:ss"
+                    let file = formatter.string(from: currentDateTime as Date)
+                    idImageName = file + ".png"
+                    saveIDImageToDocuments(image: resizeImage(image: selectedIDImage, newWidth: 200), fileNameWithExtension: idImageName)
+                    
+                } else {
+                    idImageName = "N/A"
+                }
                 
                 let context = getContext()
                 
@@ -412,9 +651,15 @@ class AddPatient: UIViewController {
                 managedObj.setValue(address.text, forKey: "address")
                 managedObj.setValue(patientid, forKey: "id")
                 managedObj.setValue(userID, forKey: "userID")
+                managedObj.setValue(profileImageName, forKey: "profileImage")
+                managedObj.setValue(idImageName, forKey: "idCardImage")
+                managedObj.setValue(medicalNo.text, forKey: "medicalNo")
                 
                 do {
                     try context.save()
+                    print("saved")
+                    
+                   // addPatientsOnServer()
                     
                     let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
                     let nextViewController = storyBoard.instantiateViewController(withIdentifier: "WalkInPatients") as! NewAppointment
@@ -424,7 +669,23 @@ class AddPatient: UIViewController {
                     nextViewController.dob = dob.text
                     nextViewController.email = email.text
                     nextViewController.address = address.text
+                    nextViewController.profile = profileImageName
+                    nextViewController.idCard = idImageName
+                    nextViewController.medicalno = medicalNo.text
+                    userDefaults.set("Add Patients", forKey: "View")
                     self.present(nextViewController, animated:true, completion:nil)
+                    
+                    SVProgressHUD.dismiss()
+                    
+                /*    self.firstName.text = ""
+                    self.lastName.text = ""
+                    self.phone.text = ""
+                    self.address.text = ""
+                    self.dob.text = ""
+                    self.email.text = ""
+                    self.medicalNo.text = ""
+                    self.patientProfileImage.image = UIImage(named: "thumb_image_not_available")
+                    self.patientIDImage.image = UIImage(named: "thumb_image_not_available")*/
                     
                     
                 } catch {
@@ -436,6 +697,32 @@ class AddPatient: UIViewController {
         }catch {
             print(error.localizedDescription)
         }
+        
+    }
+    
+    func saveImageToDocuments(image: UIImage, fileNameWithExtension: String){
+        
+        let fileManager = FileManager.default
+        //get the image path
+        let imagePath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("ProfileImages/" + fileNameWithExtension)
+        //get the image we took with camera
+        //get the PNG data for this image
+        let data = UIImagePNGRepresentation(image)
+        //store it in the document directory
+        fileManager.createFile(atPath: imagePath as String, contents: data, attributes: nil)
+        
+    }
+    
+    func saveIDImageToDocuments(image: UIImage, fileNameWithExtension: String){
+        
+        let fileManager = FileManager.default
+        //get the image path
+        let imagePath = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString).appendingPathComponent("IDCardImages/" + fileNameWithExtension)
+        //get the image we took with camera
+        //get the PNG data for this image
+        let data = UIImagePNGRepresentation(image)
+        //store it in the document directory
+        fileManager.createFile(atPath: imagePath as String, contents: data, attributes: nil)
         
     }
     
@@ -494,6 +781,7 @@ class AddPatient: UIViewController {
         } else {
             
             let uid = userDefaults.value(forKey: "UserID")
+            
             let fetchRequest:NSFetchRequest<Patients> = Patients.fetchRequest()
             let predicate = NSPredicate(format: "(userID = %@) AND (firstName = %@) AND (lastName = %@) AND (phone = %@) AND (dateBirth = %@)", uid as! CVarArg, firstName.text!, lastName.text!, phone.text!, dob.text!)
             fetchRequest.predicate = predicate
@@ -514,6 +802,31 @@ class AddPatient: UIViewController {
                     let userID = userDefaults.value(forKey: "UserID") as! Int32
                     let patientid = NSUUID().uuidString.lowercased() as String
                     
+                    if selectedImageBool == true {
+                        
+                        let currentDateTime = NSDate()
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "dd-MM-yyyy-HH:mm:ss"
+                        let file = formatter.string(from: currentDateTime as Date)
+                        profileImageName = file + ".png"
+                        saveImageToDocuments(image: resizeImage(image: selectedImage, newWidth: 200), fileNameWithExtension: profileImageName)
+                        
+                    } else {
+                        profileImageName = "N/A"
+                    }
+                    
+                    if selectedIDImageBool == true {
+                        
+                        let currentDateTime = NSDate()
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "dd-MM-yyyy-HH:mm:ss"
+                        let file = formatter.string(from: currentDateTime as Date)
+                        idImageName = file + ".png"
+                        saveIDImageToDocuments(image: resizeImage(image: selectedIDImage, newWidth: 200), fileNameWithExtension: idImageName)
+                        
+                    } else {
+                        idImageName = "N/A"
+                    }
                     
                     let context = getContext()
                     
@@ -529,6 +842,9 @@ class AddPatient: UIViewController {
                     managedObj.setValue(address.text, forKey: "address")
                     managedObj.setValue(patientid, forKey: "id")
                     managedObj.setValue(userID, forKey: "userID")
+                    managedObj.setValue(profileImageName, forKey: "profileImage")
+                    managedObj.setValue(idImageName, forKey: "idCardImage")
+                    managedObj.setValue(medicalNo.text, forKey: "medicalNo")
                     
                     do {
                         try context.save()
@@ -539,6 +855,13 @@ class AddPatient: UIViewController {
                         self.address.text = ""
                         self.dob.text = ""
                         self.email.text = ""
+                        self.medicalNo.text = ""
+                        self.selectedImageBool = false
+                        self.selectedIDImageBool = false
+                        self.patientProfileImage.image = UIImage(named: "thumb_image_not_available")
+                        self.patientIDImage.image = UIImage(named: "thumb_image_not_available")
+                        
+                       // addPatientsOnServer()
                         
                         let alert = UIAlertController(title: "Success", message: "Patient added successfully", preferredStyle: UIAlertControllerStyle.alert)
                         let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
@@ -558,6 +881,43 @@ class AddPatient: UIViewController {
         }
     }
     
+    func createProfileImagesFolder() {
+        // path to documents directory
+        let documentDirectoryPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+        if let documentDirectoryPath = documentDirectoryPath {
+            // create the custom folder path
+            let imagesDirectoryPath = documentDirectoryPath.appending("/ProfileImages")
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: imagesDirectoryPath) {
+                do {
+                    try fileManager.createDirectory(atPath: imagesDirectoryPath,
+                                                    withIntermediateDirectories: false,
+                                                    attributes: nil)
+                } catch {
+                    print("Error creating images folder in documents dir: \(error)")
+                }
+            }
+        }
+    }
+    
+    func createIDImagesFolder() {
+        // path to documents directory
+        let documentDirectoryPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+        if let documentDirectoryPath = documentDirectoryPath {
+            // create the custom folder path
+            let imagesDirectoryPath = documentDirectoryPath.appending("/IDCardImages")
+            let fileManager = FileManager.default
+            if !fileManager.fileExists(atPath: imagesDirectoryPath) {
+                do {
+                    try fileManager.createDirectory(atPath: imagesDirectoryPath,
+                                                    withIntermediateDirectories: false,
+                                                    attributes: nil)
+                } catch {
+                    print("Error creating images folder in documents dir: \(error)")
+                }
+            }
+        }
+    }
     
     func dateWithOutTime( datDate: NSDate) -> NSDate {
         let calendar = NSCalendar(identifier: NSCalendar.Identifier.gregorian)!
@@ -601,6 +961,47 @@ class AddPatient: UIViewController {
         self.present(nextViewController, animated:true, completion:nil)
     }
     
-
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    
+    func addPatientsOnServer(){
+        
+        let doctorID = userDefaults.value(forKey: "UserID")
+        let doctorName = userDefaults.value(forKey: "Username")
+        let token = userDefaults.value(forKey: "Token")
+        
+        
+        let url = URL(string: "http://muapp.com/medilixis_server/public/addapppatient")!
+        
+        let jsonDict = ["username": firstName.text, "last_name": lastName.text, "phone_number": phone.text, "dob": dob.text, "address": address.text, "email": email.text, "doctor_id": doctorID, "doctor_name": doctorName, "token": token]
+        let jsonData = try! JSONSerialization.data(withJSONObject: jsonDict, options: [])
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "post"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = jsonData
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("error:", error)
+                
+            }
+            
+            do {
+                guard let data = data else { return }
+                guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] else { return }
+                print(json)
+                
+            } catch {
+                print("error:", error)
+                
+            }
+        }
+        
+        task.resume()
+    }
     
 }

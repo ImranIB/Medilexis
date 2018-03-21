@@ -8,7 +8,6 @@
 
 import UIKit
 import CoreData
-import IQKeyboardManagerSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -50,11 +49,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UIApplication.shared.statusBarStyle = .lightContent
         
-         UITabBarItem.appearance().setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Lato", size: 14)!], for: .normal)
+         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font: UIFont(name: "Lato", size: 14)!], for: .normal)
         
-          UITabBarItem.appearance().setTitleTextAttributes([NSFontAttributeName: UIFont(name: "Lato", size: 14)!], for: .selected)
+          UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.font: UIFont(name: "Lato", size: 14)!], for: .selected)
         
-          UITabBarItem.appearance().setTitleTextAttributes([NSForegroundColorAttributeName: UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0)], for: .selected)
+          UITabBarItem.appearance().setTitleTextAttributes([NSAttributedStringKey.foregroundColor: UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0)], for: .selected)
         
          UITabBar.appearance().tintColor = UIColor(red: 0/255.0, green: 172/255.0, blue: 233/255.0, alpha: 1.0)
         
@@ -62,7 +61,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
          UITabBar.appearance().barTintColor = UIColor(red: 255/255.0, green: 255/255.0, blue: 255/255.0, alpha: 1.0)
 
-        IQKeyboardManager.sharedManager().enable = true
+        //IQKeyboardManager.sharedManager().enable = true
        /* let hasLaunchedKey = "HasLaunched"
         let defaults = UserDefaults.standard
         let hasLaunched = defaults.bool(forKey: hasLaunchedKey)

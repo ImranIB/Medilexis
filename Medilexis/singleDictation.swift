@@ -11,8 +11,10 @@ import AVFoundation
 import Speech
 import SystemConfiguration
 import CoreData
+import SimplePDFSwift
+import SwiftSpinner
 
-class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UITextViewDelegate  {
+class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerDelegate, UITextViewDelegate, UIDocumentInteractionControllerDelegate  {
     
     @IBOutlet weak var recordPause: UIButton!
     @IBOutlet weak var stop: UIButton!
@@ -78,7 +80,7 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
         defaults.set("false", forKey: "Recording")
     }
     
-    func doneClicked(){
+    @objc func doneClicked(){
         
         self.view.endEditing(true)
         if textView.text == ""{
@@ -206,14 +208,12 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
     func dismiss(alert: UIAlertAction){
     }
     
-    func stopRecording(){
+    @objc func stopRecording(){
         
         recorder?.stop()
         player?.stop()
         
         resetTimer()
-        //meterTimer.invalidate()
-        //statusLabel.text = "00:00"
         recordPause.setImage(UIImage(named: "rec-btn"), for: UIControlState.normal)
         let session = AVAudioSession.sharedInstance()
         do {
@@ -245,8 +245,7 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
         player?.stop()
         
         resetTimer()
-        //meterTimer.invalidate()
-        //statusLabel.text = "00:00"
+
         recordPause.setImage(UIImage(named: "rec-btn"), for: UIControlState.normal)
         let session = AVAudioSession.sharedInstance()
         do {
@@ -276,6 +275,7 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
         
         setSessionPlayback()
         self.playback()
+        self.recordPause.isEnabled  = false
     }
     
     func playback(){
@@ -339,6 +339,7 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
                                 self.activityIndicator.stopAnimating()
                                 self.activityIndicator.isHidden = true
                                 self.transcribeLine.isHidden = true
+                                self.exitLine.isHidden = true
                                 self.saveLine.isHidden = false
                                 
                             }
@@ -350,6 +351,7 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
                             self.activityIndicator.stopAnimating()
                             self.activityIndicator.isHidden = true
                             self.transcribeLine.isHidden = true
+                            self.exitLine.isHidden = true
                             self.saveLine.isHidden = false
                             
                         }
@@ -387,6 +389,7 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
     }
     
     func startTimer() {
+        print("on start timer")
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true, block: { (timer) in
             self.elapsedTimeInSecond += 1
             self.updateTimeLabel()
@@ -536,6 +539,7 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
     
     // MARK: - AVAudioPlayerDelegate Methods
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        self.recordPause.isEnabled  = true
         play.setImage(UIImage(named: "play-icon"), for: UIControlState.normal)
         play.isSelected = false
         resetTimer()
@@ -585,11 +589,134 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
         }
     }
     
+    // MARK: - UIDocumentInteractionControllerDelegate
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+        return self
+    }
+    
     @IBAction func navigateToHome(_ sender: UIBarButtonItem) {
         
-        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-        self.present(nextViewController, animated:true, completion:nil)
+        let pdf = SimplePDF(pdfTitle: "PRINT TEMPLATE", authorName: "Muhammad Imran")
+        
+        self.addDocumentCover(pdf)
+        self.addDocumentContent(pdf)
+        self.addHeadersFooters(pdf)
+        
+        // here we may want to save the pdf somewhere or show it to the user
+        let tmpPDFPath = pdf.writePDFWithoutTableOfContents()
+        
+        // open the generated PDF
+        DispatchQueue.main.async(execute: { () -> Void in
+            let pdfURL = URL(fileURLWithPath: tmpPDFPath)
+            let interactionController = UIDocumentInteractionController(url: pdfURL)
+            interactionController.delegate = self
+            interactionController.presentPreview(animated: true)
+            SwiftSpinner.hide()
+        })
+    }
+    
+    fileprivate func addDocumentCover(_ pdf: SimplePDF) {
+        
+        SwiftSpinner.show("Loading print preview")
+        pdf.startNewPage()
+    }
+    
+    fileprivate func addDocumentContent(_ pdf: SimplePDF) {
+        
+        let dos = defaults.value(forKey: "DOS") as! NSDate
+        let pname = defaults.value(forKey: "PatientName") as! String
+        
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = DateFormatter.Style.long
+        let dateString = dateFormatter.string(from: dos as Date)
+        
+        let text1 = ""
+        pdf.addBodyText(text1)
+        
+        let text2 = ""
+        pdf.addBodyText(text2)
+        
+        
+        let name = "Patient Name: \(pname)"
+        pdf.addBodyText(name)
+        
+        let date = "Scheduled Date: \(dateString)"
+        pdf.addBodyText(date)
+        
+        let text3 = ""
+        pdf.addBodyText(text3)
+        
+        let text4 = ""
+        pdf.addBodyText(text4)
+        
+        let text = String(describing: textView.text!)
+        pdf.addBodyText(text)
+        
+        
+        
+    }
+    
+    fileprivate func addHeadersFooters(_ pdf: SimplePDF) {
+        
+        let uid = defaults.value(forKey: "UserID")
+        let fetchRequest:NSFetchRequest<Users> = Users.fetchRequest()
+        let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count > 0 {
+                
+                let fetchResult = try context.fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    let regularFont = UIFont.systemFont(ofSize: 18)
+                    let boldFont = UIFont.boldSystemFont(ofSize: 20)
+                    let leftAlignment = NSMutableParagraphStyle()
+                    leftAlignment.alignment = NSTextAlignment.left
+                    
+                    
+                    if item.logo != nil {
+                        
+                        let retrievedImg = UIImage(data: item.logo! as Data)!
+                        
+                        let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
+                                                                    image:retrievedImg, imageHeight: 55, alignment: .right)
+                        pdf.headerFooterImages.append(rightLogo)
+                    }
+                    
+                    if item.heading != nil && item.subHeading != nil {
+                        
+                        // add some document information to the header, on left
+                        let leftHeaderString = "\(item.heading!)\n\(item.subHeading!)"
+                        let leftHeaderAttrString = NSMutableAttributedString(string: leftHeaderString)
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
+                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, Int.max), attributedString: leftHeaderAttrString)
+                        pdf.headerFooterTexts.append(header)
+                        
+                    }
+                    
+                    if item.footer != nil {
+                        
+                        // add a link to your app may be
+                        
+                        let link = NSMutableAttributedString(string: item.footer!)
+                        link.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, link.length))
+                        link.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, link.length))
+                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, Int.max), attributedString: link)
+                        pdf.headerFooterTexts.append(appLinkFooter)
+                    }
+                }
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
     }
     
     @IBAction func changeAudioTime(_ sender: UISlider) {
@@ -608,7 +735,7 @@ class singleDictation: UIViewController, AVAudioRecorderDelegate, AVAudioPlayerD
         
     }
     
-    func updateSlider(){
+    @objc func updateSlider(){
         
         progressView.value = Float(player.currentTime)
         let changedValue = Int(progressView.value)

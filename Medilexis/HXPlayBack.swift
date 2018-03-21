@@ -11,9 +11,10 @@ import CoreData
 import AVFoundation
 import Speech
 import SwiftSpinner
+import SimplePDFSwift
 
 
-class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, UITabBarDelegate {
+class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, UITabBarDelegate, UIDocumentInteractionControllerDelegate{
 
     @IBOutlet weak var recordedTransciption: UITextView!
     @IBOutlet weak var progressView: UISlider!
@@ -44,6 +45,8 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
     var timer:Timer!
     var audioPlayer = AVAudioPlayer()
     var elapsedTimeInSecond: Int = 0
+    var fileHXStored = ""
+    var hxtext: String!
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     
@@ -149,7 +152,7 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
         recordedTransciption.inputAccessoryView = toolBar
     }
     
-    func doneClicked(){
+    @objc func doneClicked(){
         
         self.view.endEditing(true)
         
@@ -161,7 +164,7 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
             saveNextLabel.isHidden = true
         }
         
-        if recordedTransciption.text != "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"{
+        if recordedTransciption.text != hxtext {
        
             saveExit.isHidden = false
             saveExitLabel.isHidden = false
@@ -170,9 +173,11 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
             saveButton.isHidden = false
             saveLabel.isHidden = false
             saveLine.isHidden = false
-            skipButton.isHidden = true
-            skipLabel.isHidden = true
+            skipButton.isHidden = false
+            skipLabel.isHidden = false
             skipLine.isHidden = true
+            
+            fileHXStored = "false"
         }
         
     }
@@ -220,6 +225,18 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
     
     @IBAction func transcribe(_ sender: UIButton) {
         
+        let alert = UIAlertController(title: "Hold On", message: "Dictation will be transcribed. Existing transcription may be overwritten. Do you want to continue?", preferredStyle: UIAlertControllerStyle.alert)
+        let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesDictate)
+        let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+        alert.addAction(action)
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true, completion: nil);
+    
+    }
+    
+    func yesDictate(alert: UIAlertAction){
+        
         if currentReachabilityStatus == .reachableViaWiFi ||  currentReachabilityStatus == .reachableViaWWAN {
             
             activityIndicator.isHidden = false
@@ -237,7 +254,7 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
                             print(error)
                             
                             DispatchQueue.main.async {
-                          
+                                
                                 let alert = UIAlertController(title: "Voice not recognized", message: "Unable to recognize voice", preferredStyle: UIAlertControllerStyle.alert)
                                 let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
                                 alert.addAction(action)
@@ -246,10 +263,6 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
                                 
                                 self.activityIndicator.stopAnimating()
                                 self.activityIndicator.isHidden = true
-                                self.saveLine.isHidden = false
-                                self.nextLine.isHidden = true
-                                self.exitLine.isHidden = true
-                                self.skipLine.isHidden = true
                                 
                             }
                             
@@ -259,10 +272,6 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
                             self.recordedTransciption.text = result?.bestTranscription.formattedString
                             self.activityIndicator.stopAnimating()
                             self.activityIndicator.isHidden = true
-                            self.saveLine.isHidden = false
-                            self.nextLine.isHidden = true
-                            self.exitLine.isHidden = true
-                            self.skipLine.isHidden = true
                             
                         }
                     }
@@ -288,9 +297,31 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
     
     @IBAction func saveExit(_ sender: UIButton) {
         
+        if fileHXStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: yes)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+            self.present(nextViewController, animated:true, completion:nil)
+        }
+    }
+    
+    func yesExit(alert: UIAlertAction){
+        
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
         self.present(nextViewController, animated:true, completion:nil)
+        
     }
     
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
@@ -363,6 +394,7 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
             for item in fetchResult {
                 
                 recordedTransciption.text = item.transcription
+                self.hxtext = item.transcription
                 
                 
             }
@@ -376,11 +408,166 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
         dismiss(animated: true, completion: nil)
     }
     
+    // MARK: - UIDocumentInteractionControllerDelegate
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+        return self
+    }
+    
     @IBAction func navigateToHome(_ sender: UIBarButtonItem) {
         
-        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-        self.present(nextViewController, animated:true, completion:nil)
+        let pdf = SimplePDF(pdfTitle: "PRINT TEMPLATE", authorName: "Muhammad Imran")
+        
+        self.addDocumentCover(pdf)
+        self.addDocumentContent(pdf)
+        self.addHeadersFooters(pdf)
+        
+        // here we may want to save the pdf somewhere or show it to the user
+        let tmpPDFPath = pdf.writePDFWithoutTableOfContents()
+        
+        // open the generated PDF
+        DispatchQueue.main.async(execute: { () -> Void in
+            let pdfURL = URL(fileURLWithPath: tmpPDFPath)
+            let interactionController = UIDocumentInteractionController(url: pdfURL)
+            interactionController.delegate = self
+            interactionController.presentPreview(animated: true)
+            SwiftSpinner.hide()
+        })
+    }
+    
+    fileprivate func addDocumentCover(_ pdf: SimplePDF) {
+        
+        SwiftSpinner.show("Loading print preview")
+        pdf.startNewPage()
+    }
+    
+    fileprivate func addDocumentContent(_ pdf: SimplePDF) {
+        
+        let dos = defaults.value(forKey: "DOS") as! NSDate
+        let pname = defaults.value(forKey: "PatientName") as! String
+        let AppointmentID = defaults.value(forKey: "AppointmentID") as! String
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = DateFormatter.Style.long
+        let dateString = dateFormatter.string(from: dos as Date)
+        
+        let text1 = ""
+        pdf.addBodyText(text1)
+        
+        let text2 = ""
+        pdf.addBodyText(text2)
+        
+        
+        let name = "Patient Name: \(pname)"
+        pdf.addBodyText(name)
+        
+        let date = "Scheduled Date: \(dateString)"
+        pdf.addBodyText(date)
+        
+        let fetchRequest:NSFetchRequest<Sounds> = Sounds.fetchRequest()
+        let predicate = NSPredicate(format: "(appointmentID = %@)", AppointmentID)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let fetchResult = try getContext().fetch(fetchRequest)
+            
+            for item in fetchResult {
+                
+                if item.type == "CC"{
+                    
+                    pdf.addH6("CHIEF COMPLAINT")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "HPI"{
+                    
+                    pdf.addH6("HISTORY OF PRESENT ILLNESS")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "HX"{
+                    
+                    pdf.addH6("HISTORY")
+                    pdf.addBodyText(item.transcription!)
+                    
+                } else if item.type == "ROS"{
+                    
+                    pdf.addH6("REVIEW OF SYSTEMS")
+                    pdf.addBodyText(item.transcription!)
+                    
+                }else if item.type == "PLAN"{
+                    
+                    pdf.addH6("PLAN")
+                    pdf.addBodyText(item.transcription!)
+                }
+                
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
+        
+    }
+    
+    fileprivate func addHeadersFooters(_ pdf: SimplePDF) {
+        
+        let uid = defaults.value(forKey: "UserID")
+        let fetchRequest:NSFetchRequest<Users> = Users.fetchRequest()
+        let predicate = NSPredicate(format: "(userID = %@)", uid as! CVarArg)
+        fetchRequest.predicate = predicate
+        
+        do {
+            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            
+            if count > 0 {
+                
+                let fetchResult = try context.fetch(fetchRequest)
+                
+                for item in fetchResult {
+                    
+                    let regularFont = UIFont.systemFont(ofSize: 18)
+                    let boldFont = UIFont.boldSystemFont(ofSize: 20)
+                    let leftAlignment = NSMutableParagraphStyle()
+                    leftAlignment.alignment = NSTextAlignment.left
+                    
+                    
+                    if item.logo != nil {
+                        
+                        let retrievedImg = UIImage(data: item.logo! as Data)!
+                        
+                        let rightLogo = SimplePDF.HeaderFooterImage(type: .header, pageRange: NSMakeRange(0, 1),
+                                                                    image:retrievedImg, imageHeight: 55, alignment: .right)
+                        pdf.headerFooterImages.append(rightLogo)
+                    }
+                    
+                    if item.heading != nil && item.subHeading != nil {
+                        
+                        // add some document information to the header, on left
+                        let leftHeaderString = "\(item.heading!)\n\(item.subHeading!)"
+                        let leftHeaderAttrString = NSMutableAttributedString(string: leftHeaderString)
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
+                        let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, Int.max), attributedString: leftHeaderAttrString)
+                        pdf.headerFooterTexts.append(header)
+                        
+                    }
+                    
+                    if item.footer != nil {
+                        
+                        // add a link to your app may be
+                        
+                        let link = NSMutableAttributedString(string: item.footer!)
+                        link.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, link.length))
+                        link.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, link.length))
+                        let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, Int.max), attributedString: link)
+                        pdf.headerFooterTexts.append(appLinkFooter)
+                    }
+                    
+                }
+                
+            }
+        }catch {
+            print(error.localizedDescription)
+        }
+        
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -390,6 +577,39 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
     }
     
     @IBAction func saveNext(_ sender: UIButton) {
+        
+        if fileHXStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: yes)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            self.tabBarController?.selectedIndex = 3
+            
+            saveLine.isHidden = true
+            nextLine.isHidden = true
+            exitLine.isHidden = true
+            saveButton.isHidden = true
+            saveLabel.isHidden = true
+            saveNext.isHidden = true
+            saveNextLabel.isHidden = true
+            saveExit.isHidden = true
+            saveExitLabel.isHidden = true
+            skipButton.isHidden = false
+            skipLabel.isHidden = false
+            skipLine.isHidden = false
+        
+        }
+    }
+    
+    func yes(alert: UIAlertAction){
         
         self.tabBarController?.selectedIndex = 3
         
@@ -405,8 +625,8 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
         skipButton.isHidden = false
         skipLabel.isHidden = false
         skipLine.isHidden = false
+        
     }
-    
     
     @IBAction func changeAudioTime(_ sender: UISlider) {
         
@@ -423,7 +643,7 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
         progressTime.text = String(format: "%02d:%02d", minutes, seconds)
     }
     
-    func updateSlider(){
+    @objc func updateSlider(){
         
         progressView.value = Float(audioPlayer.currentTime)
         let changedValue = Int(progressView.value)
@@ -458,6 +678,7 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
                     exitLine.isHidden = true
                     skipLine.isHidden = true
                     nextLine.isHidden = false
+                    fileHXStored = "true"
                 }
                 
             } else {
@@ -483,6 +704,7 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
                     exitLine.isHidden = true
                     skipLine.isHidden = true
                     nextLine.isHidden = false
+                    fileHXStored = "true"
                     
                 } catch {
                     print(error.localizedDescription)
@@ -497,9 +719,22 @@ class HXPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate, U
     
     @IBAction func skipPressed(_ sender: UIButton) {
         
-        self.tabBarController?.selectedIndex = 3
+        if fileHXStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: yes)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            self.tabBarController?.selectedIndex = 3
+        }
+        
     }
-   
-    
-    
+
 }

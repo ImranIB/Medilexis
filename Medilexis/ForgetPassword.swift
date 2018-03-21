@@ -10,7 +10,7 @@ import UIKit
 import SkyFloatingLabelTextField
 import SwiftSpinner
 
-class ForgetPassword: UIViewController {
+class ForgetPassword: UIViewController, UITextFieldDelegate {
 
     @IBOutlet weak var emailTextFIeld: SkyFloatingLabelTextFieldWithIcon!
     
@@ -170,5 +170,8 @@ class ForgetPassword: UIViewController {
         return  returnValue
     }
 
-
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
+        textField.resignFirstResponder()
+        return true
+    }
 }

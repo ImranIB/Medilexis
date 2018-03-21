@@ -6,13 +6,14 @@ target 'Medilexis' do
 pod 'SkyFloatingLabelTextField', '~> 2.0.0'
 pod "SwiftSpinner"
 pod "SimplePDFSwift"
-pod 'XLActionController/Youtube'
 pod 'AWSS3'
 pod 'CardIO'
 pod 'Stripe'
 pod 'M13Checkbox'
-pod 'IQKeyboardManagerSwift', '4.0.10'
+pod 'XLActionController/Youtube'
+pod 'AlamofireImage', '~> 3.3'
 pod 'SVProgressHUD', :git => 'https://github.com/SVProgressHUD/SVProgressHUD.git'
+
 
   # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
   use_frameworks!

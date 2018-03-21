@@ -15,6 +15,11 @@ class FetchCptList: UIViewController, UITableViewDataSource, UITableViewDelegate
     @IBOutlet var fetchCptTable: UITableView!
     @IBOutlet var save: UIButton!
     @IBOutlet var saveLabel: UILabel!
+    @IBOutlet var cancelButton: UIButton!
+    @IBOutlet var cancelLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    @IBOutlet var cancelLine: UIView!
+    
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var searchCpt = [DiagnosticList]()
@@ -22,6 +27,7 @@ class FetchCptList: UIViewController, UITableViewDataSource, UITableViewDelegate
     var searchResults:[DiagnosticList] = []
     let defaults = UserDefaults.standard
     var cptSelected = Array(repeating: false, count: 1000)
+    var CptSelected: Bool!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,17 +40,19 @@ class FetchCptList: UIViewController, UITableViewDataSource, UITableViewDelegate
         fetchCptTable.tableHeaderView = searchController.searchBar
         searchController.searchResultsUpdater = self
         searchController.dimsBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search Cpt"
+        searchController.searchBar.placeholder = "Search CPT"
         searchController.searchBar.backgroundImage = UIImage()
-        searchController.searchBar.tintColor = UIColor.white
         searchController.searchBar.barTintColor = UIColor(red: 236.0/255.0, green: 236.0/255.0, blue: 236.0/255.0, alpha: 1.0)
+        UISearchBar.appearance().tintColor = UIColor.black
+        definesPresentationContext = true
         
         self.fetchCptTable.reloadData()
         
         fetchCpt()
         
-        save.isEnabled = false
-        saveLabel.isEnabled = false
+        save.isHidden = true
+        saveLabel.isHidden = true
+        saveLine.isHidden = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -73,7 +81,6 @@ class FetchCptList: UIViewController, UITableViewDataSource, UITableViewDelegate
         
       
         let selectCpt = searchCpt[indexPath.row]
-        print(selectCpt.name!)
         let cell = fetchCptTable.cellForRow(at: indexPath)
         
         if self.cptSelected[indexPath.row] == false {
@@ -102,8 +109,12 @@ class FetchCptList: UIViewController, UITableViewDataSource, UITableViewDelegate
                     
                 } else {
                     
-                    save.isEnabled = true
-                    saveLabel.isEnabled = true
+                    save.isHidden = false
+                    saveLabel.isHidden = false
+                    saveLine.isHidden = false
+                    cancelButton.isHidden = true
+                    cancelLabel.isHidden = true
+                    cancelLine.isHidden = true
                     
                     self.cptSelected[indexPath.row] = self.cptSelected[indexPath.row] ? false : true
                     cell?.accessoryType = self.cptSelected[indexPath.row] ? .checkmark : .none
@@ -124,6 +135,8 @@ class FetchCptList: UIViewController, UITableViewDataSource, UITableViewDelegate
                     managedObj.setValue(selectCpt.name, forKey: "discription")
                     managedObj.setValue(selectCpt.code!, forKey: "code")
                     managedObj.setValue("CPT", forKey: "type")
+                    
+                    CptSelected = true
                     
                     do {
                         try context.save()
@@ -248,7 +261,8 @@ class FetchCptList: UIViewController, UITableViewDataSource, UITableViewDelegate
     @IBAction func savePressed(_ sender: UIButton) {
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Updatecodes") as! UpdateCodes
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updatecpt") as! UpdateCpt
+        nextViewController.selection = CptSelected
         self.present(nextViewController, animated:true, completion:nil)
     }
     

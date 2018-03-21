@@ -15,8 +15,7 @@ class Dashboard: UIViewController {
     @IBOutlet weak var dashboardItem: UINavigationItem!
     @IBOutlet weak var menuButton: UIBarButtonItem!
     
-    let defaults = UserDefaults.standard
-    
+    let userDefaults = Foundation.UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,9 +25,8 @@ class Dashboard: UIViewController {
             menuButton.action = #selector(SWRevealViewController.revealToggle(_:))
             view.addGestureRecognizer(self.revealViewController().panGestureRecognizer())
         }
-        
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -44,14 +42,16 @@ class Dashboard: UIViewController {
     
     @IBAction func searchPatients(_ sender: UIButton) {
         
-        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+        userDefaults.set("Home", forKey: "NavigateFrom")
         
+        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "patientsList") as! PatientsList
         self.present(nextViewController, animated:true, completion:nil)
     }
     
     @IBAction func newAppointment(_ sender: UIButton) {
         
+        userDefaults.set("", forKey: "View")
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "WalkInPatients") as! NewAppointment

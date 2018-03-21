@@ -36,7 +36,6 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     @IBOutlet var saveLine: UIView!
     @IBOutlet var nextLine: UIView!
     @IBOutlet var exitLine: UIView!
-    @IBOutlet var printLine: UIView!
     @IBOutlet var skipLine: UIView!
     @IBOutlet var transcribeLine: UIView!
 
@@ -45,8 +44,9 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     var timer:Timer!
     var audioPlayer = AVAudioPlayer()
     var elapsedTimeInSecond: Int = 0
+    var filePLANStored = ""
+    var plantext: String!
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -65,7 +65,6 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
         saveExitLabel.isHidden = false
         exitLine.isHidden = true
         transcribeLine.isHidden = true
-        printLine.isHidden = true
         recordedTransciption.delegate = self
         recordedTransciption.layer.cornerRadius = 10
         fetchTranscription()
@@ -149,7 +148,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
         recordedTransciption.inputAccessoryView = toolBar
     }
     
-    func doneClicked(){
+    @objc func doneClicked(){
         
         self.view.endEditing(true)
         
@@ -161,7 +160,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
             saveNextLabel.isHidden = true
         }
         
-        if recordedTransciption.text != "Tap to start typing or press the record button to start recording (Recorded file can be converted into text via transcribe button to appear below)"{
+        if recordedTransciption.text != plantext {
          
             saveExit.isHidden = false
             saveExitLabel.isHidden = false
@@ -170,9 +169,11 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
             saveButton.isHidden = false
             saveLabel.isHidden = false
             saveLine.isHidden = false
-            skipButton.isHidden = true
-            skipLabel.isHidden = true
+            skipButton.isHidden = false
+            skipLabel.isHidden = false
             skipLine.isHidden = true
+            
+            filePLANStored = "false"
         }
         
     }
@@ -220,6 +221,18 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     
     @IBAction func transcribe(_ sender: UIButton) {
         
+        let alert = UIAlertController(title: "Hold On", message: "Dictation will be transcribed. Existing transcription may be overwritten. Do you want to continue?", preferredStyle: UIAlertControllerStyle.alert)
+        let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: self.yesDictate)
+        let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+        alert.addAction(action)
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true, completion: nil);
+
+    }
+    
+    func yesDictate(alert: UIAlertAction){
+        
         if currentReachabilityStatus == .reachableViaWiFi ||  currentReachabilityStatus == .reachableViaWWAN {
             
             activityIndicator.isHidden = false
@@ -237,7 +250,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                             print(error)
                             
                             DispatchQueue.main.async {
-                         
+                                
                                 let alert = UIAlertController(title: "Voice not recognized", message: "Unable to recognize voice", preferredStyle: UIAlertControllerStyle.alert)
                                 let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
                                 alert.addAction(action)
@@ -246,10 +259,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                                 
                                 self.activityIndicator.stopAnimating()
                                 self.activityIndicator.isHidden = true
-                                self.saveLine.isHidden = false
-                                self.nextLine.isHidden = true
-                                self.exitLine.isHidden = true
-                                self.skipLine.isHidden = true
+                                
                             }
                             
                             
@@ -258,10 +268,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                             self.recordedTransciption.text = result?.bestTranscription.formattedString
                             self.activityIndicator.stopAnimating()
                             self.activityIndicator.isHidden = true
-                            self.saveLine.isHidden = false
-                            self.nextLine.isHidden = true
-                            self.exitLine.isHidden = true
-                            self.skipLine.isHidden = true
+                            
                             
                         }
                     }
@@ -355,6 +362,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
             for item in fetchResult {
                 
                 recordedTransciption.text = item.transcription
+                 self.plantext = item.transcription
                 
             }
         }catch {
@@ -369,9 +377,23 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     
     @IBAction func navigateToHome(_ sender: UIBarButtonItem) {
         
-        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
-        self.present(nextViewController, animated:true, completion:nil)
+        let pdf = SimplePDF(pdfTitle: "PRINT TEMPLATE", authorName: "Muhammad Imran")
+        
+        self.addDocumentCover(pdf)
+        self.addDocumentContent(pdf)
+        self.addHeadersFooters(pdf)
+        
+        // here we may want to save the pdf somewhere or show it to the user
+        let tmpPDFPath = pdf.writePDFWithoutTableOfContents()
+        
+        // open the generated PDF
+        DispatchQueue.main.async(execute: { () -> Void in
+            let pdfURL = URL(fileURLWithPath: tmpPDFPath)
+            let interactionController = UIDocumentInteractionController(url: pdfURL)
+            interactionController.delegate = self
+            interactionController.presentPreview(animated: true)
+            SwiftSpinner.hide()
+        })
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
@@ -382,26 +404,69 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     
     @IBAction func saveNext(_ sender: UIButton) {
         
+        if filePLANStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: yes)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "PhotoDictationPlayback") as! PhotoDictationPlayback
+            self.present(nextViewController, animated:true, completion:nil)
+            
+            saveLine.isHidden = true
+            nextLine.isHidden = true
+            exitLine.isHidden = true
+            saveButton.isHidden = true
+            saveLabel.isHidden = true
+            saveNext.isHidden = true
+            saveNextLabel.isHidden = true
+            saveExit.isHidden = true
+            saveExitLabel.isHidden = true
+            skipButton.isHidden = false
+            skipLabel.isHidden = false
+            skipLine.isHidden = false
+        }
+        
+    }
+    
+    func yes(alert: UIAlertAction){
+        
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "PhotoDictationPlayback") as! PhotoDictationPlayback
         self.present(nextViewController, animated:true, completion:nil)
         
-        saveLine.isHidden = true
-        nextLine.isHidden = true
-        exitLine.isHidden = true
-        saveButton.isHidden = true
-        saveLabel.isHidden = true
-        saveNext.isHidden = true
-        saveNextLabel.isHidden = true
-        saveExit.isHidden = true
-        saveExitLabel.isHidden = true
-        skipButton.isHidden = false
-        skipLabel.isHidden = false
-        skipLine.isHidden = false
+    }
+    @IBAction func saveExit(_ sender: UIButton) {
+        
+        if filePLANStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: yes)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
+            self.present(nextViewController, animated:true, completion:nil)
+        }
         
     }
     
-    @IBAction func saveExit(_ sender: UIButton) {
+    func yesExit(alert: UIAlertAction){
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Menu") as! SWRevealViewController
@@ -425,7 +490,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
         progressTime.text = String(format: "%02d:%02d", minutes, seconds)
     }
     
-    func updateSlider(){
+    @objc func updateSlider(){
         
         progressView.value = Float(audioPlayer.currentTime)
         let changedValue = Int(progressView.value)
@@ -439,27 +504,6 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     // MARK: - UIDocumentInteractionControllerDelegate
     func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
         return self
-    }
-    
-    @IBAction func printTemplate(_ sender: UIButton) {
-        
-        let pdf = SimplePDF(pdfTitle: "PRINT TEMPLATE", authorName: "Muhammad Imran")
-        
-        self.addDocumentCover(pdf)
-        self.addDocumentContent(pdf)
-        self.addHeadersFooters(pdf)
-        
-        // here we may want to save the pdf somewhere or show it to the user
-        let tmpPDFPath = pdf.writePDFWithoutTableOfContents()
-        
-        // open the generated PDF
-        DispatchQueue.main.async(execute: { () -> Void in
-            let pdfURL = URL(fileURLWithPath: tmpPDFPath)
-            let interactionController = UIDocumentInteractionController(url: pdfURL)
-            interactionController.delegate = self
-            interactionController.presentPreview(animated: true)
-            SwiftSpinner.hide()
-        })
     }
     
     fileprivate func addDocumentCover(_ pdf: SimplePDF) {
@@ -569,10 +613,10 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                         // add some document information to the header, on left
                         let leftHeaderString = "\(item.heading!)\n\(item.subHeading!)"
                         let leftHeaderAttrString = NSMutableAttributedString(string: leftHeaderString)
-                        leftHeaderAttrString.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
-                        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
-                        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
-                        leftHeaderAttrString.addAttribute(NSFontAttributeName, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, leftHeaderAttrString.length))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: boldFont, range: leftHeaderAttrString.mutableString.range(of: item.heading!))
+                        leftHeaderAttrString.addAttribute(NSAttributedStringKey.font, value: regularFont, range: leftHeaderAttrString.mutableString.range(of: item.subHeading!))
                         let header = SimplePDF.HeaderFooterText(type: .header, pageRange: NSMakeRange(0, Int.max), attributedString: leftHeaderAttrString)
                         pdf.headerFooterTexts.append(header)
                         
@@ -583,8 +627,8 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                         // add a link to your app may be
                         
                         let link = NSMutableAttributedString(string: item.footer!)
-                        link.addAttribute(NSParagraphStyleAttributeName, value: leftAlignment, range: NSMakeRange(0, link.length))
-                        link.addAttribute(NSFontAttributeName, value: regularFont, range: NSMakeRange(0, link.length))
+                        link.addAttribute(NSAttributedStringKey.paragraphStyle, value: leftAlignment, range: NSMakeRange(0, link.length))
+                        link.addAttribute(NSAttributedStringKey.font, value: regularFont, range: NSMakeRange(0, link.length))
                         let appLinkFooter = SimplePDF.HeaderFooterText(type: .footer, pageRange: NSMakeRange(0, Int.max), attributedString: link)
                         pdf.headerFooterTexts.append(appLinkFooter)
                     }
@@ -642,6 +686,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                     exitLine.isHidden = true
                     skipLine.isHidden = true
                     nextLine.isHidden = false
+                    filePLANStored = "true"
                 }
                 
             } else {
@@ -667,6 +712,7 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
                     exitLine.isHidden = true
                     skipLine.isHidden = true
                     nextLine.isHidden = false
+                    filePLANStored = "true"
                     
                 } catch {
                     print(error.localizedDescription)
@@ -681,9 +727,24 @@ class PlanPlayBack: UIViewController, AVAudioPlayerDelegate, UITextViewDelegate,
     
     @IBAction func skipPressed(_ sender: UIButton) {
         
-        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "PhotoDictationPlayback") as! PhotoDictationPlayback
-        self.present(nextViewController, animated:true, completion:nil)
+        if filePLANStored == "false" {
+            
+            let alert = UIAlertController(title: "Hold On", message: "Changes have not been saved. Do you want to leave without saving?", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler: yes)
+            let cancel = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
+            alert.addAction(cancel)
+            
+            
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "PhotoDictationPlayback") as! PhotoDictationPlayback
+            self.present(nextViewController, animated:true, completion:nil)
+        }
+        
     }
     
 

@@ -10,7 +10,7 @@ import UIKit
 import SkyFloatingLabelTextField
 import SwiftSpinner
 
-class EditProfile: UIViewController, UIPickerViewDelegate {
+class EditProfile: UIViewController, UIPickerViewDelegate, UITextFieldDelegate {
     
     
     @IBOutlet weak var firstNameTextField: SkyFloatingLabelTextFieldWithIcon!
@@ -298,6 +298,7 @@ class EditProfile: UIViewController, UIPickerViewDelegate {
         let defaults = UserDefaults.standard
         let _ = countryTextField.resignFirstResponder()
         let token = defaults.value(forKey: "Token")
+        print(token)
         
         if currentReachabilityStatus == .reachableViaWiFi ||  currentReachabilityStatus == .reachableViaWWAN {
             
@@ -355,7 +356,7 @@ class EditProfile: UIViewController, UIPickerViewDelegate {
                     do {
                         guard let data = data else { return }
                         guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: AnyObject] else { return }
-                        print("json:", json)
+                       // print("json:", json)
                         
                         DispatchQueue.main.async {
                             
@@ -409,9 +410,11 @@ class EditProfile: UIViewController, UIPickerViewDelegate {
                 return
             }
         }
-        
-        
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
+        textField.resignFirstResponder()
+        return true
+    }
 
 }

@@ -15,12 +15,14 @@ class Menu: UITableViewController {
     let userDefaults = Foundation.UserDefaults.standard
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+         menuTable.tableFooterView = UIView(frame: .zero)
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
        
-        menuTable.tableFooterView = UIView(frame: .zero)
+       
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

@@ -14,6 +14,10 @@ class FetchDxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
     @IBOutlet var fetchDxTable: UITableView!
     @IBOutlet var saveButton: UIButton!
     @IBOutlet var saveLabel: UILabel!
+    @IBOutlet var cancelButton: UIButton!
+    @IBOutlet var cancelLabel: UILabel!
+    @IBOutlet var saveLine: UIView!
+    @IBOutlet var cancelLine: UIView!
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var searchDx = [DiagnosticList]()
@@ -21,6 +25,7 @@ class FetchDxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
     var searchResults:[DiagnosticList] = []
     let defaults = UserDefaults.standard
     var dxSelected = Array(repeating: false, count: 1000)
+    var DxSelected: Bool!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,17 +38,19 @@ class FetchDxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
         fetchDxTable.tableHeaderView = searchController.searchBar
         searchController.searchResultsUpdater = self
         searchController.dimsBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search Dx"
+        searchController.searchBar.placeholder = "Search DX"
         searchController.searchBar.backgroundImage = UIImage()
-        searchController.searchBar.tintColor = UIColor.white
         searchController.searchBar.barTintColor = UIColor(red: 236.0/255.0, green: 236.0/255.0, blue: 236.0/255.0, alpha: 1.0)
+        UISearchBar.appearance().tintColor = UIColor.black
+        definesPresentationContext = true
         
         self.fetchDxTable.reloadData()
         
         fetchDx()
         
-        saveButton.isEnabled = false
-        saveLabel.isEnabled = false
+        saveButton.isHidden = true
+        saveLabel.isHidden = true
+        saveLine.isHidden = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -99,8 +106,12 @@ class FetchDxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
                     
                 } else {
                     
-                    saveButton.isEnabled = true
-                    saveLabel.isEnabled = true
+                    saveButton.isHidden = false
+                    saveLabel.isHidden = false
+                    saveLine.isHidden = false
+                    cancelButton.isHidden = true
+                    cancelLabel.isHidden = true
+                    cancelLine.isHidden = true
                     
                     self.dxSelected[indexPath.row] = self.dxSelected[indexPath.row] ? false : true
                     cell?.accessoryType = self.dxSelected[indexPath.row] ? .checkmark : .none
@@ -121,6 +132,8 @@ class FetchDxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
                     managedObj.setValue(selectCpt.name, forKey: "discription")
                     managedObj.setValue(selectCpt.code!, forKey: "code")
                     managedObj.setValue("DX", forKey: "type")
+                    
+                    DxSelected = true
                     
                     do {
                         try context.save()
@@ -245,7 +258,8 @@ class FetchDxList: UIViewController, UITableViewDataSource, UITableViewDelegate 
     @IBAction func savePressed(_ sender: UIButton) {
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Updatecodes") as! UpdateCodes
+        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "updateDX") as! UpdateDx
+        nextViewController.selection = DxSelected
         self.present(nextViewController, animated:true, completion:nil)
     }
     

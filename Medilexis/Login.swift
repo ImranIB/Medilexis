@@ -11,7 +11,7 @@ import SkyFloatingLabelTextField
 import SwiftSpinner
 import SystemConfiguration
 
-class Login: UIViewController{
+class Login: UIViewController, UITextFieldDelegate{
     
     
     @IBOutlet weak var emailTextField: SkyFloatingLabelTextFieldWithIcon!
@@ -219,6 +219,9 @@ class Login: UIViewController{
         self.view.endEditing(true)
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
+        textField.resignFirstResponder()
+        return true
+    }
     
-
 }

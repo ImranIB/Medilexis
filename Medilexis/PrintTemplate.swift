@@ -11,7 +11,7 @@ import Photos
 import CoreData
 import SkyFloatingLabelTextField
 
-class PrintTemplate: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate  {
+class PrintTemplate: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate  {
     
     
     @IBOutlet weak var headerTextOne: SkyFloatingLabelTextField!
@@ -296,6 +296,11 @@ class PrintTemplate: UIViewController, UIImagePickerControllerDelegate, UINaviga
         
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         return appDelegate.persistentContainer.viewContext
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
+        textField.resignFirstResponder()
+        return true
     }
 
 }

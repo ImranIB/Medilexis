@@ -10,13 +10,15 @@ import UIKit
 import CoreData
 import SkyFloatingLabelTextField
 
-class FilterSearchAppointments: UIViewController {
+class FilterSearchAppointments: UIViewController, UITextFieldDelegate {
     
     @IBOutlet var firstname: SkyFloatingLabelTextField!
     @IBOutlet var lastname: SkyFloatingLabelTextField!
     @IBOutlet var dob: SkyFloatingLabelTextField!
     @IBOutlet var startdate: SkyFloatingLabelTextField!
     @IBOutlet var enddate: SkyFloatingLabelTextField!
+    @IBOutlet weak var filterView: UIView!
+    
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     let defaults = UserDefaults.standard
@@ -25,39 +27,46 @@ class FilterSearchAppointments: UIViewController {
     var endPickDate: NSDate!
     
     var searchTasks = [Appointments]()
+    var tasks = [Appointments]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        firstname.title = "First Name"
+        filterView.layer.borderWidth = 1.0
+        filterView.layer.borderColor = UIColor.darkGray.cgColor
+        
+        firstname.title = ""
         firstname.titleFormatter = { $0 }
         firstname.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        self.view.addSubview(firstname)
         
-        lastname.title = "Last Name"
+        lastname.title = ""
         lastname.titleFormatter = { $0 }
         lastname.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        self.view.addSubview(lastname)
         
-        dob.title = "DOB"
+        dob.title = ""
         dob.titleFormatter = { $0 }
         dob.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        self.view.addSubview(dob)
         
-        startdate.title = "Start Date"
+        startdate.title = ""
         startdate.titleFormatter = { $0 }
         startdate.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        self.view.addSubview(startdate)
-        
-        enddate.title = "End Date"
+   
+        enddate.title = ""
         enddate.titleFormatter = { $0 }
         enddate.titleLabel.font = UIFont(name: "FontAwesome", size: 11)
-        self.view.addSubview(enddate)
-        
+       
         startPickDate = dateWithOutTime(datDate: NSDate())
         
-        print(startPickDate)
+        let dateFormate = DateFormatter()
+        dateFormate.dateFormat = "dd MMMM yyyy"
+        let date = NSDate()
+        let stringOfDate = dateFormate.string(from: date as Date)
+        startdate.text = stringOfDate
         
+        let previousDateFormate = DateFormatter()
+        previousDateFormate.dateFormat = "dd MMMM yyyy"
+        let newFromDate = dateFormate.string(from: date as Date)
+        enddate.text = newFromDate
         
         // DOB Toolbar
         
@@ -109,9 +118,9 @@ class FilterSearchAppointments: UIViewController {
         toolBar2.backgroundColor = UIColor.black
         
         
-        let defaultButton2 = UIBarButtonItem(title: "Today", style: UIBarButtonItemStyle.plain, target: self, action: #selector(FilterSearchAppointments.startDefaultBtn))
+        let defaultButton2 = UIBarButtonItem(title: "Today", style: UIBarButtonItemStyle.plain, target: self, action: #selector(FilterSearchAppointments.FromDefaultBtn))
         
-        let doneButton2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(FilterSearchAppointments.selectDoneStartButton))
+        let doneButton2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(FilterSearchAppointments.selectDoneFromButton))
         
         let flexSpace2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
         
@@ -132,6 +141,43 @@ class FilterSearchAppointments: UIViewController {
         toolBar2.setItems([defaultButton2,flexSpace2,textBtn2,flexSpace2,doneButton2], animated: true)
         
         startdate.inputAccessoryView = toolBar2
+        
+        // End Date Toolbar
+        
+        let toolBar3 = UIToolbar(frame: CGRect(x: 0, y: self.view.frame.size.height/6, width: self.view.frame.size.width, height: 40.0))
+        
+        toolBar3.layer.position = CGPoint(x: self.view.frame.size.width/2, y: self.view.frame.size.height-20.0)
+        
+        toolBar3.barStyle = UIBarStyle.blackTranslucent
+        
+        toolBar3.tintColor = UIColor.white
+        
+        toolBar3.backgroundColor = UIColor.black
+        
+        
+        let defaultButton3 = UIBarButtonItem(title: "Today", style: UIBarButtonItemStyle.plain, target: self, action: #selector(FilterSearchAppointments.ToDefaultBtn))
+        
+        let doneButton3 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(FilterSearchAppointments.selectDoneToButton))
+        
+        let flexSpace3 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
+        
+        let label3 = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
+        
+        label3.font = UIFont(name: "FontAwesome", size: 16)
+        
+        label3.backgroundColor = UIColor.clear
+        
+        label3.textColor = UIColor.white
+        
+        label3.text = "End Date"
+        
+        label3.textAlignment = NSTextAlignment.center
+        
+        let textBtn3 = UIBarButtonItem(customView: label3)
+        
+        toolBar3.setItems([defaultButton3,flexSpace3,textBtn3,flexSpace3,doneButton3], animated: true)
+        
+        enddate.inputAccessoryView = toolBar3
     }
     
     override func didReceiveMemoryWarning() {
@@ -139,71 +185,136 @@ class FilterSearchAppointments: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func searchPressed(_ sender: UIButton) {
+    @objc func FromDefaultBtn(_ sender: UIBarButtonItem) {
         
-        defaults.set("FilterSearchAppointments", forKey: "ComingFrom")
+        let dateFormate = DateFormatter()
+        dateFormate.dateFormat = "dd MMMM yyyy"
+        let date = NSDate()
+        let stringOfDate = dateFormate.string(from: date as Date)
+        startdate.text = stringOfDate
         
-        deleteAllData(entity: "FilterAppointments")
+        let todayDate = dateWithOutTime(datDate: NSDate())
+        defaults.set(todayDate, forKey: "SearchFromDate")
         
-        let uid = defaults.value(forKey: "UserID")
+        let _ = startdate.resignFirstResponder()
+    }
+    
+    @objc func ToDefaultBtn(_ sender: UIBarButtonItem) {
         
-        //let fromDate = defaults.value(forKey: "SearchFromDate") as! NSDate
-        //let toDate = defaults.value(forKey: "SearchToDate") as! NSDate
+        let dateFormate = DateFormatter()
+        dateFormate.dateFormat = "dd MMMM yyyy"
+        let date = NSDate()
+        let stringOfDate = dateFormate.string(from: date as Date)
+        enddate.text = stringOfDate
         
-        let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
-        let sortDescriptor = NSSortDescriptor(key: "dateSchedule", ascending: true)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        let predicate = NSPredicate(format: "(userID = %@) AND (firstName = %@) OR (lastName = %@)", uid as! CVarArg, firstname.text!, lastname.text!)
-        fetchRequest.predicate = predicate
+        let todayDate = dateWithOutTime(datDate: NSDate())
+        defaults.set(todayDate, forKey: "SearchToDate")
         
+        let _ = enddate.resignFirstResponder()
+    }
+    
+    @objc func selectDoneFromButton(_ sender: UIBarButtonItem) {
         
-        do {
+        let _ = startdate.resignFirstResponder()
+        
+    }
+    
+    @objc func selectDoneToButton(_ sender: UIBarButtonItem) {
+        
+        let _ = enddate.resignFirstResponder()
+        
+    }
+    
+    @objc func DoneToButton(_ sender: UIBarButtonItem) {
+        
+        let _ = enddate.resignFirstResponder()
+        
+    }
+    
+    @objc func selectDoneDateButton(_ sender: UIBarButtonItem) {
+        
+        let _ = dob.resignFirstResponder()
+        
+    }
+    
+    @objc func selectDefaultBtn(_ sender: UIBarButtonItem) {
+        
+        let dateFormate = DateFormatter()
+        dateFormate.dateFormat = "dd MMMM yyyy"
+        let date = NSDate()
+        let stringOfDate = dateFormate.string(from: date as Date)
+        dob.text = stringOfDate
+        
+        let _ = dob.resignFirstResponder()
+    }
+    
+    @IBAction func searchButtonPressed(_ sender: UIButton) {
+        
+        if firstname.text == "" && lastname.text == "" && dob.text == "" {
             
-            let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
+            let alert = UIAlertController(title: "Notice", message: "Search with either First Name, Last Name or Dob.", preferredStyle: UIAlertControllerStyle.alert)
+            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
+            alert.addAction(action)
             
-            if count > 0 {
+            self.present(alert, animated: true, completion: nil);
+            
+        } else {
+            
+            let uid = defaults.value(forKey: "UserID")
+            let fromDate = defaults.value(forKey: "SearchFromDate") as! NSDate
+            let toDate = defaults.value(forKey: "SearchToDate") as! NSDate
+            
+            tasks.removeAll()
+            let _ =  startdate.resignFirstResponder()
+            let _ =  enddate.resignFirstResponder()
+            
+            let fetchRequest:NSFetchRequest<Appointments> = Appointments.fetchRequest()
+            let sortDescriptor = NSSortDescriptor(key: "dateSchedule", ascending: true)
+            fetchRequest.sortDescriptors = [sortDescriptor]
+            let predicate = NSPredicate(format: "(userID = %@) AND (dateSchedule >= %@ OR dateSchedule <= %@) AND (firstName = %@ || lastName == %@ || dateBirth == %@)", uid as! CVarArg, fromDate, toDate, firstname.text!, lastname.text!, dob.text!)
+            fetchRequest.predicate = predicate
+            
+            do {
                 
-                let fetchResult = try getContext().fetch(fetchRequest)
+                let count = try getContext().count(for: fetchRequest as! NSFetchRequest<NSFetchRequestResult>)
                 
-                for item in fetchResult {
+                if count > 0 {
                     
-                    let entity = NSEntityDescription.entity(forEntityName: "FilterAppointments", in: context)
+                    let fetchResult = try getContext().fetch(fetchRequest)
                     
-                    let managedObj = NSManagedObject(entity: entity!, insertInto: context)
-                    
-                    managedObj.setValue(item.firstName, forKey: "firstname")
-                    managedObj.setValue(item.lastName, forKey: "lastName")
-                    managedObj.setValue(startPickDate, forKey: "startDate")
-                    managedObj.setValue(uid, forKey: "userID")
-                    
-                    do {
+                    for item in fetchResult {
                         
-                        try context.save()
+                        tasks.append(item)
                         
-                        print("saved")
+                        let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                        let nextViewController = storyBoard.instantiateViewController(withIdentifier: "searchappointments") as! SearchAppointments
+                        nextViewController.selection = true
+                        nextViewController.filteredSearchAppointments = tasks
+                        self.present(nextViewController, animated:true, completion:nil)
                         
-                    } catch {
-                        print(error.localizedDescription)
                     }
+                } else {
+                    
+                    tasks.removeAll()
+                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+                    let nextViewController = storyBoard.instantiateViewController(withIdentifier: "searchappointments") as! SearchAppointments
+                    nextViewController.selection = true
+                    nextViewController.filteredSearchAppointments = tasks
+                    self.present(nextViewController, animated:true, completion:nil)
                     
                 }
-            } else {
-                // searchTasks.removeAll()
                 
-                
+            }catch {
+                print(error.localizedDescription)
             }
             
-        }catch {
-            print(error.localizedDescription)
         }
     }
     
-    @IBAction func dobBeginEditing(_ sender: UITextField) {
+    @IBAction func dobEditing(_ sender: UITextField) {
         
         let datePickerView:UIDatePicker = UIDatePicker()
-        
         datePickerView.datePickerMode = UIDatePickerMode.date
-        
         sender.inputView = datePickerView
         
         let dateFormate = DateFormatter()
@@ -213,31 +324,28 @@ class FilterSearchAppointments: UIViewController {
         let stringOfDate = dateFormate.string(from: todayDate as Date)
         dob.text = stringOfDate
         
-        datePickerView.addTarget(self, action: #selector(FilterSearchAppointments.datePickerDateValueChanged), for: UIControlEvents.valueChanged)
+        datePickerView.addTarget(self, action: #selector(NewAppointment.datePickerDateValueChanged), for: UIControlEvents.valueChanged)
     }
     
-    func datePickerDateValueChanged(sender:UIDatePicker) {
+    @objc func datePickerDateValueChanged(sender:UIDatePicker) {
         
         let date = NSDate()
-        let todayDate = dateWithOutTime(datDate: date)
-        
         let dateFormatter = DateFormatter()
+        let todayDate = dateWithOutTime(datDate: date)
         
         dateFormatter.dateFormat = "dd MMMM yyyy"
         
-        dobPickDate = dateWithOutTime(datDate: sender.date as NSDate!)
+        let birthDate = dateWithOutTime(datDate: sender.date as NSDate!)
         
-        print(dobPickDate)
-        
-        switch dobPickDate.compare(todayDate as Date) {
+        switch birthDate.compare(todayDate as Date) {
         case .orderedAscending     :   print("Date A is earlier than date B")
         case .orderedDescending    :   print("Date A is later than date B")
         case .orderedSame          :   print("The two dates are the same")
         }
         
-        if dobPickDate.compare(todayDate as Date) == .orderedDescending {
+        if birthDate.compare(todayDate as Date) == .orderedDescending {
             
-            let alert = UIAlertController(title: "Notice", message: "Schedule date should not be selected before today's date", preferredStyle: UIAlertControllerStyle.alert)
+            let alert = UIAlertController(title: "Notice", message: "Date of birth should not be selected after today's date", preferredStyle: UIAlertControllerStyle.alert)
             let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
             alert.addAction(action)
             
@@ -252,7 +360,7 @@ class FilterSearchAppointments: UIViewController {
         
     }
     
-    @IBAction func startdateBeginEditing(_ sender: UITextField) {
+    @IBAction func startdateEditing(_ sender: UITextField) {
         
         let datePickerView:UIDatePicker = UIDatePicker()
         
@@ -270,45 +378,40 @@ class FilterSearchAppointments: UIViewController {
         datePickerView.addTarget(self, action: #selector(FilterSearchAppointments.startDateChanged), for: UIControlEvents.valueChanged)
     }
     
-    func startDateChanged(sender:UIDatePicker) {
-        
-        let date = NSDate()
-        let todayDate = dateWithOutTime(datDate: date)
+    @objc func startDateChanged(sender:UIDatePicker) {
         
         let dateFormatter = DateFormatter()
-        
         dateFormatter.dateFormat = "dd MMMM yyyy"
-        
-        startPickDate = dateWithOutTime(datDate: sender.date as NSDate!)
-        
-        print(startPickDate)
-        
-        switch startPickDate.compare(todayDate as Date) {
-        case .orderedAscending     :   print("Date A is earlier than date B")
-        case .orderedDescending    :   print("Date A is later than date B")
-        case .orderedSame          :   print("The two dates are the same")
-        }
-        
-        if startPickDate.compare(todayDate as Date) == .orderedAscending {
-            
-            let alert = UIAlertController(title: "Notice", message: "Start date should not be selected after today's date", preferredStyle: UIAlertControllerStyle.alert)
-            let action = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil)
-            alert.addAction(action)
-            
-            self.present(alert, animated: true, completion: nil);
-            
-            let _ = startdate.resignFirstResponder()
-            
-        } else {
-            
-            startdate.text = dateFormatter.string(from: sender.date)
-        }
-        
+        defaults.set(dateWithOutTime(datDate: sender.date as NSDate!), forKey: "SearchFromDate")
+        startdate.text = dateFormatter.string(from: sender.date)
     }
     
-    @IBAction func enddateBeginEditing(_ sender: UITextField) {
+    @IBAction func endDateEditing(_ sender: UITextField) {
+        
+        let datePickerView:UIDatePicker = UIDatePicker()
+        
+        datePickerView.datePickerMode = UIDatePickerMode.date
+        
+        sender.inputView = datePickerView
+        
+        let dateFormate = DateFormatter()
+        dateFormate.dateFormat = "dd MMMM yyyy"
+        let date = NSDate()
+        let todayDate = dateWithOutTime(datDate: date)
+        let stringOfDate = dateFormate.string(from: todayDate as Date)
+        enddate.text = stringOfDate
+        
+        datePickerView.addTarget(self, action: #selector(FilterSearchAppointments.endDateChanged), for: UIControlEvents.valueChanged)
     }
-    
+   
+    @objc func endDateChanged(sender:UIDatePicker) {
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM yyyy"
+        defaults.set(dateWithOutTime(datDate: sender.date as NSDate!), forKey: "SearchToDate")
+        enddate.text = dateFormatter.string(from: sender.date)
+        
+    }
     @IBAction func homePressed(_ sender: UIBarButtonItem) {
         
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
@@ -326,7 +429,7 @@ class FilterSearchAppointments: UIViewController {
         return appDelegate.persistentContainer.viewContext
     }
     
-    func dobDefaultBtn(_ sender: UIBarButtonItem) {
+    @objc func dobDefaultBtn(_ sender: UIBarButtonItem) {
         
         let dateFormate = DateFormatter()
         dateFormate.dateFormat = "dd MMMM yyyy"
@@ -337,29 +440,12 @@ class FilterSearchAppointments: UIViewController {
         let _ = dob.resignFirstResponder()
     }
     
-    func selectDoneDobButton(_ sender: UIBarButtonItem) {
+    @objc func selectDoneDobButton(_ sender: UIBarButtonItem) {
         
         let _ = dob.resignFirstResponder()
         
     }
-    
-    func startDefaultBtn(_ sender: UIBarButtonItem) {
-        
-        let dateFormate = DateFormatter()
-        dateFormate.dateFormat = "dd MMMM yyyy"
-        let date = NSDate()
-        let stringOfDate = dateFormate.string(from: date as Date)
-        startdate.text = stringOfDate
-        startPickDate = dateWithOutTime(datDate: NSDate())
-        let _ = startdate.resignFirstResponder()
-    }
-    
-    func selectDoneStartButton(_ sender: UIBarButtonItem) {
-        
-        let _ = startdate.resignFirstResponder()
-        
-    }
-    
+   
     func dateWithOutTime( datDate: NSDate) -> NSDate {
         let calendar = NSCalendar(identifier: NSCalendar.Identifier.gregorian)!
         calendar.timeZone = NSTimeZone(forSecondsFromGMT: 0) as TimeZone
@@ -374,5 +460,20 @@ class FilterSearchAppointments: UIViewController {
         catch { print(error) }
     }
     
+    @IBAction func closePressed(_ sender: UIButton) {
+        
+         dismiss(animated: true, completion: nil)
+    }
     
+    override func viewWillAppear(_ animated: Bool) {
+        
+        let currentDate = dateWithOutTime(datDate: NSDate())
+        defaults.set(currentDate, forKey: "SearchFromDate")
+        defaults.set(currentDate, forKey: "SearchToDate")
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
+        textField.resignFirstResponder()
+        return true
+    }
 }
